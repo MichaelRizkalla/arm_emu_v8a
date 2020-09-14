@@ -8,11 +8,9 @@ It is only implementing AARCH64 on ARM v8-a CPUs based on the following document
 * https://developer.arm.com/architectures/learn-the-architecture/armv8-a-instruction-set-architecture
 
 # Getting started
-=================
 This code requires the standard C++20 only.
 
 # Building and Running
-======================
 To compile using the default system compiler
 
 On windows, use the following to generate VS Solution:
@@ -35,7 +33,6 @@ To run, just provide a txt file path as an argument.
 ```
 
 # Using the emulator
-====================
 For now, the app takes a txt file formatted like the following
 ```
 0x00000000
@@ -45,7 +42,6 @@ For now, the app takes a txt file formatted like the following
 where each line represents a single instruction and executes the code.
 
 # Future development
-====================
 This emulator is incomplete, the future development goals are as follows:
 * Complete the decoded/operations for the remaining instructions
 * Add support to provide only .cpp files to run the emulator
@@ -54,9 +50,7 @@ This emulator is incomplete, the future development goals are as follows:
 
 
 # Remarks
-=========
-Thanks to [Jason Turner](https://github.com/lefticus/)'s talk the provoked me to pick a hard project to work on it. And his project *cpp_box* which I used as ground zero.
+Thanks to [Jason Turner](https://github.com/lefticus/)'s talk that provoked me to pick a hard project to work on it. And his project *cpp_box* which I used as ground zero.
 
 # License
-=========
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
