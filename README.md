@@ -1,5 +1,5 @@
 # arm_emu_v8a
-It contains my attempt for a arm v8-a cpu emulator written in C++20 (incomplete as of this moment)
+It contains my attempt to emulate a arm v8-a architecture written in C++20 (incomplete as of this moment)
 
 ## Documentation and credits
 This project is inspired by [cpp_box](https://github.com/lefticus/cpp_box/) and use the concepts of it as its bases.
@@ -42,11 +42,11 @@ For now, the app takes a txt file formatted like the following
 where each line represents a single instruction and executes the code.
 
 # Future development
-This emulator is incomplete, the future development goals are as follows:
+As this project is incomplete, the future development goals are as follows:
 * Complete the decoded/operations for the remaining instructions
-* Add support to provide only .cpp files to run the emulator
+* Add support to provide only .cpp files to run the architecture
 * Increase performance by replacing std::bitset<> with std::uint64_t
-* Implements some the features (e.g. FEAT_MTE)
+* Implements some of the features (e.g. FEAT_MTE)
 
 
 # Remarks
