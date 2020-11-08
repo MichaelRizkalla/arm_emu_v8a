@@ -6,6 +6,8 @@
 #include <string>
 #include <exception>
 
+#include <concepts>
+
 namespace arm_emu {
 // Used to enforce compile time errors (Unresolved symbol) in constexpr functions
 extern int ARM_EMU_EXCEPTION;
@@ -39,6 +41,7 @@ struct Table {
     std::array< TableEntry, Size > mEntries;
 };
 
+//////////////////////////// Traits ////////////////////////////
 template < typename TEnum >
 struct enum_size {
     static constexpr std::underlying_type_t< TEnum > value = static_cast< std::underlying_type_t< TEnum > >(TEnum::ARM_EMU_COUNT);
@@ -47,22 +50,41 @@ struct enum_size {
 template < typename TEnum >
 static constexpr auto enum_size_v = enum_size< TEnum >::value;
 
-template < typename _Ty >
-struct has_size {
+struct size_checker {
+    template < typename _Tx, typename... _Args >
+    static constexpr auto call(_Tx*) -> decltype(std::declval< _Tx& >().size(std::declval< _Args >()...));
+};
+
+struct constructor_checker {
+    template < typename _Tx, typename... _Args >
+    static constexpr auto call(_Tx*) -> decltype(_Tx { std::declval< _Args >()... });
+};
+
+// https://codereview.stackexchange.com/questions/92993/template-method-checker
+template < typename, typename, typename _Tx >
+struct has_function {
+    static_assert(std::integral_constant< _Tx, false >::value, "Third parameter has to be of function type.");
+};
+
+template < typename _Checker, typename _Ty, typename _Ret, typename... _Args >
+struct has_function< _Checker, _Ty, _Ret(_Args...) > {
   private:
-    template < typename _Tx >
-    static constexpr auto check(_Tx*) -> typename std::is_same< decltype(std::declval< _Tx& >().size()), std::size_t >::type;
+    template < typename _Chk, typename _Tx>
+    static constexpr auto check(_Tx*) -> decltype(_Chk::template call< _Tx, _Args... >(0));
 
     // Sink hole
-    template < typename >
+    template < typename, typename >
     static constexpr std::false_type check(...);
 
   public:
-    static constexpr bool value = decltype(check< std::remove_cvref_t< _Ty > >(0))::value;
+    static constexpr bool value = std::is_same_v< decltype(check< _Checker, _Ty >(0)), _Ret >;
 };
 
-template < typename _Ty >
-static constexpr auto has_size_v = has_size< _Ty >::value;
+template < class _Checker, typename _Ty, typename _Ret, typename... _Args >
+static constexpr auto has_function_v = has_function< _Checker, _Ty, _Ret, _Args... >::value;
+
+template < class _Checker, typename _Ty, typename _Ret, typename... _Args >
+concept function_in = has_function_v< _Checker, _Ty, _Ret, _Args... >;
 
 /// <summary>
 /// Credits to https://stackoverflow.com/questions/13830158/check-if-a-variable-type-is-iterable
@@ -89,6 +111,29 @@ struct is_iteratable {
 template < typename _Ty >
 static constexpr auto is_iteratable_v = is_iteratable< _Ty >::value;
 
+template < typename _Ty >
+concept iteratable = is_iteratable_v< _Ty >;
+
+template < typename _Ty >
+struct is_indexable {
+  private:
+    template < typename _Tx >
+    static constexpr auto check(_Tx*) -> decltype(std::declval< _Tx& >()[std::declval< const typename _Tx::size_type >()], std::true_type {});
+
+    // Sink hole
+    template < typename >
+    static constexpr std::false_type check(...);
+
+  public:
+    static constexpr bool value = decltype(check< std::remove_cvref_t< _Ty > >(0))::value;
+};
+
+template < typename _Ty >
+static constexpr auto is_indexable_v = is_indexable< _Ty >::value;
+
+template < typename _Ty >
+concept indexable = is_indexable_v< _Ty >;
+
 template < std::size_t N >
 struct get_type {};
 
@@ -110,8 +155,12 @@ struct get_type< 64 > {
 };
 
 template < std::size_t N >
-static constexpr auto get_type_t = get_type< N >::type;
+using get_type_t = typename get_type< N >::type;
 
+template < class _Ty >
+concept enum_type = std::is_enum_v< _Ty >;
+
+//////////////////////////// Exceptions ////////////////////////////
 class ram_not_initialized : public std::exception {
     [[nodiscard]] virtual const char* what() const noexcept override { return "RAM block is not initialized"; }
 };
@@ -132,6 +181,7 @@ class undefined_instruction : public std::exception {
     [[nodiscard]] virtual const char* what() const noexcept override { return "Undefined instruction due to unsupported feature"; }
 };
 
+//////////////////////////// Helper functions ////////////////////////////
 template < typename TQueryTarget, typename TEnumType, TEnumType TValue >
 struct Query {
     static constexpr bool result() { return TQueryTarget::template IsImplemented< TEnumType, TValue >(); }
@@ -162,4 +212,5 @@ constexpr auto concate(const std::bitset< S1 >& set1, const std::bitset< S2 >& s
     std::string s2 = set2.to_string();
     return std::bitset< S1 + S2 >(s1 + s2);
 }
+
 } // namespace arm_emu

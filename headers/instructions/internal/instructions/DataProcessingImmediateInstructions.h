@@ -25,13 +25,13 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType<DataProcessingImmediateA64::InstructionGroupEnum::PC_RELATIVE_ADDRESSING>(mInstruction);
     }
 
-    [[nodiscard]] constexpr auto get_Rd() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rd() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
     }
-    [[nodiscard]] constexpr auto get_immhi() const noexcept {
+    [[nodiscard]] inline constexpr auto get_immhi() const noexcept {
         return static_cast<std::uint32_t>(static_cast<std::uint32_t>(0x7FFFF) & (mInstruction >> 5));
     }
-    [[nodiscard]] constexpr auto get_immlo() const noexcept {
+    [[nodiscard]] inline constexpr auto get_immlo() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11) & (mInstruction >> 29));
     }
 
@@ -45,16 +45,16 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType< DataProcessingImmediateA64::InstructionGroupEnum::ADD_SUBTRACT_IMMEDIATE >(mInstruction);
     }
 
-    [[nodiscard]] constexpr auto get_Rd() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rd() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
     }
-    [[nodiscard]] constexpr auto get_Rn() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rn() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 5));
     }
-    [[nodiscard]] constexpr auto get_imm12() const noexcept {
+    [[nodiscard]] inline constexpr auto get_imm12() const noexcept {
         return static_cast<std::uint16_t>(static_cast<std::uint32_t>(0xFFF) & (mInstruction >> 10));
     }
-    [[nodiscard]] constexpr auto get_sh() const noexcept {
+    [[nodiscard]] inline constexpr auto get_sh() const noexcept {
         return readBit(22);
     }
 
@@ -68,16 +68,16 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType< DataProcessingImmediateA64::InstructionGroupEnum::ADD_SUBTRACT_IMMEDIATE_TAG >(mInstruction);
     }
 
-    [[nodiscard]] constexpr auto get_Xd() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Xd() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
     }
-    [[nodiscard]] constexpr auto get_Xn() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Xn() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 5));
     }
-    [[nodiscard]] constexpr auto get_uimm4() const noexcept {
+    [[nodiscard]] inline constexpr auto get_uimm4() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b1111) & (mInstruction >> 10));
     }
-    [[nodiscard]] constexpr auto get_uimm6() const noexcept {
+    [[nodiscard]] inline constexpr auto get_uimm6() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b111111) & (mInstruction >> 16));
     }
 
@@ -91,19 +91,19 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType< DataProcessingImmediateA64::InstructionGroupEnum::LOGICAL_IMMEDIATE >(mInstruction);
     }
 
-    [[nodiscard]] constexpr auto get_Rd() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rd() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
     }
-    [[nodiscard]] constexpr auto get_Rn() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rn() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 5));
     }
-    [[nodiscard]] constexpr auto get_imms() const noexcept {
+    [[nodiscard]] inline constexpr auto get_imms() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b111111) & (mInstruction >> 10));
     }
-    [[nodiscard]] constexpr auto get_immr() const noexcept {
+    [[nodiscard]] inline constexpr auto get_immr() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b111111) & (mInstruction >> 16));
     }
-    [[nodiscard]] constexpr auto get_N() const noexcept {
+    [[nodiscard]] inline constexpr auto get_N() const noexcept {
         return readBit(22);
     }
 
@@ -117,13 +117,13 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType< DataProcessingImmediateA64::InstructionGroupEnum::MOVE_WIDE_IMMEDIATE >(mInstruction);
     }
 
-    [[nodiscard]] constexpr auto get_Rd() const noexcept {
+    [[nodiscard]] inline constexpr auto get_Rd() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
     }
-    [[nodiscard]] constexpr auto get_imm16() const noexcept {
+    [[nodiscard]] inline constexpr auto get_imm16() const noexcept {
         return static_cast<std::uint16_t>(static_cast<std::uint32_t>(0xFFFF) & (mInstruction >> 5));
     }
-    [[nodiscard]] constexpr auto get_hw() const noexcept {
+    [[nodiscard]] inline constexpr auto get_hw() const noexcept {
         return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11) & (mInstruction >> 21));
     }
 
@@ -137,6 +137,22 @@ struct DataProcessingImmediateInstruction< DataProcessingImmediateA64::Instructi
         return DataProcessingImmediateA64::getInstructionType< DataProcessingImmediateA64::InstructionGroupEnum::BITFIELD >(mInstruction);
     }
 
+    [[nodiscard]] inline constexpr auto get_Rd() const noexcept {
+        return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 0));
+    }
+    [[nodiscard]] inline constexpr auto get_Rn() const noexcept {
+        return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b11111) & (mInstruction >> 5));
+    }
+    [[nodiscard]] inline constexpr auto get_imms() const noexcept {
+        return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b111111) & (mInstruction >> 10));
+    }
+    [[nodiscard]] inline constexpr auto get_immr() const noexcept {
+        return static_cast<std::uint8_t>(static_cast<std::uint32_t>(0b111111) & (mInstruction >> 16));
+    }
+    [[nodiscard]] inline constexpr auto get_N() const noexcept {
+        return readBit(22);
+    }
+    
     constexpr explicit DataProcessingImmediateInstruction(const DataProcessingImmediateGroup& instruction) noexcept : DataProcessingImmediateGroup(instruction) {};
     NULL_COPY_MOVE(DataProcessingImmediateInstruction)
     ~DataProcessingImmediateInstruction() = default;

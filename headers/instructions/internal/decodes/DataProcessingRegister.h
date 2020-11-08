@@ -365,9 +365,9 @@ class DataProcessingRegisterA64 {
     } } };
     static inline constexpr Table< ConditionalCompareImmediate, enum_size_v< ConditionalCompareImmediate > > ConditionalCompareImmediateTable { { {
         { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b0011'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMNi_32BIT },
-        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b0111'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMNi_32BIT },
-        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b1011'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMNi_32BIT },
-        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b1111'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMNi_32BIT },
+        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b0111'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMPi_32BIT },
+        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b1011'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMNi_64BIT },
+        { 0b1111'1111'1110'0000'0000'1100'0001'0000, 0b1111'1010'0100'0000'0000'1000'0000'0000, ConditionalCompareImmediate::CCMPi_64BIT },
     } } };
     static inline constexpr Table< ConditionalSelect, enum_size_v< ConditionalSelect > > ConditionalSelectTable { { {
         { 0b1111'1111'1110'0000'0000'1100'0000'0000, 0b0001'1010'1000'0000'0000'0000'0000'0000, ConditionalSelect::CSEL_32BIT },

@@ -7,14 +7,13 @@
 namespace arm_emu {
 
 // Byte-Addressed RAM
-template < typename _AddressingMode, typename _E = std::enable_if_t< std::is_integral_v< _AddressingMode > > >
-struct Ram {
+template < typename _AddressingMode >
+requires std::integral< _AddressingMode > struct Ram {
 
     using type = _AddressingMode;
 
-    template < typename _Ty,
-               typename _Ei = std::enable_if_t< std::conjunction_v< std::is_integral< std::remove_cvref_t< _Ty > >, std::negation< std::is_enum< _Ty > > > > >
-    constexpr Ram(_Ty size__) : size_(static_cast< std::size_t >(size__)) {
+    template < typename _Ty >
+        requires std::integral< std::remove_cvref_t< _Ty > > && (!enum_type< _Ty >)constexpr Ram(_Ty size__) : size_(static_cast< std::size_t >(size__)) {
         data = std::make_unique< _AddressingMode[] >(static_cast< _AddressingMode >(size_));
     }
     ~Ram()                      = default;
@@ -45,9 +44,10 @@ struct Ram {
         for (auto i = 0ull; i < size_; i++) data.get()[i] = 0;
     }
 
-    template < typename _Ty,
-               typename _Ei = std::enable_if_t< std::conjunction_v< has_size< _Ty >, is_iteratable< _Ty >, std::is_same< typename _Ty::value_type, _AddressingMode > > > >
-    constexpr auto write_block(const std::size_t& startLoc, _Ty inData) {
+    template < typename _Ty >
+    requires std::same_as< typename _Ty::value_type, _AddressingMode >&& iteratable< _Ty >&&
+                                                                         function_in< size_checker, _Ty, typename _Ty::size_type(void) > constexpr auto
+                                                                         write_block(const std::size_t& startLoc, _Ty inData) {
         if (nullptr == data) throw ram_not_initialized {};
         if (size_ < startLoc) throw std::out_of_range { "Starting location is out of ram's boundary!" };
         if (size_ < (startLoc + inData.size())) throw std::out_of_range { "Data exceeds ram's boundary!" };
@@ -57,9 +57,8 @@ struct Ram {
         for (auto&& e : inData) { ptr[loc++] = e; }
     }
 
-    template < typename _Ty,
-               typename _Ei = std::enable_if_t< std::conjunction_v< std::is_integral< std::remove_cvref_t< _Ty > >, std::negation< std::is_enum< _Ty > > > > >
-    [[nodiscard]] inline constexpr auto read_block(_Ty startLoc, _Ty blockSize) const {
+    template < typename _Ty >
+        requires std::integral< std::remove_cvref_t< _Ty > > && (!enum_type< _Ty >) [[nodiscard]] inline constexpr auto read_block(_Ty startLoc, _Ty blockSize) const {
         if (nullptr == data) throw ram_not_initialized {};
         if (size_ < startLoc) throw std::out_of_range { "Starting location is out of ram's boundary!" };
         auto readEnd = startLoc + blockSize;
@@ -74,11 +73,9 @@ struct Ram {
         return out;
     }
 
-    inline constexpr auto size() const noexcept {
-        return size_;
-    }
+    inline constexpr auto size() const noexcept { return size_; }
 
-protected:
+  protected:
     std::unique_ptr< _AddressingMode[] > data;
     std::size_t                          size_;
 };

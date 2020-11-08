@@ -906,14 +906,13 @@ struct SPSRabtRegister final : public SpecialRegister {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -922,20 +921,19 @@ struct SPSRabtRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[21] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -944,14 +942,13 @@ struct SPSRabtRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[21] = Status::ACTIVE;
                 value |= data << 21;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }
@@ -1136,7 +1133,7 @@ struct SPSREL1Register final : public SpecialRegister {
     constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] auto TCO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) {
             if (bitStatus_[25] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1145,20 +1142,19 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto TCO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[25] = Status::ACTIVE;
                 value |= data << 25;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto TCO_Reset() { bitStatus_[25] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[24] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1167,20 +1163,19 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[24] = Status::ACTIVE;
                 value |= data << 24;
-            }   
-        }
-        else
+            }
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[24] = Status::UNKNOWN; }
 
     [[nodiscard]] auto UAO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1189,20 +1184,19 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto UAO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto UAO_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1211,14 +1205,13 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
@@ -1246,7 +1239,7 @@ struct SPSREL1Register final : public SpecialRegister {
     constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1255,20 +1248,19 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[12] = Status::ACTIVE;
                 value |= data << 12;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[12] = Status::UNKNOWN; }
 
     [[nodiscard]] auto BTYPE() const {
-        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1277,15 +1269,14 @@ struct SPSREL1Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto BTYPE(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (3 < data) throw std::invalid_argument("A bit can only hold up to 3");
             else {
                 bitStatus_[10] = Status::ACTIVE;
                 bitStatus_[11] = Status::ACTIVE;
                 value |= data << 10;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto BTYPE_Reset() {
@@ -1430,7 +1421,7 @@ struct SPSREL2Register final : public SpecialRegister {
     constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] auto TCO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) {
             if (bitStatus_[25] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1439,20 +1430,19 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto TCO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[25] = Status::ACTIVE;
                 value |= data << 25;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto TCO_Reset() { bitStatus_[25] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[24] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1461,20 +1451,19 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[24] = Status::ACTIVE;
                 value |= data << 24;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[24] = Status::UNKNOWN; }
 
     [[nodiscard]] auto UAO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1483,20 +1472,19 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto UAO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto UAO_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1505,14 +1493,13 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
@@ -1540,7 +1527,7 @@ struct SPSREL2Register final : public SpecialRegister {
     constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1549,20 +1536,19 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[12] = Status::ACTIVE;
                 value |= data << 12;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[12] = Status::UNKNOWN; }
 
     [[nodiscard]] auto BTYPE() const {
-        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1571,15 +1557,14 @@ struct SPSREL2Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto BTYPE(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (3 < data) throw std::invalid_argument("A bit can only hold up to 3");
             else {
                 bitStatus_[10] = Status::ACTIVE;
                 bitStatus_[11] = Status::ACTIVE;
                 value |= data << 10;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto BTYPE_Reset() {
@@ -1724,7 +1709,7 @@ struct SPSREL3Register final : public SpecialRegister {
     constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] auto TCO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) {
             if (bitStatus_[25] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1733,20 +1718,19 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto TCO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[25] = Status::ACTIVE;
                 value |= data << 25;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto TCO_Reset() { bitStatus_[25] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[24] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1755,20 +1739,19 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[24] = Status::ACTIVE;
                 value |= data << 24;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[24] = Status::UNKNOWN; }
 
     [[nodiscard]] auto UAO() const {
-        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1777,20 +1760,19 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto UAO(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto UAO_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1799,14 +1781,13 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
@@ -1834,7 +1815,7 @@ struct SPSREL3Register final : public SpecialRegister {
     constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1843,20 +1824,19 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[12] = Status::ACTIVE;
                 value |= data << 12;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[12] = Status::UNKNOWN; }
 
     [[nodiscard]] auto BTYPE() const {
-        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()) {
             if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -1865,15 +1845,14 @@ struct SPSREL3Register final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto BTYPE(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (3 < data) throw std::invalid_argument("A bit can only hold up to 3");
             else {
                 bitStatus_[10] = Status::ACTIVE;
                 bitStatus_[11] = Status::ACTIVE;
                 value |= data << 10;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto BTYPE_Reset() {
@@ -2065,7 +2044,7 @@ struct SPSRfiqRegister final : public SpecialRegister {
     // J // NOT USED IN AARCH64
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2074,20 +2053,19 @@ struct SPSRfiqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2096,20 +2074,19 @@ struct SPSRfiqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[21] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2118,14 +2095,13 @@ struct SPSRfiqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[21] = Status::ACTIVE;
                 value |= data << 21;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }
@@ -2357,7 +2333,7 @@ struct SPSRirqRegister final : public SpecialRegister {
     // J // NOT USED IN AARCH64
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2366,20 +2342,19 @@ struct SPSRirqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2388,20 +2363,19 @@ struct SPSRirqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[21] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2410,14 +2384,13 @@ struct SPSRirqRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[21] = Status::ACTIVE;
                 value |= data << 21;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }
@@ -2649,7 +2622,7 @@ struct SPSRundRegister final : public SpecialRegister {
     // J // NOT USED IN AARCH64
 
     [[nodiscard]] auto SSBS() const {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             if (bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2658,20 +2631,19 @@ struct SPSRundRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto SSBS(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[23] = Status::ACTIVE;
                 value |= data << 23;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             if (bitStatus_[22] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2680,20 +2652,19 @@ struct SPSRundRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto PAN(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[22] = Status::ACTIVE;
                 value |= data << 22;
             }
-        }
-        else
+        } else
             throw undefined_register_access {};
     }
     constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             if (bitStatus_[21] == Status::UNKNOWN || status_ == Status::UNKNOWN)
                 throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
             else
@@ -2702,14 +2673,13 @@ struct SPSRundRegister final : public SpecialRegister {
         throw undefined_register_access {};
     }
     auto DIT(const std::uint64_t& data) {
-        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()){
+        if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
             [[unlikely]] if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
             else {
                 bitStatus_[21] = Status::ACTIVE;
                 value |= data << 21;
             }
-        }
-        else 
+        } else
             throw undefined_register_access {};
     }
     constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }

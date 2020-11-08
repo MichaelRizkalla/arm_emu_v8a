@@ -41,8 +41,8 @@ class Branch_Exception_SystemA64 {
   public:
     using InstructionGroupEnum = Branch_Exception_SystemGroupA64;
 
-    Branch_Exception_SystemA64() = delete;
-    ~Branch_Exception_SystemA64()                   = delete;
+    Branch_Exception_SystemA64()  = delete;
+    ~Branch_Exception_SystemA64() = delete;
     NULL_COPY_MOVE(Branch_Exception_SystemA64)
 
     enum class ConditionalBranching : std::uint32_t {
@@ -111,10 +111,9 @@ class Branch_Exception_SystemA64 {
         Undefined = std::numeric_limits< std::underlying_type_t< Barriers > >::max(),
     };
     enum class PState : std::uint32_t {
-        MSRi,
-        /*CFINV, // Variations of MSRi
+        CFINV, // Variations of MSRi
         XAFLAG,
-        AXFLAG,*/
+        AXFLAG,
 
         ARM_EMU_COUNT,
 
@@ -187,10 +186,10 @@ class Branch_Exception_SystemA64 {
     };
 
   private:
-    static inline constexpr Table< ConditionalBranching, enum_size_v< ConditionalBranching > > ConditionalBranchingTable { { {
+    static inline constexpr Table< ConditionalBranching, enum_size_v< ConditionalBranching > >                 ConditionalBranchingTable { { {
         { 0b1111'1111'0000'0000'0000'0000'0001'0000, 0b0101'0100'0000'0000'0000'0000'0000'0000, ConditionalBranching::BCond },
     } } };
-    static inline constexpr Table< ExceptionGeneration, enum_size_v< ExceptionGeneration > > ExceptionGenerationTable { { {
+    static inline constexpr Table< ExceptionGeneration, enum_size_v< ExceptionGeneration > >                   ExceptionGenerationTable { { {
         { 0b1111'1111'1110'0000'0000'0000'0001'1111, 0b1101'0100'0000'0000'0000'0000'0000'0001, ExceptionGeneration::SVC },
         { 0b1111'1111'1110'0000'0000'0000'0001'1111, 0b1101'0100'0000'0000'0000'0000'0000'0010, ExceptionGeneration::HVC },
         { 0b1111'1111'1110'0000'0000'0000'0001'1111, 0b1101'0100'0000'0000'0000'0000'0000'0011, ExceptionGeneration::SMC },
@@ -200,7 +199,7 @@ class Branch_Exception_SystemA64 {
         { 0b1111'1111'1110'0000'0000'0000'0001'1111, 0b1101'0100'1010'0000'0000'0000'0000'0010, ExceptionGeneration::DCPS2 },
         { 0b1111'1111'1110'0000'0000'0000'0001'1111, 0b1101'0100'1010'0000'0000'0000'0000'0011, ExceptionGeneration::DCPS3 },
     } } };
-    static inline constexpr Table< Hints, enum_size_v< Hints > > HintsTable { { {
+    static inline constexpr Table< Hints, enum_size_v< Hints > >                                               HintsTable { { {
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0010'0000'0001'1111, Hints::NOP },
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0010'0000'0011'1111, Hints::YIELD },
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0010'0000'0101'1111, Hints::WFE },
@@ -227,7 +226,7 @@ class Branch_Exception_SystemA64 {
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0010'0011'1111'1111, Hints::AUTIBSP },
         { 0b1111'1111'1111'1111'1111'1111'0011'1111, 0b1101'0101'0000'0011'0010'0100'0001'1111, Hints::BTI },
     } } };
-    static inline constexpr Table< Barriers, enum_size_v< Barriers > + 14 > BarriersTable { { {
+    static inline constexpr Table< Barriers, enum_size_v< Barriers > + 14 >                                    BarriersTable { { {
         { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0011'0011'0000'0101'1111, Barriers::CLREX },
         { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0011'0011'0000'1011'1111, Barriers::DMB },
         { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0011'0011'0000'1101'1111, Barriers::ISB },
@@ -250,18 +249,20 @@ class Branch_Exception_SystemA64 {
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0011'0000'1001'1111, Barriers::SSBB },
         { 0b1111'1111'1111'1111'1111'1111'1111'1111, 0b1101'0101'0000'0011'0011'0100'1001'1111, Barriers::PSSBB },
     } } };
-    static inline constexpr Table< PState, enum_size_v< PState > > PStateTable { { {
-        { 0b1111'1111'1111'1000'1111'0000'0001'1111, 0b1101'0101'0000'0000'0100'0000'0001'1111, PState::MSRi }, // Could be fixed
+    static inline constexpr Table< PState, enum_size_v< PState > >                                             PStateTable { { {
+        { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0000'0100'0000'0001'1111, PState::CFINV },
+        { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0000'0100'0000'0011'1111, PState::XAFLAG },
+        { 0b1111'1111'1111'1111'1111'0000'1111'1111, 0b1101'0101'0000'0000'0100'0000'0101'1111, PState::AXFLAG },
     } } };
-    static inline constexpr Table< SystemInstruction, enum_size_v< SystemInstruction > > SystemInstructionTable { { {
+    static inline constexpr Table< SystemInstruction, enum_size_v< SystemInstruction > >                       SystemInstructionTable { { {
         { 0b1111'1111'1111'1000'0000'0000'0000'0000, 0b1101'0101'0000'1000'0000'0000'0000'0000, SystemInstruction::SYS },
         { 0b1111'1111'1111'1000'0000'0000'0000'0000, 0b1101'0101'0010'1000'0000'0000'0000'0000, SystemInstruction::SYSL },
     } } };
-    static inline constexpr Table< SystemRegisterMove, enum_size_v< SystemRegisterMove > > SystemRegisterMoveTable { { {
+    static inline constexpr Table< SystemRegisterMove, enum_size_v< SystemRegisterMove > >                     SystemRegisterMoveTable { { {
         { 0b1111'1111'1111'0000'0000'0000'0000'0000, 0b1101'0101'0001'0000'0000'0000'0000'0000, SystemRegisterMove::MSRr },
         { 0b1111'1111'1111'0000'0000'0000'0000'0000, 0b1101'0101'0011'0000'0000'0000'0000'0000, SystemRegisterMove::MRS },
     } } };
-    static inline constexpr Table< UnconditionalBranchRegister, enum_size_v< UnconditionalBranchRegister > > UnconditionalBranchRegisterTable { { {
+    static inline constexpr Table< UnconditionalBranchRegister, enum_size_v< UnconditionalBranchRegister > >   UnconditionalBranchRegisterTable { { {
         { 0b1111'1111'1111'1111'1111'1100'0001'1111, 0b1101'0110'0001'1111'0000'0000'0000'0000, UnconditionalBranchRegister::BR },
         { 0b1111'1111'1111'1111'1111'1100'0001'1111, 0b1101'0110'0001'1111'0000'1000'0001'1111, UnconditionalBranchRegister::BRAAZ },
         { 0b1111'1111'1111'1111'1111'1100'0001'1111, 0b1101'0110'0001'1111'0000'1100'0001'1111, UnconditionalBranchRegister::BRABZ },
@@ -284,13 +285,13 @@ class Branch_Exception_SystemA64 {
         { 0b1111'1100'0000'0000'0000'0000'0000'0000, 0b0001'0100'0000'0000'0000'0000'0000'0000, UnconditionalBranchImmediate::B },
         { 0b1111'1100'0000'0000'0000'0000'0000'0000, 0b1001'0100'0000'0000'0000'0000'0000'0000, UnconditionalBranchImmediate::BL },
     } } };
-    static inline constexpr Table< CompareAndBranchImmediate, enum_size_v< CompareAndBranchImmediate > > CompareAndBranchImmediateTable { { {
+    static inline constexpr Table< CompareAndBranchImmediate, enum_size_v< CompareAndBranchImmediate > >       CompareAndBranchImmediateTable { { {
         { 0b1111'1111'0000'0000'0000'0000'0000'0000, 0b0011'0100'0000'0000'0000'0000'0000'0000, CompareAndBranchImmediate::CBZ_32BIT },
         { 0b1111'1111'0000'0000'0000'0000'0000'0000, 0b0011'0101'0000'0000'0000'0000'0000'0000, CompareAndBranchImmediate::CBNZ_32BIT },
         { 0b1111'1111'0000'0000'0000'0000'0000'0000, 0b1011'0100'0000'0000'0000'0000'0000'0000, CompareAndBranchImmediate::CBZ_64BIT },
         { 0b1111'1111'0000'0000'0000'0000'0000'0000, 0b1011'0101'0000'0000'0000'0000'0000'0000, CompareAndBranchImmediate::CBNZ_64BIT },
     } } };
-    static inline constexpr Table< TestAndBranchImmediate, enum_size_v< TestAndBranchImmediate > > TestAndBranchImmediateTable { { {
+    static inline constexpr Table< TestAndBranchImmediate, enum_size_v< TestAndBranchImmediate > >             TestAndBranchImmediateTable { { {
         { 0b0111'1111'0000'0000'0000'0000'0000'0000, 0b0011'0110'0000'0000'0000'0000'0000'0000, TestAndBranchImmediate::TBZ },
         { 0b0111'1111'0000'0000'0000'0000'0000'0000, 0b0011'0111'0000'0000'0000'0000'0000'0000, TestAndBranchImmediate::TBNZ },
     } } };

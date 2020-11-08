@@ -67,7 +67,7 @@ std::uint32_t process_line(line mLine) {
     }
 }
 
-/*constexpr std::array< std::uint32_t, 1 > single_instruction { { 0b0101'0100'1000'0000'0000'0100'0000'0000 } };*/
+constexpr std::array< std::uint32_t, 1 > single_instruction { { 0b0101'0010'0000'0000'0000'0000'0000'0000 } };
 
 int main(int argc, char *argv[]) {
     using namespace arm_emu;
@@ -91,7 +91,6 @@ int main(int argc, char *argv[]) {
     }
 
     std::cout << "Starting system: \n\n\n";
-
     System sys(1024, program);
 
     std::uint32_t        opCount = 0;
