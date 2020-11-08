@@ -36,7 +36,7 @@ struct Table {
         TEnum         type;
     };
 
-    constexpr Table(std::array< TableEntry, Size > input) : mEntries(input) {};
+    constexpr Table(std::array< TableEntry, Size > input) noexcept : mEntries(input) {};
 
     std::array< TableEntry, Size > mEntries;
 };
@@ -184,30 +184,30 @@ class undefined_instruction : public std::exception {
 //////////////////////////// Helper functions ////////////////////////////
 template < typename TQueryTarget, typename TEnumType, TEnumType TValue >
 struct Query {
-    static constexpr bool result() { return TQueryTarget::template IsImplemented< TEnumType, TValue >(); }
+    static constexpr bool result() noexcept { return TQueryTarget::template IsImplemented< TEnumType, TValue >(); }
 };
 
 // Figure a way to write 1 version of concate that mimics the behaviour of the 4
 template < std::size_t S1, std::size_t S2 >
-constexpr auto concate(std::bitset< S1 >&& set1, std::bitset< S2 >&& set2) {
+constexpr auto concate(std::bitset< S1 >&& set1, std::bitset< S2 >&& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
     return std::bitset< S1 + S2 >(s1 + s2);
 }
 template < std::size_t S1, std::size_t S2 >
-constexpr auto concate(const std::bitset< S1 >& set1, std::bitset< S2 >&& set2) {
+constexpr auto concate(const std::bitset< S1 >& set1, std::bitset< S2 >&& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
     return std::bitset< S1 + S2 >(s1 + s2);
 }
 template < std::size_t S1, std::size_t S2 >
-constexpr auto concate(std::bitset< S1 >&& set1, const std::bitset< S2 >& set2) {
+constexpr auto concate(std::bitset< S1 >&& set1, const std::bitset< S2 >& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
     return std::bitset< S1 + S2 >(s1 + s2);
 }
 template < std::size_t S1, std::size_t S2 >
-constexpr auto concate(const std::bitset< S1 >& set1, const std::bitset< S2 >& set2) {
+constexpr auto concate(const std::bitset< S1 >& set1, const std::bitset< S2 >& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
     return std::bitset< S1 + S2 >(s1 + s2);

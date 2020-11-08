@@ -30,7 +30,7 @@ class System {
     }
 
     template < typename _Ty >
-    requires iteratable< _Ty >&& std::same_as< typename _Ty::value_type, std::uint32_t > System(const std::uint64_t& ramSize, _Ty instructions) :
+    requires iteratable< _Ty >&& std::same_as< typename _Ty::value_type, std::uint32_t > System(const std::uint64_t& ramSize, _Ty instructions) noexcept :
         ram_block(ramSize), prog_block(instructions.size()), cache(this, 0) {
         std::uint32_t i = 0;
         for (auto&& instruction : instructions) { prog_block.write_loc(i++, instruction); }
@@ -1939,7 +1939,7 @@ class System {
                     result = operand1;
                 } else {
                     get_type_t< datasize > res = static_cast< get_type_t< datasize > >((~operand2).to_ullong());
-                    result                     = res + static_cast< get_type_t< datasize > >(1);
+                    result                     = static_cast< get_type_t< datasize > >(res) + static_cast< get_type_t< datasize > >(1);
                 }
 
                 gp_registers.write(Rd, result);
@@ -2286,7 +2286,7 @@ class System {
         }
     }
 
-    void setup_registers() {
+    void setup_registers() noexcept {
         gp_registers.PC() = 0;
         gp_registers.SP() = ram_block.size() - 1ull;
         sp_registers.SP_EL0.Set(ram_block.size() - 1ull);
@@ -2298,7 +2298,7 @@ class System {
             return static_cast< decltype(prog_block)::type >(-1); // need to find an undefined value
     }
     [[nodiscard]] bool instructions_remaining() const noexcept { return (gp_registers.PC() < (prog_block.size())); }
-    void               fetch_and_execute() {
+    void               fetch_and_execute() const {
         const auto instruction = prog_block[gp_registers.PC()];
         decode(BaseInstruction { instruction });
     }

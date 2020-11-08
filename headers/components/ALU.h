@@ -59,7 +59,7 @@ struct ALU {
     }
 
     template < std::size_t N, typename _Ty >
-    [[nodiscard]] inline static constexpr auto AddWithCarry(std::bitset< N > x, std::bitset< N > y, _Ty c) {
+    [[nodiscard]] inline static constexpr auto AddWithCarry(std::bitset< N > x, std::bitset< N > y, _Ty c) noexcept {
         using _T  = std::uint64_t;
         using _ST = std::make_signed_t< _T >;
 
@@ -76,7 +76,7 @@ struct ALU {
     }
 
     template < std::size_t N >
-    [[nodiscard]] inline static constexpr std::int64_t HighestSetBit(std::bitset< N > x) {
+    [[nodiscard]] inline static constexpr std::int64_t HighestSetBit(std::bitset< N > x) noexcept {
         for (std::int64_t i = N - 1; i > -1; i--) {
             if (x[i] == true) return i;
         }
@@ -91,14 +91,16 @@ struct ALU {
     }
 
     template < std::size_t N, std::size_t M >
-    [[nodiscard]] inline static constexpr auto Replicate(std::bitset< M > x) {
+    [[nodiscard]] inline static constexpr auto Replicate(std::bitset< M > x) noexcept {
         static_assert(N % M == 0);
         std::bitset< N * M > return_value;
         std::bitset< N * M > value(0);
         if constexpr (N * M > 0) value = x.to_ullong();
-        for (std::size_t n = 0; n < static_cast< std::size_t >(N / M); n++) {
-            return_value |= value;
-            value <<= M;
+        if constexpr (N / M > 0) {
+            for (std::size_t n = 0; n < static_cast< std::size_t >(N / M); n++) {
+                return_value |= value;
+                value <<= M;
+            }
         }
         return return_value;
     }
@@ -119,13 +121,13 @@ struct ALU {
     }
 
     template < std::size_t N, std::size_t M >
-    [[nodiscard]] inline static constexpr auto ZeroExtend(std::bitset< M > x) {
+    [[nodiscard]] inline static constexpr auto ZeroExtend(std::bitset< M > x) noexcept {
         static_assert(N >= M);
         return std::bitset< N >(x.to_ullong());
     }
 
     template < std::size_t N, std::size_t M >
-    [[nodiscard]] inline static constexpr auto SignExtend(std::bitset< M > x) {
+    [[nodiscard]] inline static constexpr auto SignExtend(std::bitset< M > x) noexcept {
         static_assert(N >= M);
         auto             val          = Replicate< N - M >(std::bitset< 1 > { x[M - 1] });
         std::bitset< N > return_value = concate< N - M, M >(val, x);
@@ -133,7 +135,7 @@ struct ALU {
     }
 
     template < std::size_t N, std::size_t M >
-    [[nodiscard]] inline static constexpr std::bitset< N > Extend(std::bitset< M > x, bool unsigned_) {
+    [[nodiscard]] inline static constexpr std::bitset< N > Extend(std::bitset< M > x, bool unsigned_) noexcept {
         if (unsigned_)
             return ZeroExtend< N, M >(x);
         else
@@ -141,7 +143,7 @@ struct ALU {
     }
 
     template < typename _Ty >
-    [[nodiscard]] inline static constexpr auto DecodeRegExtend(_Ty option) {
+    [[nodiscard]] inline static constexpr auto DecodeRegExtend(_Ty option) noexcept {
         return static_cast< ExtendType >(option);
     }
 
@@ -324,7 +326,7 @@ struct ALU {
     }
 
     template < typename _Ty >
-    [[nodiscard]] inline static constexpr auto getOption(_Ty in) {
+    [[nodiscard]] inline static constexpr auto getOption(_Ty in) noexcept {
         if (in == 0b111 || in == 0b011) { return WidthOption::X; }
         return WidthOption::W;
     }
@@ -362,9 +364,9 @@ struct ALU {
         auto R    = static_cast< std::uint32_t >((immr & levels).to_ulong());
         auto diff = S - R;
 
-        auto          esize = (static_cast< std::int64_t >(1) << len);
+        auto esize = (static_cast< std::int64_t >(1) << len);
         (void)esize; // suppress compiler warnings for now
-        std::uint32_t mask  = 0;
+        std::uint32_t mask = 0;
         for (auto i = 0; i < len - 1; i++) { mask |= static_cast< std::uint32_t >(1) << i; }
         std::uint32_t d = mask & diff;
 
@@ -379,7 +381,7 @@ struct ALU {
         return std::make_pair(wmask, tmask);
     }
 
-    [[nodiscard]] inline static bool ConditionHold(std::bitset< 4 >&& cond, NZCVRegister* nzcv) {
+    [[nodiscard]] inline static bool ConditionHold(std::bitset< 4 >&& cond, NZCVRegister* nzcv) noexcept {
         bool result = false;
 
         std::string cond_s = cond.to_string();
@@ -406,11 +408,11 @@ struct ALU {
         return result;
     }
 
-    inline static constexpr void Hint_Branch(std::uint64_t& PC, BranchType branch_type) {
+    inline static constexpr void Hint_Branch(std::uint64_t& PC, BranchType branch_type) noexcept {
         if (branch_type == BranchType::RET) PC = std::numeric_limits< std::uint64_t >::max();
     }
 
-    inline static constexpr void BranchTo(SpecialRegisters* sp, std::uint64_t& PC, const std::uint64_t& target, BranchType branch_type) {
+    inline static constexpr void BranchTo(SpecialRegisters* sp, std::uint64_t& PC, const std::uint64_t& target, BranchType branch_type) noexcept {
         Hint_Branch(PC, branch_type);
         /*if (N == 32)
             if(UsingAArch32());

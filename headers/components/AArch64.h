@@ -26,7 +26,7 @@ struct AArch64 {
         return return_value;
     }*/
 
-    [[nodiscard]] inline static constexpr auto ExceptionSyndrome(Exception exceptype) {
+    [[nodiscard]] inline static constexpr auto ExceptionSyndrome(Exception exceptype) noexcept {
         ExceptionRecord r;
 
         r.exceptype = exceptype;
@@ -40,17 +40,17 @@ struct AArch64 {
         return r;
     }
 
-    inline static constexpr auto HasArchVersion(std::size_t ver) { return ver == ARMv8p0; }
+    [[nodiscard]] inline static constexpr auto HasArchVersion(std::size_t ver) noexcept { return static_cast< bool >(ver == ARMv8p0); }
 
-    [[nodiscard]] inline static constexpr bool HaveVirtHostExt() { return HasArchVersion(ARMv8p1); }
+    [[nodiscard]] inline static constexpr auto HaveVirtHostExt() noexcept { return HasArchVersion(ARMv8p1); }
 
-    [[nodiscard]] inline static constexpr bool HaveSecureEL2Ext() { return HasArchVersion(ARMv8p4); }
+    [[nodiscard]] inline static constexpr auto HaveSecureEL2Ext() noexcept { return HasArchVersion(ARMv8p4); }
 
-    [[nodiscard]] inline static constexpr bool HavePACExt() { return HasArchVersion(ARMv8p3); }
+    [[nodiscard]] inline static constexpr auto HavePACExt() noexcept { return HasArchVersion(ARMv8p3); }
 
-    [[nodiscard]] inline static constexpr bool HaveBTIExt() { return HasArchVersion(ARMv8p5); }
+    [[nodiscard]] inline static constexpr auto HaveBTIExt() noexcept { return HasArchVersion(ARMv8p5); }
 
-    [[nodiscard]] inline static constexpr bool HaveFlagManipulateExt() { return HasArchVersion(ARMv8p4); }
+    [[nodiscard]] inline static constexpr auto HaveFlagManipulateExt() noexcept { return HasArchVersion(ARMv8p4); }
 
     [[nodiscard]] inline static constexpr auto HaveEL(ExceptionLevel el) {
         if (el == ExceptionLevel::EL0 || el == ExceptionLevel::EL1) return true;
@@ -58,7 +58,7 @@ struct AArch64 {
         return SystemSettings::IsImplemented< Features, Features::EL3 >();
     }
 
-    [[nodiscard]] inline static constexpr bool ELIsInHost(ExceptionLevel el) {
+    [[nodiscard]] inline static constexpr auto ELIsInHost(ExceptionLevel el) noexcept {
         (void)el;
         return false;
         // Always false as HaveVirtHostExt() = false;
@@ -66,9 +66,9 @@ struct AArch64 {
                 (el == EL2 || (el == EL0 && HCR_EL2.TGE == '1')));*/
     }
 
-    [[nodiscard]] inline static constexpr bool IsInHost(const SpecialRegisters* const sp) { return ELIsInHost(sp->CurrentEL.EL()); }
+    [[nodiscard]] inline static constexpr auto IsInHost(const SpecialRegisters* const sp) noexcept { return ELIsInHost(sp->CurrentEL.EL()); }
 
-    [[nodiscard]] inline static constexpr auto ThisInstrAddr(const std::uint64_t& PC) {
+    [[nodiscard]] inline static constexpr auto ThisInstrAddr(const std::uint64_t& PC) noexcept {
         /* assert N == 64 || (N == 32 && UsingAArch32()); */ // always true
         return PC;
     }
@@ -99,7 +99,7 @@ struct AArch64 {
             TakeException(sp, ExceptionLevel::EL1, exception, preferred_exception_return, vect_offset);
     }
 
-    [[nodiscard]] inline static constexpr auto S1TranslationRegime(ExceptionLevel el) {
+    [[nodiscard]] inline static constexpr auto S1TranslationRegime(ExceptionLevel el) noexcept {
         if (el != ExceptionLevel::EL0) return el;
         // Always false ... not using AArch32
         /*else if HaveEL(EL3) && ELUsingAArch32(EL3) && SCR.NS == '0' then
@@ -110,7 +110,7 @@ struct AArch64 {
             return ExceptionLevel::EL1;
     }
 
-    [[nodiscard]] inline static constexpr bool EffectiveTBI(std::bitset< 64 > address, bool IsInstr, ExceptionLevel el) {
+    [[nodiscard]] inline static constexpr auto EffectiveTBI(std::bitset< 64 > address, bool IsInstr, ExceptionLevel el) noexcept {
         (void)el;
         (void)IsInstr;
         (void)address;
@@ -139,7 +139,7 @@ struct AArch64 {
         return false;
     }
 
-    [[nodiscard]] inline static constexpr auto AddrTop(const std::bitset< 64 >& address, bool IsInstr, ExceptionLevel el) {
+    [[nodiscard]] inline static constexpr auto AddrTop(const std::bitset< 64 >& address, bool IsInstr, ExceptionLevel el) noexcept {
         /*auto regime = S1TranslationRegime(el);*/
         /*if ELUsingAArch32(regime) then
             // AArch32 translation regime.
@@ -153,7 +153,7 @@ struct AArch64 {
         }
     }
 
-    [[nodiscard]] inline static constexpr auto BranchAddr(SpecialRegisters* sp, const std::uint64_t& target) {
+    [[nodiscard]] inline static constexpr auto BranchAddr(SpecialRegisters* sp, const std::uint64_t& target) noexcept {
         std::bitset< 64 > vaddress { target };
 
         auto msbit = AddrTop(vaddress, true, sp->CurrentEL.EL());
@@ -226,7 +226,7 @@ struct AArch64 {
             throw undefined_behaviour {};
     }
 
-    inline static constexpr auto SysInstr(std::uint8_t op0, std::uint8_t op1, std::uint8_t crn, std::uint8_t crm, std::uint8_t op2, std::bitset< 64 > val) {
+    inline static constexpr auto SysInstr(std::uint8_t op0, std::uint8_t op1, std::uint8_t crn, std::uint8_t crm, std::uint8_t op2, std::bitset< 64 > val) noexcept {
         // TO BE Implemented, check P.807
         return;
     }

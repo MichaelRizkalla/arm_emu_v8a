@@ -23,8 +23,8 @@ struct GPRegisters {
     [[nodiscard]] constexpr auto& XZR() const noexcept { return registers[31]; }
     [[nodiscard]] constexpr auto  X(const std::uint8_t& loc) const { return registers[loc]; }
 
-    [[nodiscard]] constexpr auto& PC() { return PC_; }
-    [[nodiscard]] constexpr auto& PC() const { return PC_; }
+    [[nodiscard]] constexpr auto& PC() noexcept { return PC_; }
+    [[nodiscard]] constexpr auto& PC() const noexcept { return PC_; }
 
     // 32-bit aliases
     [[nodiscard]] auto& WSP() noexcept {
@@ -35,13 +35,13 @@ struct GPRegisters {
         registers[31] &= 0xFFFFFFFF;
         return registers[31];
     }
-    [[nodiscard]] inline auto W(const std::uint8_t& loc) {
+    [[nodiscard]] inline auto W(const std::uint8_t& loc) const noexcept {
         auto return_value = registers[loc].to_ullong() & 0xFFFFFFFF;
         return std::bitset< 32 >(static_cast< std::uint32_t >(return_value));
     }
 
     template < InstructionArch Arch >
-    [[nodiscard]] inline constexpr auto read(const std::uint8_t& loc) {
+    [[nodiscard]] inline constexpr auto read(const std::uint8_t& loc) const noexcept {
         if constexpr (Arch == InstructionArch::ARM32) {
             auto return_value = registers[loc].to_ulong() & 0xFFFFFFFF;
             return std::bitset< 32 >(static_cast< std::uint32_t >(return_value));
@@ -50,13 +50,13 @@ struct GPRegisters {
         }
     }
 
-    constexpr auto write(const std::uint8_t& loc, const std::uint64_t& data) { registers[loc] = data; }
-    constexpr auto write(const std::uint8_t& loc, const std::bitset< 64 >& data) { registers[loc] = data; }
-    constexpr auto write(const std::uint8_t& loc, const std::uint32_t& data) { registers[loc] = static_cast< std::uint64_t >(data); }
-    auto           write(const std::uint8_t& loc, const std::bitset< 32 >& data) { registers[loc] = data.to_ullong(); }
+    constexpr auto write(const std::uint8_t& loc, const std::uint64_t& data) noexcept { registers[loc] = data; }
+    constexpr auto write(const std::uint8_t& loc, const std::bitset< 64 >& data) noexcept { registers[loc] = data; }
+    constexpr auto write(const std::uint8_t& loc, const std::uint32_t& data) noexcept { registers[loc] = static_cast< std::uint64_t >(data); }
+    auto           write(const std::uint8_t& loc, const std::bitset< 32 >& data) noexcept { registers[loc] = data.to_ullong(); }
 
-    GPRegisters()  = default;
-    ~GPRegisters() = default;
+    GPRegisters() noexcept = default;
+    ~GPRegisters()         = default;
 
     GPRegisters(const GPRegisters&) = delete;
     GPRegisters(GPRegisters&&)      = delete;
@@ -83,7 +83,7 @@ struct SIMDRegisters {
     constexpr static std::size_t Half_size = 64;
     constexpr static std::size_t Full_size = 128;
 
-    [[nodiscard]] constexpr auto B(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto B(const std::uint8_t& loc) const noexcept {
         std::uint8_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < B_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -91,7 +91,7 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto H(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto H(const std::uint8_t& loc) const noexcept {
         std::uint16_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < H_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -99,7 +99,7 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto S(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto S(const std::uint8_t& loc) const noexcept {
         std::uint32_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < S_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -107,7 +107,7 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto D(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto D(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < H_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -115,8 +115,8 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto Q(const std::uint8_t& loc) { return registers[loc]; }
-    [[nodiscard]] constexpr auto Q_LSB(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto Q(const std::uint8_t& loc) const noexcept { return registers[loc]; }
+    [[nodiscard]] constexpr auto Q_LSB(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < Q_size / 2; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -124,7 +124,7 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto Q_MSB(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto Q_MSB(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = Q_size / 2; i < Q_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -135,7 +135,7 @@ struct SIMDRegisters {
 
     // If the element size in bits multiplied by the number of lanes does not equal 128,
     // then the upper 64 bits of the register are ignored on a read and cleared to zero on a write
-    [[nodiscard]] constexpr auto V8B(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto V8B(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < Half_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -143,8 +143,8 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto V16B(const std::uint8_t& loc) { return registers[loc]; }
-    [[nodiscard]] constexpr auto V4H(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto V16B(const std::uint8_t& loc) const noexcept { return registers[loc]; }
+    [[nodiscard]] constexpr auto V4H(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < Half_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -152,8 +152,8 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto V8H(const std::uint8_t& loc) { return registers[loc]; }
-    [[nodiscard]] constexpr auto V2S(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto V8H(const std::uint8_t& loc) const noexcept { return registers[loc]; }
+    [[nodiscard]] constexpr auto V2S(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < Half_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -161,8 +161,8 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto V4S(const std::uint8_t& loc) { return registers[loc]; }
-    [[nodiscard]] constexpr auto V1D(const std::uint8_t& loc) {
+    [[nodiscard]] constexpr auto V4S(const std::uint8_t& loc) const noexcept { return registers[loc]; }
+    [[nodiscard]] constexpr auto V1D(const std::uint8_t& loc) const noexcept {
         std::uint64_t regVal = 0, mask = 1;
         for (std::size_t i = 0; i < Half_size; i++) {
             if (registers[loc][i]) regVal |= mask;
@@ -170,25 +170,25 @@ struct SIMDRegisters {
         }
         return regVal;
     }
-    [[nodiscard]] constexpr auto V2D(const std::uint8_t& loc) { return registers[loc]; }
+    [[nodiscard]] constexpr auto V2D(const std::uint8_t& loc) const noexcept { return registers[loc]; }
 
-    void write(const std::uint8_t& loc, const std::uint8_t& data) {
+    void write(const std::uint8_t& loc, const std::uint8_t& data) noexcept {
         for (std::size_t i = 0; i < B_size; i++) { registers[loc].reset(i); }
         registers[loc] |= data;
     }
-    void write(const std::uint8_t& loc, const std::uint16_t& data) {
+    void write(const std::uint8_t& loc, const std::uint16_t& data) noexcept {
         for (std::size_t i = 0; i < H_size; i++) { registers[loc].reset(i); }
         registers[loc] |= data;
     }
-    void write(const std::uint8_t& loc, const std::uint32_t& data) {
+    void write(const std::uint8_t& loc, const std::uint32_t& data) noexcept {
         for (std::size_t i = 0; i < S_size; i++) { registers[loc].reset(i); }
         registers[loc] |= data;
     }
-    void write(const std::uint8_t& loc, const std::uint64_t& data) {
+    void write(const std::uint8_t& loc, const std::uint64_t& data) noexcept {
         for (std::size_t i = 0; i < D_size; i++) { registers[loc].reset(i); }
         registers[loc] |= data;
     }
-    void write(const std::uint8_t& loc, const std::uint64_t& LSBData, const std::uint64_t& MSBData) {
+    void write(const std::uint8_t& loc, const std::uint64_t& LSBData, const std::uint64_t& MSBData) noexcept {
         registers[loc].reset();
         registers[loc] |= MSBData;
         registers[loc] <<= Half_size;
@@ -232,8 +232,8 @@ struct SIMDRegisters {
         registers[loc] |= writeable;
     }
 
-    constexpr SIMDRegisters() = default;
-    ~SIMDRegisters()          = default;
+    constexpr SIMDRegisters() noexcept = default;
+    ~SIMDRegisters()                   = default;
 
     SIMDRegisters(const SIMDRegisters&) = delete;
     SIMDRegisters(SIMDRegisters&&)      = delete;
@@ -272,13 +272,13 @@ struct SpecialRegister {
     NULL_COPY_MOVE(SpecialRegister)
 
   protected:
-    constexpr SpecialRegister() : value(0), status_(Status::ACTIVE), bitStatus_({ Status::ACTIVE }) {
+    constexpr SpecialRegister() noexcept : value(0), status_(Status::ACTIVE), bitStatus_({ Status::ACTIVE }) {
         std::for_each(bitStatus_.begin(), bitStatus_.end(), [](auto& e) { e = Status::ACTIVE; });
     };
-    constexpr explicit SpecialRegister(const std::uint64_t& val) : value(val), status_(Status::ACTIVE), bitStatus_({ Status::ACTIVE }) {
+    constexpr explicit SpecialRegister(const std::uint64_t& val) noexcept : value(val), status_(Status::ACTIVE), bitStatus_({ Status::ACTIVE }) {
         std::for_each(bitStatus_.begin(), bitStatus_.end(), [](auto& e) { e = Status::ACTIVE; });
     };
-    constexpr explicit SpecialRegister(const std::uint64_t& val, Status status) : value(val), status_(status), bitStatus_({ Status::ACTIVE }) {
+    constexpr explicit SpecialRegister(const std::uint64_t& val, Status status) noexcept : value(val), status_(status), bitStatus_({ Status::ACTIVE }) {
         std::for_each(bitStatus_.begin(), bitStatus_.end(), [](auto& e) { e = Status::ACTIVE; });
     };
 
@@ -293,7 +293,7 @@ struct CurrentELRegister final : public SpecialRegister {
     constexpr auto                EL(const ExceptionLevel& el) noexcept { value = static_cast< std::uint64_t >(el) << 2; }
 
     // CurrentELRegister() = default;
-    constexpr CurrentELRegister() : SpecialRegister() {}
+    constexpr CurrentELRegister() noexcept : SpecialRegister() {}
     constexpr explicit CurrentELRegister(const std::uint64_t& val) : SpecialRegister(val) {}
     constexpr explicit CurrentELRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
     ~CurrentELRegister() = default;
@@ -315,7 +315,7 @@ struct DAIFRegister final : public SpecialRegister {
     constexpr auto                I(const bool& val) noexcept { value |= (static_cast< std::uint64_t >(val) << 7); }
     constexpr auto                F(const bool& val) noexcept { value |= (static_cast< std::uint64_t >(val) << 6); }
 
-    constexpr DAIFRegister() : SpecialRegister() {}
+    constexpr DAIFRegister() noexcept : SpecialRegister() {}
     constexpr explicit DAIFRegister(const std::uint64_t& val) : SpecialRegister(val) {}
     constexpr explicit DAIFRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
     ~DAIFRegister() = default;
@@ -337,9 +337,9 @@ struct DITRegister final : public SpecialRegister {
     }
     constexpr auto DIT_Reset() noexcept { value &= 0xFFFFFFFFFEFFFFFF; }
 
-    constexpr DITRegister() : SpecialRegister() {}
-    constexpr explicit DITRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit DITRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr DITRegister() noexcept : SpecialRegister() {}
+    constexpr explicit DITRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit DITRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~DITRegister() = default;
 
     NULL_COPY_MOVE(DITRegister)
@@ -357,9 +357,9 @@ struct ELREL1Register : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr ELREL1Register() : SpecialRegister() {}
-    constexpr explicit ELREL1Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit ELREL1Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr ELREL1Register() noexcept : SpecialRegister() {}
+    constexpr explicit ELREL1Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit ELREL1Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~ELREL1Register() = default;
 
     NULL_COPY_MOVE(ELREL1Register)
@@ -377,9 +377,9 @@ struct ELREL2Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr ELREL2Register() : SpecialRegister() {}
-    constexpr explicit ELREL2Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit ELREL2Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr ELREL2Register() noexcept : SpecialRegister() {}
+    constexpr explicit ELREL2Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit ELREL2Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~ELREL2Register() = default;
 
     NULL_COPY_MOVE(ELREL2Register)
@@ -398,16 +398,16 @@ struct ELREL3Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr ELREL3Register() : SpecialRegister() {}
-    constexpr explicit ELREL3Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit ELREL3Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr ELREL3Register() noexcept : SpecialRegister() {}
+    constexpr explicit ELREL3Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit ELREL3Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~ELREL3Register() = default;
 
     NULL_COPY_MOVE(ELREL3Register)
 };
 struct FPCRRegister final : public SpecialRegister {
     // C5.2.7 FPCR, Floating-point Control Register
-    [[nodiscard]] constexpr auto& Value() const { return value; }
+    [[nodiscard]] constexpr auto& Value() const noexcept { return value; }
     constexpr auto                Reset() noexcept { status_ = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto AHP() const {
@@ -419,7 +419,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 26);
     }
-    constexpr auto AHP_Reset() { bitStatus_[26] = Status::UNKNOWN; }
+    constexpr auto AHP_Reset() noexcept { bitStatus_[26] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto DN() const {
         if (bitStatus_[25] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -430,7 +430,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 25);
     }
-    constexpr auto DN_Reset() { bitStatus_[25] = Status::UNKNOWN; }
+    constexpr auto DN_Reset() noexcept { bitStatus_[25] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto FZ() const {
         if (bitStatus_[24] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -441,7 +441,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 24);
     }
-    constexpr auto FZ_Reset() { bitStatus_[24] = Status::UNKNOWN; }
+    constexpr auto FZ_Reset() noexcept { bitStatus_[24] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto RMode() const {
         if (bitStatus_[22] == Status::UNKNOWN || bitStatus_[23] == Status::UNKNOWN || status_ == Status::UNKNOWN)
@@ -460,7 +460,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (3 < static_cast< std::uint64_t >(data)) throw std::invalid_argument("This field can only hold 0, 1, 2, 3");
         value |= (static_cast< std::uint64_t >(data) << 22);
     }
-    constexpr auto RMode_Reset() {
+    constexpr auto RMode_Reset() noexcept {
         bitStatus_[22] = Status::UNKNOWN;
         bitStatus_[23] = Status::UNKNOWN;
     }
@@ -478,7 +478,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 19);
     }
-    constexpr auto FZ16_Reset() { bitStatus_[19] = Status::UNKNOWN; }
+    constexpr auto FZ16_Reset() noexcept { bitStatus_[19] = Status::UNKNOWN; }
 
     // Len // Ignored in AARCH64
 
@@ -491,7 +491,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 15);
     }
-    constexpr auto IDE_Reset() { bitStatus_[15] = Status::UNKNOWN; }
+    constexpr auto IDE_Reset() noexcept { bitStatus_[15] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IXE() const {
         if (bitStatus_[12] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -502,7 +502,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 12);
     }
-    constexpr auto IXE_Reset() { bitStatus_[12] = Status::UNKNOWN; }
+    constexpr auto IXE_Reset() noexcept { bitStatus_[12] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto UFE() const {
         if (bitStatus_[11] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -513,7 +513,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 11);
     }
-    constexpr auto UFE_Reset() { bitStatus_[11] = Status::UNKNOWN; }
+    constexpr auto UFE_Reset() noexcept { bitStatus_[11] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto OFE() const {
         if (bitStatus_[10] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -524,7 +524,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 10);
     }
-    constexpr auto OFE_Reset() { bitStatus_[10] = Status::UNKNOWN; }
+    constexpr auto OFE_Reset() noexcept { bitStatus_[10] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto DZE() const {
         if (bitStatus_[9] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -535,7 +535,7 @@ struct FPCRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 9);
     }
-    constexpr auto DZE_Reset() { bitStatus_[9] = Status::UNKNOWN; }
+    constexpr auto DZE_Reset() noexcept { bitStatus_[9] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IOE() const {
         if (bitStatus_[8] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -548,16 +548,16 @@ struct FPCRRegister final : public SpecialRegister {
     }
     constexpr auto IOE_Reset() { bitStatus_[8] = Status::UNKNOWN; }
 
-    constexpr FPCRRegister() : SpecialRegister() {}
-    constexpr explicit FPCRRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit FPCRRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr FPCRRegister() noexcept : SpecialRegister() {}
+    constexpr explicit FPCRRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit FPCRRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~FPCRRegister() = default;
 
     NULL_COPY_MOVE(FPCRRegister)
 };
 struct FPSRRegister final : public SpecialRegister {
     // C5.2.8 FPSR, Floating-point Status Register
-    [[nodiscard]] constexpr auto& Value() const { return value; }
+    [[nodiscard]] constexpr auto& Value() const noexcept { return value; }
     constexpr auto                Reset() noexcept { status_ = Status::UNKNOWN; }
 
     // N // Not supported in AARCH64
@@ -574,7 +574,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 27);
     }
-    constexpr auto QC_Reset() { bitStatus_[27] = Status::UNKNOWN; }
+    constexpr auto QC_Reset() noexcept { bitStatus_[27] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IDC() const {
         if (bitStatus_[7] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -585,7 +585,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 7);
     }
-    constexpr auto IDC_Reset() { bitStatus_[7] = Status::UNKNOWN; }
+    constexpr auto IDC_Reset() noexcept { bitStatus_[7] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IXC() const {
         if (bitStatus_[4] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -596,7 +596,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 4);
     }
-    constexpr auto IXC_Reset() { bitStatus_[4] = Status::UNKNOWN; }
+    constexpr auto IXC_Reset() noexcept { bitStatus_[4] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto UFC() const {
         if (bitStatus_[3] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -607,7 +607,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 3);
     }
-    constexpr auto UFC_Reset() { bitStatus_[3] = Status::UNKNOWN; }
+    constexpr auto UFC_Reset() noexcept { bitStatus_[3] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto OFC() const {
         if (bitStatus_[2] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -618,7 +618,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 2);
     }
-    constexpr auto OFC_Reset() { bitStatus_[2] = Status::UNKNOWN; }
+    constexpr auto OFC_Reset() noexcept { bitStatus_[2] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto DZC() const {
         if (bitStatus_[1] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -629,7 +629,7 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 1);
     }
-    constexpr auto DZC_Reset() { bitStatus_[1] = Status::UNKNOWN; }
+    constexpr auto DZC_Reset() noexcept { bitStatus_[1] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IOC() const {
         if (bitStatus_[0] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -640,11 +640,11 @@ struct FPSRRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 0);
     }
-    constexpr auto IOC_Reset() { bitStatus_[0] = Status::UNKNOWN; }
+    constexpr auto IOC_Reset() noexcept { bitStatus_[0] = Status::UNKNOWN; }
 
-    constexpr FPSRRegister() : SpecialRegister() {}
-    constexpr explicit FPSRRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit FPSRRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr FPSRRegister() noexcept : SpecialRegister() {}
+    constexpr explicit FPSRRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit FPSRRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~FPSRRegister() = default;
 
     NULL_COPY_MOVE(FPSRRegister)
@@ -675,9 +675,9 @@ struct NZCVRegister final : public SpecialRegister {
         value |= (data << 28);
     }
 
-    constexpr NZCVRegister() : SpecialRegister() {}
-    constexpr explicit NZCVRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit NZCVRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr NZCVRegister() noexcept : SpecialRegister() {}
+    constexpr explicit NZCVRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit NZCVRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~NZCVRegister() = default;
 
     NULL_COPY_MOVE(NZCVRegister)
@@ -691,16 +691,16 @@ struct PANRegister final : public SpecialRegister {
     constexpr auto     Reset() noexcept { value = 0x00000000; }
     [[nodiscard]] auto PAN() const { return Value(); }
 
-    constexpr PANRegister() : SpecialRegister() {}
-    constexpr explicit PANRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit PANRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr PANRegister() noexcept : SpecialRegister() {}
+    constexpr explicit PANRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit PANRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~PANRegister() = default;
 
     NULL_COPY_MOVE(PANRegister)
 };
 struct SPEL0Register final : public SpecialRegister {
     // C5.2.11 SP_EL0, Stack Pointer (EL0)
-    [[nodiscard]] constexpr auto Value() {
+    [[nodiscard]] constexpr auto Value() const {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
@@ -710,16 +710,16 @@ struct SPEL0Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr SPEL0Register() : SpecialRegister() {}
-    constexpr explicit SPEL0Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPEL0Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPEL0Register() noexcept : SpecialRegister() {}
+    constexpr explicit SPEL0Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPEL0Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPEL0Register() = default;
 
     NULL_COPY_MOVE(SPEL0Register)
 };
 struct SPEL1Register final : public SpecialRegister {
     // C5.2.12 SP_EL1, Stack Pointer (EL1)
-    [[nodiscard]] constexpr auto Value() {
+    [[nodiscard]] constexpr auto Value() const {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
@@ -729,16 +729,16 @@ struct SPEL1Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr SPEL1Register() : SpecialRegister() {}
-    constexpr explicit SPEL1Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPEL1Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPEL1Register() noexcept : SpecialRegister() {}
+    constexpr explicit SPEL1Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPEL1Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPEL1Register() = default;
 
     NULL_COPY_MOVE(SPEL1Register)
 };
 struct SPEL2Register final : public SpecialRegister {
     // C5.2.13 SP_EL2, Stack Pointer (EL2)
-    [[nodiscard]] constexpr auto Value() {
+    [[nodiscard]] constexpr auto Value() const {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
@@ -748,16 +748,16 @@ struct SPEL2Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr SPEL2Register() : SpecialRegister() {}
-    constexpr explicit SPEL2Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPEL2Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPEL2Register() noexcept : SpecialRegister() {}
+    constexpr explicit SPEL2Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPEL2Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPEL2Register() = default;
 
     NULL_COPY_MOVE(SPEL2Register)
 };
 struct SPEL3Register final : public SpecialRegister {
     // C5.2.14 SP_EL3, Stack Pointer (EL3)
-    [[nodiscard]] constexpr auto Value() {
+    [[nodiscard]] constexpr auto Value() const {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
@@ -767,9 +767,9 @@ struct SPEL3Register final : public SpecialRegister {
     }
     constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
-    constexpr SPEL3Register() : SpecialRegister() {}
-    constexpr explicit SPEL3Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPEL3Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPEL3Register() noexcept : SpecialRegister() {}
+    constexpr explicit SPEL3Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPEL3Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPEL3Register() = default;
 
     NULL_COPY_MOVE(SPEL3Register)
@@ -782,11 +782,11 @@ struct SPSelRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 0);
     }
-    constexpr auto Reset() { value = 0x00000000'00000001; }
+    constexpr auto Reset() noexcept { value = 0x00000000'00000001; }
 
-    constexpr SPSelRegister() : SpecialRegister() {}
-    constexpr explicit SPSelRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPSelRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPSelRegister() noexcept : SpecialRegister() {}
+    constexpr explicit SPSelRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPSelRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPSelRegister() = default;
 
     NULL_COPY_MOVE(SPSelRegister)
@@ -797,7 +797,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
-    constexpr auto Reset() { status_ = Status::UNKNOWN; }
+    constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto N() const {
         if (bitStatus_[31] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -808,7 +808,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 31);
     }
-    constexpr auto N_Reset() { bitStatus_[31] = Status::UNKNOWN; }
+    constexpr auto N_Reset() noexcept { bitStatus_[31] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto Z() const {
         if (bitStatus_[30] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -819,7 +819,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 30);
     }
-    constexpr auto Z_Reset() { bitStatus_[30] = Status::UNKNOWN; }
+    constexpr auto Z_Reset() noexcept { bitStatus_[30] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto C() const {
         if (bitStatus_[29] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -830,7 +830,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 29);
     }
-    constexpr auto C_Reset() { bitStatus_[29] = Status::UNKNOWN; }
+    constexpr auto C_Reset() noexcept { bitStatus_[29] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto V() const {
         if (bitStatus_[28] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -841,7 +841,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 28);
     }
-    constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
+    constexpr auto V_Reset() noexcept { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto Q() const {
         if (bitStatus_[27] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -852,7 +852,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 27);
     }
-    constexpr auto Q_Reset() { bitStatus_[27] = Status::UNKNOWN; }
+    constexpr auto Q_Reset() noexcept { bitStatus_[27] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IT() const {
         if (bitStatus_[10] == Status::UNKNOWN || bitStatus_[11] == Status::UNKNOWN || bitStatus_[12] == Status::UNKNOWN || bitStatus_[13] == Status::UNKNOWN ||
@@ -877,7 +877,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         value |= ((data & 0x00000000'00000003) << 25);
         value |= ((data & 0x00000000'000000FC) << (10 - 2));
     }
-    constexpr auto IT_Reset() {
+    constexpr auto IT_Reset() noexcept {
         bitStatus_[10] = Status::UNKNOWN;
         bitStatus_[11] = Status::UNKNOWN;
         bitStatus_[12] = Status::UNKNOWN;
@@ -909,7 +909,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
+    constexpr auto SSBS_Reset() noexcept { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
         if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
@@ -930,7 +930,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
+    constexpr auto PAN_Reset() noexcept { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
         if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
@@ -951,7 +951,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }
+    constexpr auto DIT_Reset() noexcept { bitStatus_[21] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IL() const {
         if (bitStatus_[20] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -962,7 +962,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 20);
     }
-    constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
+    constexpr auto IL_Reset() noexcept { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto GE() const {
         if (bitStatus_[16] == Status::UNKNOWN || bitStatus_[17] == Status::UNKNOWN || bitStatus_[18] == Status::UNKNOWN || bitStatus_[19] == Status::UNKNOWN ||
@@ -978,7 +978,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (15 < data) throw std::invalid_argument("This field can only hold values up to 15");
         value |= (data << 16);
     }
-    constexpr auto GE_Reset() {
+    constexpr auto GE_Reset() noexcept {
         bitStatus_[16] = Status::UNKNOWN;
         bitStatus_[17] = Status::UNKNOWN;
         bitStatus_[18] = Status::UNKNOWN;
@@ -994,7 +994,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 9);
     }
-    constexpr auto E() { bitStatus_[9] = Status::UNKNOWN; }
+    constexpr auto E() noexcept { bitStatus_[9] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto A() const {
         if (bitStatus_[8] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1005,7 +1005,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 8);
     }
-    constexpr auto A() { bitStatus_[8] = Status::UNKNOWN; }
+    constexpr auto A() noexcept { bitStatus_[8] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto I() const {
         if (bitStatus_[7] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1016,7 +1016,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 7);
     }
-    constexpr auto I() { bitStatus_[7] = Status::UNKNOWN; }
+    constexpr auto I() noexcept { bitStatus_[7] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto F() const {
         if (bitStatus_[6] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1027,7 +1027,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 6);
     }
-    constexpr auto F() { bitStatus_[6] = Status::UNKNOWN; }
+    constexpr auto F() noexcept { bitStatus_[6] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto T() const {
         if (bitStatus_[5] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1038,7 +1038,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 5);
     }
-    constexpr auto T() { bitStatus_[5] = Status::UNKNOWN; }
+    constexpr auto T() noexcept { bitStatus_[5] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto M() const {
         if (bitStatus_[0] == Status::UNKNOWN || bitStatus_[1] == Status::UNKNOWN || bitStatus_[2] == Status::UNKNOWN || bitStatus_[3] == Status::UNKNOWN ||
@@ -1065,7 +1065,7 @@ struct SPSRabtRegister final : public SpecialRegister {
         if (31 < dat_val) throw std::invalid_argument("This field can only hold values up to 31");
         value |= (dat_val << 0);
     }
-    constexpr auto M_Reset() {
+    constexpr auto M_Reset() noexcept {
         bitStatus_[0] = Status::UNKNOWN;
         bitStatus_[1] = Status::UNKNOWN;
         bitStatus_[2] = Status::UNKNOWN;
@@ -1073,9 +1073,9 @@ struct SPSRabtRegister final : public SpecialRegister {
         bitStatus_[4] = Status::UNKNOWN;
     }
 
-    constexpr SPSRabtRegister() : SpecialRegister() {}
-    constexpr explicit SPSRabtRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPSRabtRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPSRabtRegister() noexcept : SpecialRegister() {}
+    constexpr explicit SPSRabtRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPSRabtRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPSRabtRegister() = default;
 
     NULL_COPY_MOVE(SPSRabtRegister)
@@ -1086,7 +1086,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
-    constexpr auto Reset() { status_ = Status::UNKNOWN; }
+    constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto N() const {
         if (bitStatus_[31] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1097,7 +1097,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 31);
     }
-    constexpr auto N_Reset() { bitStatus_[31] = Status::UNKNOWN; }
+    constexpr auto N_Reset() noexcept { bitStatus_[31] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto Z() const {
         if (bitStatus_[30] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1108,7 +1108,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 30);
     }
-    constexpr auto Z_Reset() { bitStatus_[30] = Status::UNKNOWN; }
+    constexpr auto Z_Reset() noexcept { bitStatus_[30] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto C() const {
         if (bitStatus_[29] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1119,7 +1119,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 29);
     }
-    constexpr auto C_Reset() { bitStatus_[29] = Status::UNKNOWN; }
+    constexpr auto C_Reset() noexcept { bitStatus_[29] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto V() const {
         if (bitStatus_[28] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1130,7 +1130,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 28);
     }
-    constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
+    constexpr auto V_Reset() noexcept { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] auto TCO() const {
         if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) {
@@ -1151,7 +1151,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto TCO_Reset() { bitStatus_[25] = Status::UNKNOWN; }
+    constexpr auto TCO_Reset() noexcept { bitStatus_[25] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
         if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
@@ -1172,7 +1172,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto DIT_Reset() { bitStatus_[24] = Status::UNKNOWN; }
+    constexpr auto DIT_Reset() noexcept { bitStatus_[24] = Status::UNKNOWN; }
 
     [[nodiscard]] auto UAO() const {
         if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) {
@@ -1193,7 +1193,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto UAO_Reset() { bitStatus_[23] = Status::UNKNOWN; }
+    constexpr auto UAO_Reset() noexcept { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
         if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
@@ -1214,7 +1214,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
+    constexpr auto PAN_Reset() noexcept { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto SS() const {
         if (bitStatus_[21] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1225,7 +1225,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 21);
     }
-    constexpr auto SS_Reset() { bitStatus_[21] = Status::UNKNOWN; }
+    constexpr auto SS_Reset() noexcept { bitStatus_[21] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IL() const {
         if (bitStatus_[20] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1236,7 +1236,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 20);
     }
-    constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
+    constexpr auto IL_Reset() noexcept { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] auto SSBS() const {
         if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) {
@@ -1257,7 +1257,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto SSBS_Reset() { bitStatus_[12] = Status::UNKNOWN; }
+    constexpr auto SSBS_Reset() noexcept { bitStatus_[12] = Status::UNKNOWN; }
 
     [[nodiscard]] auto BTYPE() const {
         if (Query< SystemSettings, Features, Features::FEAT_BTI >::result()) {
@@ -1279,7 +1279,7 @@ struct SPSREL1Register final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto BTYPE_Reset() {
+    constexpr auto BTYPE_Reset() noexcept {
         bitStatus_[10] = Status::UNKNOWN;
         bitStatus_[11] = Status::UNKNOWN;
     }
@@ -1293,7 +1293,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 9);
     }
-    constexpr auto D_Reset() { bitStatus_[9] = Status::UNKNOWN; }
+    constexpr auto D_Reset() noexcept { bitStatus_[9] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto A() const {
         if (bitStatus_[8] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1304,7 +1304,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 8);
     }
-    constexpr auto A_Reset() { bitStatus_[8] = Status::UNKNOWN; }
+    constexpr auto A_Reset() noexcept { bitStatus_[8] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto I() const {
         if (bitStatus_[7] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1315,7 +1315,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 7);
     }
-    constexpr auto I_Reset() { bitStatus_[7] = Status::UNKNOWN; }
+    constexpr auto I_Reset() noexcept { bitStatus_[7] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto F() const {
         if (bitStatus_[6] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -1326,7 +1326,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 6);
     }
-    constexpr auto F_Reset() { bitStatus_[6] = Status::UNKNOWN; }
+    constexpr auto F_Reset() noexcept { bitStatus_[6] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto M() const {
         if (bitStatus_[0] == Status::UNKNOWN || bitStatus_[1] == Status::UNKNOWN || bitStatus_[2] == Status::UNKNOWN || bitStatus_[3] == Status::UNKNOWN ||
@@ -1353,7 +1353,7 @@ struct SPSREL1Register final : public SpecialRegister {
         if (31 < dat_val) throw std::invalid_argument("This field can only hold values up to 31");
         value |= (dat_val << 0);
     }
-    constexpr auto M_Reset() {
+    constexpr auto M_Reset() noexcept {
         bitStatus_[0] = Status::UNKNOWN;
         bitStatus_[1] = Status::UNKNOWN;
         bitStatus_[2] = Status::UNKNOWN;
@@ -1361,9 +1361,9 @@ struct SPSREL1Register final : public SpecialRegister {
         bitStatus_[4] = Status::UNKNOWN;
     }
 
-    constexpr SPSREL1Register() : SpecialRegister() {}
-    constexpr explicit SPSREL1Register(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPSREL1Register(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPSREL1Register() noexcept : SpecialRegister() {}
+    constexpr explicit SPSREL1Register(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPSREL1Register(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPSREL1Register() = default;
 
     NULL_COPY_MOVE(SPSREL1Register)
@@ -2528,7 +2528,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
         return value;
     }
-    constexpr auto Reset() { status_ = Status::UNKNOWN; }
+    constexpr auto Reset() noexcept { status_ = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto N() const {
         if (bitStatus_[31] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2539,7 +2539,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 31);
     }
-    constexpr auto N_Reset() { bitStatus_[31] = Status::UNKNOWN; }
+    constexpr auto N_Reset() noexcept { bitStatus_[31] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto Z() const {
         if (bitStatus_[30] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2550,7 +2550,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 30);
     }
-    constexpr auto Z_Reset() { bitStatus_[30] = Status::UNKNOWN; }
+    constexpr auto Z_Reset() noexcept { bitStatus_[30] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto C() const {
         if (bitStatus_[29] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2561,7 +2561,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 29);
     }
-    constexpr auto C_Reset() { bitStatus_[29] = Status::UNKNOWN; }
+    constexpr auto C_Reset() noexcept { bitStatus_[29] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto V() const {
         if (bitStatus_[28] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2572,7 +2572,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 28);
     }
-    constexpr auto V_Reset() { bitStatus_[28] = Status::UNKNOWN; }
+    constexpr auto V_Reset() noexcept { bitStatus_[28] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto Q() const {
         if (bitStatus_[27] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2583,7 +2583,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 27);
     }
-    constexpr auto Q_Reset() { bitStatus_[27] = Status::UNKNOWN; }
+    constexpr auto Q_Reset() noexcept { bitStatus_[27] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IT() const {
         if (bitStatus_[10] == Status::UNKNOWN || bitStatus_[11] == Status::UNKNOWN || bitStatus_[12] == Status::UNKNOWN || bitStatus_[13] == Status::UNKNOWN ||
@@ -2608,7 +2608,7 @@ struct SPSRundRegister final : public SpecialRegister {
         value |= ((data & 0x00000000'00000003) << 25);
         value |= ((data & 0x00000000'000000FC) << (10 - 2));
     }
-    constexpr auto IT_Reset() {
+    constexpr auto IT_Reset() noexcept {
         bitStatus_[10] = Status::UNKNOWN;
         bitStatus_[11] = Status::UNKNOWN;
         bitStatus_[12] = Status::UNKNOWN;
@@ -2640,7 +2640,7 @@ struct SPSRundRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto SSBS_Reset() { bitStatus_[23] = Status::UNKNOWN; }
+    constexpr auto SSBS_Reset() noexcept { bitStatus_[23] = Status::UNKNOWN; }
 
     [[nodiscard]] auto PAN() const {
         if (Query< SystemSettings, Features, Features::FEAT_PAN >::result()) {
@@ -2661,7 +2661,7 @@ struct SPSRundRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto PAN_Reset() { bitStatus_[22] = Status::UNKNOWN; }
+    constexpr auto PAN_Reset() noexcept { bitStatus_[22] = Status::UNKNOWN; }
 
     [[nodiscard]] auto DIT() const {
         if (Query< SystemSettings, Features, Features::FEAT_DIT >::result()) {
@@ -2682,7 +2682,7 @@ struct SPSRundRegister final : public SpecialRegister {
         } else
             throw undefined_register_access {};
     }
-    constexpr auto DIT_Reset() { bitStatus_[21] = Status::UNKNOWN; }
+    constexpr auto DIT_Reset() noexcept { bitStatus_[21] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto IL() const {
         if (bitStatus_[20] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2693,7 +2693,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 20);
     }
-    constexpr auto IL_Reset() { bitStatus_[20] = Status::UNKNOWN; }
+    constexpr auto IL_Reset() noexcept { bitStatus_[20] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto GE() const {
         if (bitStatus_[16] == Status::UNKNOWN || bitStatus_[17] == Status::UNKNOWN || bitStatus_[18] == Status::UNKNOWN || bitStatus_[19] == Status::UNKNOWN ||
@@ -2709,7 +2709,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (15 < data) throw std::invalid_argument("This field can only hold values up to 15");
         value |= (data << 16);
     }
-    constexpr auto GE_Reset() {
+    constexpr auto GE_Reset() noexcept {
         bitStatus_[16] = Status::UNKNOWN;
         bitStatus_[17] = Status::UNKNOWN;
         bitStatus_[18] = Status::UNKNOWN;
@@ -2725,7 +2725,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 9);
     }
-    constexpr auto E() { bitStatus_[9] = Status::UNKNOWN; }
+    constexpr auto E() noexcept { bitStatus_[9] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto A() const {
         if (bitStatus_[8] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2736,7 +2736,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 8);
     }
-    constexpr auto A() { bitStatus_[8] = Status::UNKNOWN; }
+    constexpr auto A() noexcept { bitStatus_[8] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto I() const {
         if (bitStatus_[7] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2747,7 +2747,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 7);
     }
-    constexpr auto I() { bitStatus_[7] = Status::UNKNOWN; }
+    constexpr auto I() noexcept { bitStatus_[7] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto F() const {
         if (bitStatus_[6] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2758,7 +2758,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 6);
     }
-    constexpr auto F() { bitStatus_[6] = Status::UNKNOWN; }
+    constexpr auto F() noexcept { bitStatus_[6] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto T() const {
         if (bitStatus_[5] == Status::UNKNOWN || status_ == Status::UNKNOWN) throw std::out_of_range("Attempt to access architecturally UNKNOWN value");
@@ -2769,7 +2769,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 5);
     }
-    constexpr auto T() { bitStatus_[5] = Status::UNKNOWN; }
+    constexpr auto T() noexcept { bitStatus_[5] = Status::UNKNOWN; }
 
     [[nodiscard]] constexpr auto M() const {
         if (bitStatus_[0] == Status::UNKNOWN || bitStatus_[1] == Status::UNKNOWN || bitStatus_[2] == Status::UNKNOWN || bitStatus_[3] == Status::UNKNOWN ||
@@ -2796,7 +2796,7 @@ struct SPSRundRegister final : public SpecialRegister {
         if (31 < dat_val) throw std::invalid_argument("This field can only hold values up to 31");
         value |= (dat_val << 0);
     }
-    constexpr auto M_Reset() {
+    constexpr auto M_Reset() noexcept {
         bitStatus_[0] = Status::UNKNOWN;
         bitStatus_[1] = Status::UNKNOWN;
         bitStatus_[2] = Status::UNKNOWN;
@@ -2804,9 +2804,9 @@ struct SPSRundRegister final : public SpecialRegister {
         bitStatus_[4] = Status::UNKNOWN;
     }
 
-    constexpr SPSRundRegister() : SpecialRegister() {}
-    constexpr explicit SPSRundRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SPSRundRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SPSRundRegister() noexcept : SpecialRegister() {}
+    constexpr explicit SPSRundRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SPSRundRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SPSRundRegister() = default;
 
     NULL_COPY_MOVE(SPSRundRegister)
@@ -2817,7 +2817,7 @@ struct SSBSRegister final : public SpecialRegister {
         if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) return value;
         throw undefined_register_access {};
     }
-    constexpr auto Reset() { value = 0x00000000'00000000; }
+    constexpr auto Reset() noexcept { value = 0x00000000'00000000; }
 
     [[nodiscard]] auto SSBS() const {
         if (Query< SystemSettings, Features, Features::FEAT_SSBS >::result()) return static_cast< std::uint64_t >(1) & (value >> 12);
@@ -2827,11 +2827,11 @@ struct SSBSRegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 12);
     }
-    constexpr auto SSBS_Reset() { Reset(); }
+    constexpr auto SSBS_Reset() noexcept { Reset(); }
 
-    constexpr SSBSRegister() : SpecialRegister() {}
-    constexpr explicit SSBSRegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit SSBSRegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr SSBSRegister() noexcept : SpecialRegister() {}
+    constexpr explicit SSBSRegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit SSBSRegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~SSBSRegister() = default;
 
     NULL_COPY_MOVE(SSBSRegister)
@@ -2842,7 +2842,7 @@ struct TCORegister final : public SpecialRegister {
         if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) return value;
         throw undefined_register_access {};
     }
-    constexpr auto Reset() { value = 0x00000000'00000000; }
+    constexpr auto Reset() noexcept { value = 0x00000000'00000000; }
 
     [[nodiscard]] auto TCO() const {
         if (Query< SystemSettings, Features, Features::FEAT_MTE >::result()) return static_cast< std::uint64_t >(1) & (value >> 25);
@@ -2852,11 +2852,11 @@ struct TCORegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 25);
     }
-    constexpr auto TCO_Reset() { Reset(); }
+    constexpr auto TCO_Reset() noexcept { Reset(); }
 
-    constexpr TCORegister() : SpecialRegister() {}
-    constexpr explicit TCORegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit TCORegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr TCORegister() noexcept : SpecialRegister() {}
+    constexpr explicit TCORegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit TCORegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~TCORegister() = default;
 
     NULL_COPY_MOVE(TCORegister)
@@ -2867,7 +2867,7 @@ struct UAORegister final : public SpecialRegister {
         if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) return value;
         throw undefined_register_access {};
     }
-    constexpr auto Reset() { value = 0x00000000'00000000; }
+    constexpr auto Reset() noexcept { value = 0x00000000'00000000; }
 
     [[nodiscard]] auto UAO() const {
         if (Query< SystemSettings, Features, Features::FEAT_UAO >::result()) return static_cast< std::uint64_t >(1) & (value >> 23);
@@ -2877,11 +2877,11 @@ struct UAORegister final : public SpecialRegister {
         if (1 < data) throw std::invalid_argument("A bit can only hold 0 or 1");
         value |= (data << 23);
     }
-    constexpr auto UAO_Reset() { Reset(); }
+    constexpr auto UAO_Reset() noexcept { Reset(); }
 
-    constexpr UAORegister() : SpecialRegister() {}
-    constexpr explicit UAORegister(const std::uint64_t& val) : SpecialRegister(val) {}
-    constexpr explicit UAORegister(const std::uint64_t& val, Status status) : SpecialRegister(val, status) {}
+    constexpr UAORegister() noexcept : SpecialRegister() {}
+    constexpr explicit UAORegister(const std::uint64_t& val) noexcept : SpecialRegister(val) {}
+    constexpr explicit UAORegister(const std::uint64_t& val, Status status) noexcept : SpecialRegister(val, status) {}
     ~UAORegister() = default;
 
     NULL_COPY_MOVE(UAORegister)
@@ -2890,7 +2890,7 @@ struct UAORegister final : public SpecialRegister {
 // Special registers
 struct SpecialRegisters {
 
-    constexpr SpecialRegisters() :
+    constexpr SpecialRegisters() noexcept :
         CurrentEL({}),
         DAIF({}),
         DIT({}),
