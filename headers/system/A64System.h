@@ -29,8 +29,8 @@ class System {
         cache.fill_cache();
     }
 
-    template < typename _Ty >
-    requires iteratable< _Ty >&& std::same_as< typename _Ty::value_type, std::uint32_t > System(const std::uint64_t& ramSize, _Ty instructions) noexcept :
+    template < typename Ty >
+    requires iteratable< Ty >&& std::same_as< typename Ty::value_type, std::uint32_t > System(const std::uint64_t& ramSize, Ty instructions) noexcept :
         ram_block(ramSize), prog_block(instructions.size()), cache(this, 0) {
         std::uint32_t i = 0;
         for (auto&& instruction : instructions) { prog_block.write_loc(i++, instruction); }

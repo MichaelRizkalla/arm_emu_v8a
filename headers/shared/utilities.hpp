@@ -51,53 +51,53 @@ template < typename TEnum >
 static constexpr auto enum_size_v = enum_size< TEnum >::value;
 
 struct size_checker {
-    template < typename _Tx, typename... _Args >
-    static constexpr auto call(_Tx*) -> decltype(std::declval< _Tx& >().size(std::declval< _Args >()...));
+    template < typename Tx, typename... Args >
+    static constexpr auto call(Tx*) -> decltype(std::declval< Tx& >().size(std::declval< Args >()...));
 };
 
 struct constructor_checker {
-    template < typename _Tx, typename... _Args >
-    static constexpr auto call(_Tx*) -> decltype(_Tx { std::declval< _Args >()... });
+    template < typename Tx, typename... Args >
+    static constexpr auto call(Tx*) -> decltype(Tx { std::declval< Args >()... });
 };
 
 // https://codereview.stackexchange.com/questions/92993/template-method-checker
-template < typename, typename, typename _Tx >
+template < typename, typename, typename Tx >
 struct has_function {
-    static_assert(std::integral_constant< _Tx, false >::value, "Third parameter has to be of function type.");
+    static_assert(std::integral_constant< Tx, false >::value, "Third parameter has to be of function type.");
 };
 
-template < typename _Checker, typename _Ty, typename _Ret, typename... _Args >
-struct has_function< _Checker, _Ty, _Ret(_Args...) > {
+template < typename Checker, typename Ty, typename Ret, typename... Args >
+struct has_function< Checker, Ty, Ret(Args...) > {
   private:
-    template < typename _Chk, typename _Tx>
-    static constexpr auto check(_Tx*) -> decltype(_Chk::template call< _Tx, _Args... >(0));
+    template < typename Chk, typename Tx>
+    static constexpr auto check(Tx*) -> decltype(Chk::template call< Tx, Args... >(0));
 
     // Sink hole
     template < typename, typename >
     static constexpr std::false_type check(...);
 
   public:
-    static constexpr bool value = std::is_same_v< decltype(check< _Checker, _Ty >(0)), _Ret >;
+    static constexpr bool value = std::is_same_v< decltype(check< Checker, Ty >(0)), Ret >;
 };
 
-template < class _Checker, typename _Ty, typename _Ret, typename... _Args >
-static constexpr auto has_function_v = has_function< _Checker, _Ty, _Ret, _Args... >::value;
+template < class Checker, typename Ty, typename Ret, typename... Args >
+static constexpr auto has_function_v = has_function< Checker, Ty, Ret, Args... >::value;
 
-template < class _Checker, typename _Ty, typename _Ret, typename... _Args >
-concept function_in = has_function_v< _Checker, _Ty, _Ret, _Args... >;
+template < class Checker, typename Ty, typename Ret, typename... Args >
+concept function_in = has_function_v< Checker, Ty, Ret, Args... >;
 
 /// <summary>
 /// Credits to https://stackoverflow.com/questions/13830158/check-if-a-variable-type-is-iterable
 /// </summary>
 /// <typeparam name="_Ty"></typeparam>
-template < typename _Ty >
+template < typename Ty >
 struct is_iteratable {
   private:
-    template < typename _Tx >
-    static constexpr auto check(_Tx*)
-        -> decltype(std::begin(std::declval< _Tx& >()) != std::end(std::declval< _Tx& >()), ++std::declval< decltype(std::begin(std::declval< _Tx& >()))& >(),
-                    --std::declval< decltype(std::begin(std::declval< _Tx& >()))& >(), ++std::declval< decltype(std::end(std::declval< _Tx& >()))& >(),
-                    --std::declval< decltype(std::end(std::declval< _Tx& >()))& >(), void(*std::begin(std::declval< _Tx& >())), void(*std::end(std::declval< _Tx& >())),
+    template < typename Tx >
+    static constexpr auto check(Tx*)
+        -> decltype(std::begin(std::declval< Tx& >()) != std::end(std::declval< Tx& >()), ++std::declval< decltype(std::begin(std::declval< Tx& >()))& >(),
+                    --std::declval< decltype(std::begin(std::declval< Tx& >()))& >(), ++std::declval< decltype(std::end(std::declval< Tx& >()))& >(),
+                    --std::declval< decltype(std::end(std::declval< Tx& >()))& >(), void(*std::begin(std::declval< Tx& >())), void(*std::end(std::declval< Tx& >())),
                     std::true_type {});
 
     // Sink hole
@@ -105,34 +105,34 @@ struct is_iteratable {
     static constexpr std::false_type check(...);
 
   public:
-    static constexpr bool value = decltype(check< _Ty >(0))::value;
+    static constexpr bool value = decltype(check< Ty >(0))::value;
 };
 
-template < typename _Ty >
-static constexpr auto is_iteratable_v = is_iteratable< _Ty >::value;
+template < typename Ty >
+static constexpr auto is_iteratable_v = is_iteratable< Ty >::value;
 
-template < typename _Ty >
-concept iteratable = is_iteratable_v< _Ty >;
+template < typename Ty >
+concept iteratable = is_iteratable_v< Ty >;
 
-template < typename _Ty >
+template < typename Ty >
 struct is_indexable {
   private:
-    template < typename _Tx >
-    static constexpr auto check(_Tx*) -> decltype(std::declval< _Tx& >()[std::declval< const typename _Tx::size_type >()], std::true_type {});
+    template < typename Tx >
+    static constexpr auto check(Tx*) -> decltype(std::declval< Tx& >()[std::declval< const typename Tx::size_type >()], std::true_type {});
 
     // Sink hole
     template < typename >
     static constexpr std::false_type check(...);
 
   public:
-    static constexpr bool value = decltype(check< std::remove_cvref_t< _Ty > >(0))::value;
+    static constexpr bool value = decltype(check< std::remove_cvref_t< Ty > >(0))::value;
 };
 
 template < typename _Ty >
 static constexpr auto is_indexable_v = is_indexable< _Ty >::value;
 
-template < typename _Ty >
-concept indexable = is_indexable_v< _Ty >;
+template < typename Ty >
+concept indexable = is_indexable_v< Ty >;
 
 template < std::size_t N >
 struct get_type {};
@@ -157,8 +157,8 @@ struct get_type< 64 > {
 template < std::size_t N >
 using get_type_t = typename get_type< N >::type;
 
-template < class _Ty >
-concept enum_type = std::is_enum_v< _Ty >;
+template < class Ty >
+concept enum_type = std::is_enum_v< Ty >;
 
 //////////////////////////// Exceptions ////////////////////////////
 class ram_not_initialized : public std::exception {
@@ -192,25 +192,25 @@ template < std::size_t S1, std::size_t S2 >
 constexpr auto concate(std::bitset< S1 >&& set1, std::bitset< S2 >&& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
-    return std::bitset< S1 + S2 >(s1 + s2);
+    return std::bitset< S1 + S2 >(std::move(s1) + std::move(s2));
 }
 template < std::size_t S1, std::size_t S2 >
 constexpr auto concate(const std::bitset< S1 >& set1, std::bitset< S2 >&& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
-    return std::bitset< S1 + S2 >(s1 + s2);
+    return std::bitset< S1 + S2 >(std::move(s1) + std::move(s2));
 }
 template < std::size_t S1, std::size_t S2 >
 constexpr auto concate(std::bitset< S1 >&& set1, const std::bitset< S2 >& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
-    return std::bitset< S1 + S2 >(s1 + s2);
+    return std::bitset< S1 + S2 >(std::move(s1) + std::move(s2));
 }
 template < std::size_t S1, std::size_t S2 >
 constexpr auto concate(const std::bitset< S1 >& set1, const std::bitset< S2 >& set2) noexcept {
     std::string s1 = set1.to_string();
     std::string s2 = set2.to_string();
-    return std::bitset< S1 + S2 >(s1 + s2);
+    return std::bitset< S1 + S2 >(std::move(s1) + std::move(s2));
 }
 
 } // namespace arm_emu

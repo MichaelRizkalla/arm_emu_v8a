@@ -7,29 +7,29 @@
 
 namespace arm_emu {
 
-template < class _Ty, class CRTP = void, class _Enable = std::enable_if_t< std::is_same_v< _Ty, std::uint32_t > > >
+template < class Ty, class CRTP = void, class Enable = std::enable_if_t< std::is_same_v< Ty, std::uint32_t > > >
 struct AbstractInstruction {
-    using Type = _Ty;
+    using Type = Ty;
 
-    [[nodiscard]] constexpr auto operator&(const _Ty rhs) const noexcept { return mInstruction & rhs; }
-    [[nodiscard]] constexpr auto operator|(const _Ty rhs) const noexcept { return mInstruction | rhs; }
+    [[nodiscard]] constexpr auto operator&(const Ty rhs) const noexcept { return mInstruction & rhs; }
+    [[nodiscard]] constexpr auto operator|(const Ty rhs) const noexcept { return mInstruction | rhs; }
 
-    [[nodiscard]] friend constexpr auto operator&(const _Ty lhs, const CRTP rhs) noexcept { return lhs & rhs.mInstruction; }
-    [[nodiscard]] friend constexpr auto operator|(const _Ty lhs, const CRTP rhs) noexcept { return lhs | rhs.mInstruction; }
+    [[nodiscard]] friend constexpr auto operator&(const Ty lhs, const CRTP rhs) noexcept { return lhs & rhs.mInstruction; }
+    [[nodiscard]] friend constexpr auto operator|(const Ty lhs, const CRTP rhs) noexcept { return lhs | rhs.mInstruction; }
 
     [[nodiscard]] constexpr auto data() const noexcept { return mInstruction; }
-    template < class BitLoc, class _E = std::enable_if_t< std::conjunction_v< std::is_integral< BitLoc >, std::negation< std::is_same< BitLoc, std::uint64_t > >,
+    template < class BitLoc, class E = std::enable_if_t< std::conjunction_v< std::is_integral< BitLoc >, std::negation< std::is_same< BitLoc, std::uint64_t > >,
                                                                               std::negation< std::is_same< BitLoc, std::int64_t > > > > >
     [[nodiscard]] constexpr bool readBit(BitLoc bit) const noexcept {
-        return static_cast< bool >(mInstruction & (static_cast< _Ty >(1) << bit));
+        return static_cast< bool >(mInstruction & (static_cast< Ty >(1) << bit));
     }
     [[nodiscard]] constexpr bool is64() const noexcept { return readBit(static_cast< std::uint8_t >(31)); }
 
-    constexpr explicit AbstractInstruction(const _Ty& instruction) noexcept : mInstruction(instruction) {}
-    constexpr explicit AbstractInstruction(_Ty&& instruction) noexcept : mInstruction(std::move(instruction)) {}
+    constexpr explicit AbstractInstruction(const Ty& instruction) noexcept : mInstruction(instruction) {}
+    constexpr explicit AbstractInstruction(Ty&& instruction) noexcept : mInstruction(std::move(instruction)) {}
 
   protected:
-    const _Ty mInstruction;
+    const Ty mInstruction;
 };
 
 struct BaseInstruction : public AbstractInstruction< std::uint32_t, BaseInstruction > {

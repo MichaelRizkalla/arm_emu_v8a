@@ -9,8 +9,8 @@ namespace arm_emu {
 
 struct ALU {
 
-    template < std::size_t _TWidth >
-    [[nodiscard]] inline static constexpr auto SP(SpecialRegisters* sp, std::bitset< _TWidth > value) {
+    template < std::size_t TWidth >
+    [[nodiscard]] inline static constexpr auto SP(SpecialRegisters* sp, std::bitset< TWidth > value) {
         if (sp->SPSel.SP() == 0) {
             sp->SP_EL0.Set(value.to_ullong());
         } else {
@@ -33,9 +33,9 @@ struct ALU {
         }
     }
 
-    template < std::size_t _TWidth >
-    [[nodiscard]] inline static constexpr std::bitset< _TWidth > SP(SpecialRegisters* sp) {
-        static_assert((_TWidth == 8) || (_TWidth == 16) || (_TWidth == 32) || (_TWidth == 64));
+    template < std::size_t TWidth >
+    [[nodiscard]] inline static constexpr std::bitset< TWidth > SP(SpecialRegisters* sp) {
+        static_assert((TWidth == 8) || (TWidth == 16) || (TWidth == 32) || (TWidth == 64));
         if (sp->SPSel.SP() == 0) {
             return sp->SP_EL0.Value();
         } else {
@@ -58,20 +58,20 @@ struct ALU {
         }
     }
 
-    template < std::size_t N, typename _Ty >
-    [[nodiscard]] inline static constexpr auto AddWithCarry(std::bitset< N > x, std::bitset< N > y, _Ty c) noexcept {
-        using _T  = std::uint64_t;
-        using _ST = std::make_signed_t< _T >;
+    template < std::size_t N, typename Ty >
+    [[nodiscard]] inline static constexpr auto AddWithCarry(std::bitset< N > x, std::bitset< N > y, Ty c) noexcept {
+        using T  = std::uint64_t;
+        using ST = std::make_signed_t< T >;
 
-        _T               unsigned_sum = static_cast< _T >(x.to_ullong()) + static_cast< _T >(y.to_ullong()) + static_cast< _T >(c);
-        _ST              signed_sum   = static_cast< _ST >(x.to_ullong()) + static_cast< _ST >(y.to_ullong()) + static_cast< _T >(c);
+        T               unsigned_sum = static_cast< T >(x.to_ullong()) + static_cast< T >(y.to_ullong()) + static_cast< T >(c);
+        ST              signed_sum   = static_cast< ST >(x.to_ullong()) + static_cast< ST >(y.to_ullong()) + static_cast< T >(c);
         std::bitset< N > result       = unsigned_sum;
 
         std::uint8_t nzcv = 0b0000'0000;
         nzcv |= static_cast< std::uint8_t >((result.to_ullong() >> (N - 1)) & 1) << 3;
         nzcv |= result.none() ? 1 << 2 : 0;
-        nzcv |= static_cast< _T >(result.to_ullong()) == unsigned_sum ? 0 : 1 << 1;
-        nzcv |= static_cast< _ST >(result.to_ullong()) == signed_sum ? 0 : 1 << 0;
+        nzcv |= static_cast< T >(result.to_ullong()) == unsigned_sum ? 0 : 1 << 1;
+        nzcv |= static_cast< ST >(result.to_ullong()) == signed_sum ? 0 : 1 << 0;
         return std::make_pair(result, nzcv);
     }
 
@@ -142,8 +142,8 @@ struct ALU {
             return SignExtend< N, M >(x);
     }
 
-    template < typename _Ty >
-    [[nodiscard]] inline static constexpr auto DecodeRegExtend(_Ty option) noexcept {
+    template < typename Ty >
+    [[nodiscard]] inline static constexpr auto DecodeRegExtend(Ty option) noexcept {
         return static_cast< ExtendType >(option);
     }
 
@@ -325,8 +325,8 @@ struct ALU {
         return result;
     }
 
-    template < typename _Ty >
-    [[nodiscard]] inline static constexpr auto getOption(_Ty in) noexcept {
+    template < typename Ty >
+    [[nodiscard]] inline static constexpr auto getOption(Ty in) noexcept {
         if (in == 0b111 || in == 0b011) { return WidthOption::X; }
         return WidthOption::W;
     }

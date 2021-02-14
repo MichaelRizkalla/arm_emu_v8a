@@ -17,14 +17,47 @@ set(INCLUDE_DIRS
                     "headers/instructions"
                     "headers/shared"
                     "headers/system"
-                    "headers/types" )
+                    "headers/types" )                 
+file(GLOB_RECURSE EMU_COMPONTENTS 
+    "headers/components/*.h" 
+    "headers/components/*.hpp"
+    "headers/components/*.cpp")
+file(GLOB_RECURSE EMU_INSTRUCTIONS 
+    "headers/instructions/*.h" 
+    "headers/instructions/*.hpp"
+    "headers/instructions/*.cpp")
+file(GLOB_RECURSE EMU_SHARED 
+    "headers/shared/*.h" 
+    "headers/shared/*.hpp"
+    "headers/shared/*.cpp")
+file(GLOB_RECURSE EMU_SYSTEM 
+    "headers/system/*.h" 
+    "headers/system/*.hpp"
+    "headers/system/*.cpp")
+file(GLOB_RECURSE EMU_TYPES 
+    "headers/types/*.h" 
+    "headers/types/*.hpp"
+    "headers/types/*.cpp")
 
 set(SOURCE "run_arm_emu.cpp")
 
 ################################################################################
 ### Add build target
 ################################################################################
-add_executable(${PROJECT_NAME} ${SOURCE})
+add_executable(${PROJECT_NAME} ${SOURCE} ${EMU_COMPONTENTS} 
+                                        ${EMU_INSTRUCTIONS} ${EMU_SHARED}
+                                        ${EMU_SYSTEM} ${EMU_TYPES})
+
+################################################################################
+### Visual studio filters
+################################################################################
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    source_group("arm_emu/components" FILES ${EMU_COMPONTENTS})
+    source_group("arm_emu/instructions" FILES ${EMU_INSTRUCTIONS})
+    source_group("arm_emu/shared" FILES ${EMU_SHARED})
+    source_group("arm_emu/system" FILES ${EMU_SYSTEM})
+    source_group("arm_emu/types" FILES ${EMU_TYPES})
+endif()
 
 ################################################################################
 ### Configure target
