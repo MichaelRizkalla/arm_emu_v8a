@@ -31,7 +31,7 @@ struct DecodeGroupA64Entry {
     DecodeGroupA64 type;
 };
 
-static constexpr std::array< DecodeGroupA64Entry, 7 > DecodeGroupA64Table { {
+static std::array< DecodeGroupA64Entry, 7 > DecodeGroupA64Table { {
     { 0b0000'1111, 0b0000'0000, DecodeGroupA64::Reserved },
     { 0b0000'1111, 0b0000'0010, DecodeGroupA64::ScalableVectorExtension },
     { 0b0000'1110, 0b0000'1000, DecodeGroupA64::DataProcessingImmediate },

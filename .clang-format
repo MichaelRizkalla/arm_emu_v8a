@@ -9,10 +9,6 @@ AlignEscapedNewlines: Left
 AlignOperands: 'true'
 AlignTrailingComments: 'true'
 AllowAllParametersOfDeclarationOnNextLine: 'true'
-AllowShortBlocksOnASingleLine: 'true'
-AllowShortFunctionsOnASingleLine: InlineOnly
-AllowShortIfStatementsOnASingleLine: 'true'
-AllowShortLoopsOnASingleLine: 'true'
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: 'true'
@@ -23,7 +19,7 @@ BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: 'false'
 BreakConstructorInitializers: AfterColon
 ColumnLimit: 170
-CompactNamespaces: 'true'
+CompactNamespaces: 'false'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 Cpp11BracedListStyle: 'false'
 DerivePointerAlignment: 'true'
@@ -55,5 +51,12 @@ SpacesInSquareBrackets: 'false'
 Standard: Auto
 UseTab: Never
 IndentWidth: 4
+NamespaceIndentation: All
+AllowShortEnumsOnASingleLine: 'false'
+AllowShortFunctionsOnASingleLine: 'false'
+AllowShortIfStatementsOnASingleLine: 'false'
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortLoopsOnASingleLine: 'false'
+SortIncludes: 'true'
 
 ...

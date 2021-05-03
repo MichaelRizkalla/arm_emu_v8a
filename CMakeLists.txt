@@ -1,13 +1,16 @@
 ################################################################################
 ### Minimum Cmake required
 ################################################################################
-cmake_minimum_required(VERSION 3.13.0)
-project(ARM_EMU)
+cmake_minimum_required(VERSION 3.19.2)
+
 
 ################################################################################
 ### Programming language version and compiler flags
 ################################################################################
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(ARM_EMU)
 
 ################################################################################
 ### Includes
@@ -62,31 +65,35 @@ endif()
 ################################################################################
 ### Configure target
 ################################################################################
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(${PROJECT_NAME} PUBLIC 
+    target_compile_options(${PROJECT_NAME} PRIVATE 
                                     -Wall -fexceptions -std=c++2a 
                                     -Wno-unknown-pragmas -Wno-unused-function -O3)
-    target_link_options(${PROJECT_NAME} PUBLIC -s)
+    target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(${PROJECT_NAME} PUBLIC 
+    target_compile_options(${PROJECT_NAME} PRIVATE 
                                     -Wall -fexceptions -std=c++2a 
                                     -Wno-unknown-pragmas -Wno-unused-function -O3)
-    target_link_options(${PROJECT_NAME} PUBLIC -s)
+    target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Debug")
-    target_compile_options(${PROJECT_NAME} PUBLIC 
-                                    /W4 /WX- /permissive- /std:c++latest
-                                    /TP /Gd /Gm- /RTC0 /diagnostics:classic
+    string(REGEX REPLACE "/W[3|4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+    target_compile_options(${PROJECT_NAME} PRIVATE 
+                                    /WX- /permissive- /std:c++20
+                                    /TP /Gd /Gm- /diagnostics:classic
                                     /fp:precise /EHsc)
-    target_link_options(${PROJECT_NAME} PUBLIC /INCREMENTAL /MACHINE:X64)
+    target_link_options(${PROJECT_NAME} PRIVATE /INCREMENTAL /MACHINE:X64)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
-    target_compile_options(${PROJECT_NAME} PUBLIC 
-                                    /W4 /WX- /permissive- /std:c++latest
+    string(REGEX REPLACE "/W[3|4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+    target_compile_options(${PROJECT_NAME} PRIVATE 
+                                    /WX- /permissive- /std:c++20
                                     /TP /Gd /Gm- /diagnostics:classic
                                     /fp:precise /EHsc /Ob2 /Ox /Oi)
-    target_link_options(${PROJECT_NAME} PUBLIC /INCREMENTAL /MACHINE:X64)
+    target_link_options(${PROJECT_NAME} PRIVATE /INCREMENTAL /MACHINE:X64)
 endif()

@@ -1,3 +1,4 @@
-#pragma once
+#ifndef A64_STRUCTS_H
+#define A64_STRUCTS_H
 
-#include "internal/structs/A64ExceptionRecord.h"
+#endif // A64_STRUCTS_H

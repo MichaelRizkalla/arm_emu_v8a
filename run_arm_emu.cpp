@@ -67,7 +67,7 @@ std::uint32_t process_line(line mLine) {
     }
 }
 
-constexpr std::array< std::uint32_t, 1 > single_instruction { { 0b0101'0010'0000'0000'0000'0000'0000'0000 } };
+std::array< std::uint32_t, 1 > single_instruction { { 0b0101'0010'0000'0000'0000'0000'0000'0000 } };
 
 int main(int argc, char *argv[]) {
     using namespace arm_emu;

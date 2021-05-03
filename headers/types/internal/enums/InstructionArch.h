@@ -1,4 +1,6 @@
-#pragma once
+#ifndef INSTRUCTION_ARCH_H
+#define INSTRUCTION_ARCH_H
+
 #include <cstdint>
 
 namespace arm_emu {
@@ -9,3 +11,5 @@ namespace arm_emu {
 		ARM64,
 	};
 }
+
+#endif // INSTRUCTION_ARCH_H

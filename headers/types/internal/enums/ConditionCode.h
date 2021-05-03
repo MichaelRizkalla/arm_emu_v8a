@@ -1,6 +1,8 @@
 // Condition Code based on C1.2.4 Section
 
-#pragma once
+#ifndef CONDITION_CODE_H
+#define CONDITION_CODE_H
+
 #include <cstdint>
 namespace arm_emu {
 
@@ -32,3 +34,5 @@ namespace arm_emu {
 	};
 
 }
+
+#endif // CONDITION_CODE_H
