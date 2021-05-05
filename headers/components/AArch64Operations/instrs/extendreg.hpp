@@ -23,6 +23,14 @@ namespace arm_emu {
         SXTX = 0b111,
     };
 
+    /// <summary>
+    /// Perform a register extension and shift
+    /// </summary>
+    /// <param name="gp_regs"></param>
+    /// <param name="reg"></param>
+    /// <param name="exttype"></param>
+    /// <param name="shift"></param>
+    /// <returns></returns>
     template < std::size_t N >
     [[nodiscard]] inline static std::bitset< N > ExtendReg(const GPRegisters* gp_regs, std::uint8_t reg, ExtendType exttype, std::uint8_t shift) {
         assert(shift >= 0 && shift <= 4);
@@ -78,6 +86,16 @@ namespace arm_emu {
         auto             new_val = mVal & val;
         new_val <<= shift;
         return Extend< N, N >(new_val, unsigned_);
+    }
+
+    /// <summary>
+    /// Decode a register extension option
+    /// </summary>
+    /// <typeparam name="Ty"></typeparam>
+    /// <param name="option"></param>
+    /// <returns></returns>
+    [[nodiscard]] inline static auto DecodeRegExtend(const std::bitset<3>& option) noexcept {
+        return static_cast< ExtendType >(option.to_ulong());
     }
 
 } // namespace arm_emu

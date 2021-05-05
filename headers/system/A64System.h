@@ -5,8 +5,8 @@
 #include <utilities.hpp>
 #include <Registers.h>
 #include <Memory.h>
-#include <A64Enums.h>
-#include <A64Structs.h>
+//#include <A64Enums.h>
+//#include <A64Structs.h>
 #include <A64InstructionSet.h>
 #include <A64Instructions.h>
 
@@ -85,7 +85,7 @@ class System {
         auto immhi = instruction.get_immhi(); // 19bits
         auto immlo = instruction.get_immlo(); // 2bits
         switch (instruction.getInstructionType()) {
-            case DataProcessingImmediateA64::PCRelativeAddressing::ADR: { // P.791 + 88
+            case DataProcessingImmediateA64::PCRelativeAddressing::ADR: { // P.879
                 std::bitset< 64 > imm;
                 std::bitset< 21 > temp_imm = concate< 19, 2 >(immhi, immlo);
                 imm                        = SignExtend< 64 >(temp_imm);
@@ -94,7 +94,7 @@ class System {
                 std::uint64_t     new_addr = base.to_ullong() + imm.to_ullong();
                 gp_registers.write(Rd, new_addr);
             } break;
-            case DataProcessingImmediateA64::PCRelativeAddressing::ADRP: { // P.792 + 88
+            case DataProcessingImmediateA64::PCRelativeAddressing::ADRP: { // P.880
                 std::bitset< 64 >      imm;
                 std::bitset< 21 + 12 > temp_imm = concate< 21, 12 >(concate< 19, 2 >(immhi, immlo), 0);
                 imm                             = SignExtend< 64 >(temp_imm);
@@ -122,11 +122,11 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1    = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto operand1    = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto [result, _] = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -137,7 +137,7 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 } else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1       = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto operand1       = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto [result, nzcv] = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(nzcv), std::uint8_t >);
@@ -151,13 +151,13 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto operand2 = imm;
                 operand2.flip();
                 auto [result, _] = AddWithCarry(operand1, operand2, static_cast< std::uint32_t >(1));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -168,7 +168,7 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto operand2 = imm;
                 operand2.flip();
                 auto [result, nzcv] = AddWithCarry(operand1, operand2, static_cast< std::uint32_t >(1));
@@ -184,11 +184,11 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 } else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1    = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto operand1    = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto [result, _] = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -199,7 +199,7 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 } else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1       = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto operand1       = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto [result, nzcv] = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(nzcv), std::uint8_t >);
@@ -214,13 +214,13 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 } else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto operand2 = imm;
                 operand2.flip();
                 auto [result, _] = AddWithCarry(operand1, operand2, static_cast< std::uint64_t >(1));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -231,7 +231,7 @@ class System {
                     imm = ZeroExtend< datasize >(concate< 12, 12 >(imm12, 0));
                 } else
                     imm = ZeroExtend< datasize >(imm12);
-                auto operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto operand2 = imm;
                 operand2.flip();
                 auto [result, nzcv] = AddWithCarry(operand1, imm, static_cast< std::uint64_t >(1));
@@ -274,7 +274,7 @@ class System {
         auto immr = instruction.get_immr();
         auto N    = instruction.get_N();
         switch (instruction.getInstructionType()) {
-            case DataProcessingImmediateA64::LogicalImmediate::AND_32BIT: { // P.793 + 88
+            case DataProcessingImmediateA64::LogicalImmediate::AND_32BIT: { // P.881
                 if (N != 0) throw undefined_behaviour {};
                 constexpr auto datasize = 32;
 
@@ -284,7 +284,7 @@ class System {
                 auto result   = operand1 & imm;
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -294,7 +294,7 @@ class System {
             case DataProcessingImmediateA64::LogicalImmediate::EOR_32BIT: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingImmediateA64::LogicalImmediate::ANDS_32BIT: { // P.797 + 88
+            case DataProcessingImmediateA64::LogicalImmediate::ANDS_32BIT: { // P.885
                 if (N == 0) throw undefined_behaviour {};
                 constexpr auto datasize = 32;
 
@@ -306,18 +306,18 @@ class System {
                 std::bitset< 4 > nzcv = concate< 2, 2 >(concate< 1, 1 >(result[31] ? 1 : 0, result == 0 ? 1 : 0), 0);
                 write_nzcv(nzcv);
                 if (Rd == 31) // Documentation does not state SP as an option to Rd
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
-            case DataProcessingImmediateA64::LogicalImmediate::AND_64BIT: { // P.793 + 88
+            case DataProcessingImmediateA64::LogicalImmediate::AND_64BIT: { // P.881
                 auto [imm, _] = DecodeBitMasks< 64 >(N, imms, immr, true);
                 static_assert(std::is_same_v< decltype(imm), std::bitset< 64 > >);
                 auto operand1 = gp_registers.X(Rn);
                 auto result   = operand1 & imm;
                 static_assert(std::is_same_v< decltype(result), std::bitset< 64 > >);
                 if (Rd == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -327,7 +327,7 @@ class System {
             case DataProcessingImmediateA64::LogicalImmediate::EOR_64BIT: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingImmediateA64::LogicalImmediate::ANDS_64BIT: { // // P.797 + 88
+            case DataProcessingImmediateA64::LogicalImmediate::ANDS_64BIT: { // // P.885
                 constexpr auto datasize = 64;
 
                 auto [imm, _] = DecodeBitMasks< datasize >(N, imms, immr, true);
@@ -338,7 +338,7 @@ class System {
                 std::bitset< 4 > nzcv = concate< 2, 2 >(concate< 1, 1 >(result[63] ? 1 : 0, result == 0 ? 1 : 0), 0);
                 write_nzcv(nzcv);
                 if (Rd == 31) // Documentation does not state SP as an option to Rd
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -454,7 +454,7 @@ class System {
             case Branch_Exception_SystemA64::ConditionalBranching::BCond: { // P.816 + 88
                 std::bitset< 64 > offset = (SignExtend< 64 >(concate< 19, 2 >(imm19, 0))).to_ullong() / sizeof(decltype(prog_block)::type);
                 const auto        pc     = gp_registers.PC() - 1;
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR);
+                if (ConditionHolds(cond, &sp_registers.NZCV)) BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR);
             } break;
             default: {
                 throw undefined_instruction {};
@@ -529,7 +529,7 @@ class System {
         auto L   = instruction.get_L();
 
         switch (instruction.getInstructionType()) {
-            case Branch_Exception_SystemA64::SystemInstruction::SYS: { // P.1359 + 88
+            case Branch_Exception_SystemA64::SystemInstruction::SYS: { // P.1465
                 AArch64::CheckSystemAccess(&sp_registers, 0b01, op1, CRn, CRm, op2, Rt, L);
 
                 std::uint32_t sys_op1 = static_cast< std::uint32_t >(op1);
@@ -537,7 +537,7 @@ class System {
                 std::uint32_t sys_crn = static_cast< std::uint32_t >(CRn);
                 std::uint32_t sys_crm = static_cast< std::uint32_t >(CRm);
 
-                AArch64::SysInstr(1, sys_op1, sys_crn, sys_crm, sys_op2, gp_registers.X(Rt));
+                SysInstr(1, sys_op1, sys_crn, sys_crm, sys_op2, gp_registers.X(Rt));
 
             } break;
             case Branch_Exception_SystemA64::SystemInstruction::SYSL: {
@@ -560,7 +560,7 @@ class System {
                 auto target = gp_registers.X(Rn);
                 static_assert(std::is_same_v< decltype(target), std::bitset< 64 > >);
 
-                ALU::BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::INDCALL);
+                BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::INDCALL);
             } break;
             case Branch_Exception_SystemA64::UnconditionalBranchRegister::BRAAZ: {
                 throw not_implemented_feature {};
@@ -574,7 +574,7 @@ class System {
 
                 const auto pc = gp_registers.PC();
                 gp_registers.write(30, pc + 4);
-                ALU::BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::INDCALL);
+                BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::INDCALL);
             } break;
             case Branch_Exception_SystemA64::UnconditionalBranchRegister::BLRAAZ: {
                 throw not_implemented_feature {};
@@ -585,7 +585,7 @@ class System {
             case Branch_Exception_SystemA64::UnconditionalBranchRegister::RET: {
                 auto target = gp_registers.X(Rn);
                 static_assert(std::is_same_v< decltype(target), std::bitset< 64 > >);
-                ALU::BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::RET);
+                BranchTo(&sp_registers, gp_registers.PC(), target.to_ullong(), BranchType::RET);
             } break;
             case Branch_Exception_SystemA64::UnconditionalBranchRegister::RETAA: {
                 throw not_implemented_feature {};
@@ -629,13 +629,13 @@ class System {
             case Branch_Exception_SystemA64::UnconditionalBranchImmediate::B: { // P.817 + 88
                 std::bitset< 64 > offset = (SignExtend< 64 >(concate< 26, 2 >(imm26, 0)).to_ullong() / sizeof(decltype(prog_block)::type));
                 const auto        pc     = gp_registers.PC();
-                ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR);
+                BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR);
             } break;
             case Branch_Exception_SystemA64::UnconditionalBranchImmediate::BL: { // P.830 + 88
                 std::bitset< 64 > offset = (SignExtend< 64 >(concate< 26, 2 >(imm26, 0)).to_ullong() / sizeof(decltype(prog_block)::type));
                 const auto        pc     = gp_registers.PC();
                 gp_registers.write(30, pc + 4);
-                ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIRCALL);
+                BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIRCALL);
             } break;
             default: {
                 throw undefined_instruction {};
@@ -656,7 +656,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
                 const auto pc = gp_registers.PC();
-                if (operand1 == 0) { ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
+                if (operand1 == 0) { BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
             } break;
             case Branch_Exception_SystemA64::CompareAndBranchImmediate::CBNZ_32BIT: { // P.850 + 88
                 constexpr auto datasize = 32;
@@ -667,7 +667,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
                 const auto pc = gp_registers.PC();
-                if (operand1 != 0) { ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
+                if (operand1 != 0) { BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
             } break;
             case Branch_Exception_SystemA64::CompareAndBranchImmediate::CBZ_64BIT: { // P.851 + 88
                 constexpr auto datasize = 64;
@@ -678,7 +678,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
                 const auto pc = gp_registers.PC();
-                if (operand1 == 0) { ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
+                if (operand1 == 0) { BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
             } break;
             case Branch_Exception_SystemA64::CompareAndBranchImmediate::CBNZ_64BIT: { // P.850 + 88
                 constexpr auto datasize = 64;
@@ -689,7 +689,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
                 const auto pc = gp_registers.PC();
-                if (operand1 != 0) { ALU::BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
+                if (operand1 != 0) { BranchTo(&sp_registers, gp_registers.PC(), pc + offset.to_ullong(), BranchType::DIR); }
             } break;
             default:
                 throw undefined_instruction {};
@@ -878,7 +878,7 @@ class System {
 
                 if (Rn == 31) {
                     // checkSPAlignment();
-                    address = ALU::SP< 64 >(&sp_registers);
+                    address = SP< 64 >(&sp_registers);
                 } else {
                     address = gp_registers.X(Rn);
                 }
@@ -897,7 +897,7 @@ class System {
                     if (postindex)
                         address = address.to_ullong() + offset.to_ullong();
                     else if (Rn == 31)
-                        ALU::SP(&sp_registers, address);
+                        SP(&sp_registers, address);
                     else
                         gp_registers.write(Rn, address);
                 }
@@ -940,7 +940,7 @@ class System {
 
                 if (Rn == 31) {
                     // checkSPAlignment();
-                    address = ALU::SP< 64 >(&sp_registers);
+                    address = SP< 64 >(&sp_registers);
                 } else
                     address = gp_registers.X(Rn);
 
@@ -957,7 +957,7 @@ class System {
                         address = address.to_ullong() + offset.to_ullong();
 
                     if (Rn == 31)
-                        ALU::SP(&sp_registers, address);
+                        SP(&sp_registers, address);
                     else
                         gp_registers.write(Rn, address);
                 }
@@ -1013,7 +1013,7 @@ class System {
 
                 if (Rn == 31) {
                     // checkSPAlignment();
-                    address = ALU::SP< 64 >(&sp_registers);
+                    address = SP< 64 >(&sp_registers);
                 } else
                     address = gp_registers.X(Rn);
 
@@ -1030,7 +1030,7 @@ class System {
                     if (postindex)
                         address = address.to_ullong() + offset.to_ullong();
                     else if (Rn == 31)
-                        ALU::SP(&sp_registers, address);
+                        SP(&sp_registers, address);
                     else
                         gp_registers.write(Rn, address);
                 }
@@ -1073,7 +1073,7 @@ class System {
 
                 if (Rn == 31) {
                     // checkSPAlignment();
-                    address = ALU::SP< 64 >(&sp_registers);
+                    address = SP< 64 >(&sp_registers);
                 } else
                     address = gp_registers.X(Rn);
 
@@ -1090,7 +1090,7 @@ class System {
                         address = address.to_ullong() + offset.to_ullong();
 
                     if (Rn == 31)
-                        ALU::SP(&sp_registers, address);
+                        SP(&sp_registers, address);
                     else
                         gp_registers.write(Rn, address);
                 }
@@ -1129,7 +1129,7 @@ class System {
             case DataProcessingRegisterA64::DataProcessingTwoSource::LSRV_32BIT: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingRegisterA64::DataProcessingTwoSource::ASRV_32BIT: { // P.801 + 88
+            case DataProcessingRegisterA64::DataProcessingTwoSource::ASRV_32BIT: { // P.889
                 constexpr auto datasize   = 32;
                 auto           shift_type = DecodeShift(op2);
 
@@ -1185,7 +1185,7 @@ class System {
             case DataProcessingRegisterA64::DataProcessingTwoSource::LSRV_64BIT: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingRegisterA64::DataProcessingTwoSource::ASRV_64BIT: { // P.801 + 88
+            case DataProcessingRegisterA64::DataProcessingTwoSource::ASRV_64BIT: { // P.889
                 constexpr auto datasize   = 64;
                 auto           shift_type = DecodeShift(op2);
 
@@ -1275,13 +1275,14 @@ class System {
             case DataProcessingRegisterA64::DataProcessingOneSource::AUTIB: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingRegisterA64::DataProcessingOneSource::AUTDA: { // P.809 + 88
+            case DataProcessingRegisterA64::DataProcessingOneSource::AUTDA: { // P.897
                 auto source_is_sp = false;
                 if (!HavePACExt()) throw undefined_instruction {};
-                if (Rn == 31) source_is_sp = true;
 
                 // Will always throw since instruction is ARMv8p3
-                /*if (AArch64::HavePACExt()) {
+                /*if (Rn == 31) source_is_sp = true;
+
+                if (AArch64::HavePACExt()) {
                     if (source_is_sp) {
                         gp_registers.write(Rd, AArch64::AuthDA(gp_registers.X(Rd), ALU::SP<64>(&sp_registers), false));
                     }
@@ -1311,12 +1312,12 @@ class System {
             case DataProcessingRegisterA64::DataProcessingOneSource::AUTIZB: {
                 throw not_implemented_feature {};
             } break;
-            case DataProcessingRegisterA64::DataProcessingOneSource::AUTDZA: { // P.809 + 88
+            case DataProcessingRegisterA64::DataProcessingOneSource::AUTDZA: { // P.897
                 if (!HavePACExt()) throw undefined_instruction {};
-                auto source_is_sp = false;
-
                 // Will always throw since instruction is ARMv8p3
-                /*if (AArch64::HavePACExt()) {
+                /*auto source_is_sp = false;
+
+                if (AArch64::HavePACExt()) {
                 if (source_is_sp) {
                 gp_registers.write(Rd, AArch64::AuthDA(gp_registers.X(Rd), ALU::SP<64>(&sp_registers), false));
                 }
@@ -1399,26 +1400,27 @@ class System {
             case DataProcessingRegisterA64::AddSubtractExtendedRegister::ADD_32BIT_EXTENDED: { // P.776 + 88
                 if (imm3 > 4) throw undefined_behaviour {};
                 constexpr auto datasize = 32;
-                auto           operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto           operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto           operand2 = ExtendReg< datasize >(&gp_registers, Rm, static_cast< ExtendType >(option), imm3);
                 auto [result, _]        = AddWithCarry(operand1, operand2, static_cast< std::uint8_t >(0));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rn == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
             case DataProcessingRegisterA64::AddSubtractExtendedRegister::ADDS_32BIT_EXTENDED: { // P.784 + 88
                 if (imm3 > 4) throw undefined_behaviour {};
+                if (imm3 > 4) throw undefined_behaviour {};
                 constexpr auto datasize = 32;
-                auto           operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.W(Rn);
+                auto           operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.W(Rn);
                 auto           operand2 = ExtendReg< datasize >(&gp_registers, Rm, static_cast< ExtendType >(option), imm3);
                 auto [result, nzcv]     = AddWithCarry(operand1, operand2, static_cast< std::uint8_t >(0));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(nzcv), std::uint8_t >);
                 write_nzcv(nzcv);
                 if (Rn == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -1431,26 +1433,26 @@ class System {
             case DataProcessingRegisterA64::AddSubtractExtendedRegister::ADD_64BIT_EXTENDED: { // P.776 + 88
                 if (imm3 > 4) throw undefined_behaviour {};
                 constexpr auto datasize = 64;
-                auto           operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto           operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto           operand2 = ExtendReg< datasize >(&gp_registers, Rm, static_cast< ExtendType >(option), imm3);
                 auto [result, _]        = AddWithCarry(operand1, operand2, static_cast< std::uint8_t >(0));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 if (Rn == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
             case DataProcessingRegisterA64::AddSubtractExtendedRegister::ADDS_64BIT_EXTENDED: { // P.784 + 88
                 if (imm3 > 4) throw undefined_behaviour {};
                 constexpr auto datasize = 64;
-                auto           operand1 = Rn == 31 ? ALU::SP< datasize >(&sp_registers) : gp_registers.X(Rn);
+                auto           operand1 = Rn == 31 ? SP< datasize >(&sp_registers) : gp_registers.X(Rn);
                 auto           operand2 = ExtendReg< datasize >(&gp_registers, Rm, static_cast< ExtendType >(option), imm3);
                 auto [result, nzcv]     = AddWithCarry(operand1, operand2, static_cast< std::uint8_t >(0));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(nzcv), std::uint8_t >);
                 write_nzcv(nzcv);
                 if (Rn == 31)
-                    ALU::SP(&sp_registers, result);
+                    SP(&sp_registers, result);
                 else
                     gp_registers.write(Rd, result);
             } break;
@@ -1747,7 +1749,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     auto val = AddWithCarry(operand1, operand2, 0);
                     flags    = val.second;
                 }
@@ -1764,7 +1766,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     operand2.flip();
                     auto val = AddWithCarry(operand1, operand2, 1);
                     flags    = val.second;
@@ -1780,7 +1782,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     auto val = AddWithCarry(operand1, operand2, 0);
                     flags    = val.second;
                 }
@@ -1797,7 +1799,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     operand2.flip();
                     auto val = AddWithCarry(operand1, operand2, 1);
                     flags    = val.second;
@@ -1825,7 +1827,7 @@ class System {
                 auto operand1 = gp_registers.W(Rn);
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     auto val = AddWithCarry(operand1, imm, 0);
                     flags    = val.second;
                 }
@@ -1842,7 +1844,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 auto operand2 = std::bitset< datasize > {};
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     operand2 = ~imm;
                     auto val = AddWithCarry(operand1, operand2, 1);
                 }
@@ -1857,7 +1859,7 @@ class System {
                 auto operand1 = gp_registers.X(Rn);
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     auto val = AddWithCarry(operand1, imm, 0);
                     flags    = val.second;
                 }
@@ -1874,7 +1876,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand1), std::bitset< datasize > >);
                 auto operand2 = std::bitset< datasize > {};
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     operand2 = ~imm;
                     auto val = AddWithCarry(operand1, operand2, 1);
                 }
@@ -1902,7 +1904,7 @@ class System {
 
                 std::bitset< datasize > result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     result = operand1;
                 } else {
                     result = operand2.to_ullong() + 1;
@@ -1919,7 +1921,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
                 decltype(operand1) result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV))
+                if (ConditionHolds(cond, &sp_registers.NZCV))
                     result = operand1;
                 else
                     result = ~operand2;
@@ -1935,7 +1937,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
                 decltype(operand1) result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     result = operand1;
                 } else {
                     get_type_t< datasize > res = static_cast< get_type_t< datasize > >((~operand2).to_ullong());
@@ -1954,7 +1956,7 @@ class System {
 
                 std::bitset< datasize > result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     result = operand1;
                 } else {
                     result = operand2.to_ullong() + 1;
@@ -1971,7 +1973,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
                 decltype(operand1) result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV))
+                if (ConditionHolds(cond, &sp_registers.NZCV))
                     result = operand1;
                 else
                     result = ~operand2;
@@ -1987,7 +1989,7 @@ class System {
                 static_assert(std::is_same_v< decltype(operand2), std::bitset< datasize > >);
                 decltype(operand1) result;
 
-                if (ALU::ConditionHold(cond, &sp_registers.NZCV)) {
+                if (ConditionHolds(cond, &sp_registers.NZCV)) {
                     result = operand1;
                 } else {
                     get_type_t< datasize > res = static_cast< get_type_t< datasize > >((~operand2).to_ullong());

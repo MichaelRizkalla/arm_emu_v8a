@@ -3,7 +3,6 @@
 
 #include "internal/enums/A64AbortMode.h"
 #include "internal/enums/A64AccType.h"
-#include "internal/enums/A64BranchType.h"
 #include "internal/enums/A64Constraint.h"
 #include "internal/enums/A64Features.h"
 #include "internal/enums/A64RoundingMode.h"

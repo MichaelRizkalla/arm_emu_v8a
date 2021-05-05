@@ -8,7 +8,7 @@ namespace arm_emu {
 struct SystemSettings {
 
     template < typename TEnumType, TEnumType TValue >
-    static bool IsImplemented() noexcept;
+    constexpr static bool IsImplemented() noexcept;
 
     SystemSettings()  = delete;
     ~SystemSettings() = delete;
@@ -16,35 +16,35 @@ struct SystemSettings {
 };
 
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_DIT >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_DIT >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::EL3 >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::EL3 >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_FP16 >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_FP16 >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_PAN >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_PAN >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_SSBS >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_SSBS >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_MTE >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_MTE >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_UAO >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_UAO >() noexcept {
     return false;
 }
 template <>
-bool SystemSettings::IsImplemented< Features, Features::FEAT_BTI >() noexcept {
+constexpr bool SystemSettings::IsImplemented< Features, Features::FEAT_BTI >() noexcept {
     return false;
 }
 

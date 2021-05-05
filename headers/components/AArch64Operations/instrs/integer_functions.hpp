@@ -29,6 +29,14 @@ namespace arm_emu {
         }
     }
 
+    /// <summary>
+    /// Perform shift of a register operand
+    /// </summary>
+    /// <param name="gp_regs"></param>
+    /// <param name="reg"></param>
+    /// <param name="shifttype"></param>
+    /// <param name="amount"></param>
+    /// <returns></returns>
     template < std::size_t N, std::uint8_t MaxShift >
     [[nodiscard]] inline static std::bitset< N > ShiftReg(const GPRegisters* gp_regs, std::uint8_t reg, ShiftType shifttype, std::uint8_t amount) {
         std::bitset< N > result = gp_regs->X(reg).to_ullong();
@@ -50,7 +58,14 @@ namespace arm_emu {
         return result;
     }
 
-    // Decode AArch64 bitfield and logical immediate masks which use a similar encoding structure
+    /// <summary>
+    /// Decode AArch64 bitfield and logical immediate masks which use a similar encoding structure
+    /// </summary>
+    /// <param name="immN"></param>
+    /// <param name="imms"></param>
+    /// <param name="immr"></param>
+    /// <param name="immediate"></param>
+    /// <returns></returns>
     template < std::size_t M >
     [[nodiscard]] inline static auto DecodeBitMasks(bool immN, std::bitset< 6 > imms, std::bitset< 6 > immr, bool immediate) {
         std::bitset< M > tmask, wmask;
