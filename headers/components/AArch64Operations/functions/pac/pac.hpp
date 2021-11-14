@@ -5,7 +5,7 @@
 
 namespace arm_emu {
 
-    [[nodiscard]] inline static auto HavePACExt() noexcept {
+    [[nodiscard]] inline constexpr static auto HavePACExt() noexcept {
         return HasArchVersion(ArchVersion::ARMv8p3);
     }
 

@@ -23,23 +23,23 @@ namespace arm_emu {
     /// </summary>
     /// <param name="ver"></param>
     /// <returns></returns>
-    [[nodiscard]] inline static auto HasArchVersion(ArchVersion ver) noexcept {
+    [[nodiscard]] inline constexpr static auto HasArchVersion(ArchVersion ver) noexcept {
         return static_cast< bool >(ver == ArchVersion::ARMv8p0);
     }
 
-    [[nodiscard]] inline static auto HaveVirtHostExt() noexcept {
+    [[nodiscard]] inline constexpr static auto HaveVirtHostExt() noexcept {
         return HasArchVersion(ArchVersion::ARMv8p1);
     }
 
-    [[nodiscard]] inline static auto HaveSecureEL2Ext() noexcept {
+    [[nodiscard]] inline constexpr static auto HaveSecureEL2Ext() noexcept {
         return HasArchVersion(ArchVersion::ARMv8p4);
     }
 
-    [[nodiscard]] inline static auto HaveBTIExt() noexcept {
+    [[nodiscard]] inline constexpr static auto HaveBTIExt() noexcept {
         return HasArchVersion(ArchVersion::ARMv8p5);
     }
 
-    [[nodiscard]] inline static auto HaveFlagManipulateExt() noexcept {
+    [[nodiscard]] inline constexpr static auto HaveFlagManipulateExt() noexcept {
         return HasArchVersion(ArchVersion::ARMv8p4);
     }
 

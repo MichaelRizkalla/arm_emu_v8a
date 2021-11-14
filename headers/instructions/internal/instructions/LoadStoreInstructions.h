@@ -95,6 +95,13 @@ struct LoadStoreInstruction< LoadStoreA64::InstructionGroupEnum::LOAD_REGISTER_L
         return LoadStoreA64::getInstructionType< LoadStoreA64::InstructionGroupEnum::LOAD_REGISTER_LITERAL >(mInstruction);
     }
 
+    [[nodiscard]] auto get_Rt() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 0));
+    }
+    [[nodiscard]] auto get_imm19() const noexcept {
+        return static_cast< std::uint16_t >(static_cast< std::uint32_t >(0x7FFFF) & (mInstruction >> 5));
+    }
+
     explicit LoadStoreInstruction(const LoadStoreGroup& instruction) noexcept : LoadStoreGroup(instruction) {};
     NULL_COPY_MOVE(LoadStoreInstruction)
     ~LoadStoreInstruction() = default;
@@ -198,6 +205,25 @@ template <>
 struct LoadStoreInstruction< LoadStoreA64::InstructionGroupEnum::LOAD_STORE_REGISTER_REGISTER_OFFSET > final : public LoadStoreGroup {
     [[nodiscard]] auto getInstructionType() const noexcept {
         return LoadStoreA64::getInstructionType< LoadStoreA64::InstructionGroupEnum::LOAD_STORE_REGISTER_REGISTER_OFFSET >(mInstruction);
+    }
+
+    [[nodiscard]] auto get_Rt() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 0));
+    }
+    [[nodiscard]] auto get_Rn() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 5));
+    }
+    [[nodiscard]] auto get_S() const noexcept {
+        return readBit(12);
+    }
+    [[nodiscard]] auto get_option() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b111) & (mInstruction >> 13));
+    }
+    [[nodiscard]] auto get_Rm() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 16));
+    }
+    [[nodiscard]] auto get_size() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11) & (mInstruction >> 30));
     }
 
     explicit LoadStoreInstruction(const LoadStoreGroup& instruction) noexcept : LoadStoreGroup(instruction) {};

@@ -56,6 +56,9 @@ struct DataProcessingRegisterInstruction< DataProcessingRegisterA64::Instruction
     [[nodiscard]] inline auto get_Z() const noexcept {
         return readBit(13);
     }
+    [[nodiscard]] inline auto get_opc() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11) & (mInstruction >> 10));
+    }
 
     explicit DataProcessingRegisterInstruction(const DataProcessingRegisterGroup& instruction) noexcept : DataProcessingRegisterGroup(instruction) {};
     NULL_COPY_MOVE(DataProcessingRegisterInstruction)
@@ -258,6 +261,19 @@ template <>
 struct DataProcessingRegisterInstruction< DataProcessingRegisterA64::InstructionGroupEnum::DATA_PROCESSING_THREE_SOURCE > final : public DataProcessingRegisterGroup {
     [[nodiscard]] inline auto getInstructionType() const noexcept {
         return DataProcessingRegisterA64::getInstructionType< DataProcessingRegisterA64::InstructionGroupEnum::DATA_PROCESSING_THREE_SOURCE >(mInstruction);
+    }
+
+    [[nodiscard]] inline auto get_Rd() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 0));
+    }
+    [[nodiscard]] inline auto get_Rn() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 5));
+    }
+    [[nodiscard]] inline auto get_Ra() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 10));
+    }
+    [[nodiscard]] inline auto get_Rm() const noexcept {
+        return static_cast< std::uint8_t >(static_cast< std::uint32_t >(0b11111) & (mInstruction >> 16));
     }
 
     explicit DataProcessingRegisterInstruction(const DataProcessingRegisterGroup& instruction) noexcept : DataProcessingRegisterGroup(instruction) {};

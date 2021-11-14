@@ -194,6 +194,19 @@ namespace arm_emu {
         throw undefined_behaviour {};
     }
 
+    template < typename Type >
+    [[nodiscard]] inline static std::int64_t RoundTowardsZero(Type x) {
+        if (x == static_cast< Type >(0.0L)) {
+            return static_cast< std::int64_t >(0);
+        }
+
+        if (x >= static_cast< Type >(0.0L)) {
+            return std::floor(x);
+        } else {
+            return std::ceil(x);
+        }
+    }
+
 } // namespace arm_emu
 
 #endif // SHARED_OPERATIONS_FUNCTIONS_COMMON_HPP

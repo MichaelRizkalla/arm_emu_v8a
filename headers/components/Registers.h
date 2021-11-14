@@ -2947,4 +2947,9 @@ struct SpecialRegisters {
     UAORegister       UAO;       // User Access Override
 };
 
+// System registers
+struct SystemRegisters {
+    //TODO: Implement system registers P.3017
+};
+
 } // namespace arm_emu
