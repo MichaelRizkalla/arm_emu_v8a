@@ -1,0 +1,18 @@
+#if !defined(ARCHITECTUREPROFILE_H_INCLUDED_CC236739_53DD_4A4A_84FA_ADD5929B8145)
+    #define ARCHITECTUREPROFILE_H_INCLUDED_CC236739_53DD_4A4A_84FA_ADD5929B8145
+
+    #include <API/Api.h>
+    #include <cstdint>
+
+BEGIN_NAMESPACE
+
+enum class IProcessingUnit::ArchitectureProfile : std::uint32_t
+{
+    AArch32,
+
+    AArch64,
+};
+
+END_NAMESPACE
+
+#endif // !defined(ARCHITECTUREPROFILE_H_INCLUDED_CC236739_53DD_4A4A_84FA_ADD5929B8145)

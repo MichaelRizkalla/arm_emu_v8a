@@ -1,0 +1,18 @@
+#if !defined(INSTRUCTIONSET_H_INCLUDED_738F54D8_8780_4068_8B98_38A4EB61D3D9)
+    #define INSTRUCTIONSET_H_INCLUDED_738F54D8_8780_4068_8B98_38A4EB61D3D9
+
+    #include <API/Api.h>
+    #include <cstdint>
+
+BEGIN_NAMESPACE
+
+enum class IProcessingUnit::InstructionSet : std::uint32_t
+{
+    A32,
+    T32,
+    A64,
+};
+
+END_NAMESPACE
+
+#endif // !defined(INSTRUCTIONSET_H_INCLUDED_738F54D8_8780_4068_8B98_38A4EB61D3D9)

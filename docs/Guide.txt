@@ -1,0 +1,8 @@
+Functions are Pascal Case complaint.
+Member variable are camel case starting with m_ prefix.
+scoped variables and function parameters are name camelCase
+class static variable starts with capital letter and continue as snake case 
+free static variable and camelCase
+
+class type alias are PascalCase unless they have to 
+    comply with C++ standard (e.g. size_type, allocator_type, etc...)
