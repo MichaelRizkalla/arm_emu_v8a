@@ -1,17 +1,15 @@
 
 #include <Memory/MemoryWatcher.h>
-#include <Memory/RandomAccessMemory.h>
-#include <memory_resource>
-#include <vector>
+#include <Memory/ProgramMemory.h>
 
 BEGIN_NAMESPACE
 
-class RandomAccessMemory::Impl final {
+class ProgramMemory::Impl final {
   public:
     Impl(Object* logger, Address addressableSize) :
         m_size(addressableSize), m_memory(BuildInitialMemory(m_size)), m_watcher(), m_debugObject(*logger) {
         m_debugObject.Log(LogType::Construction, "Memory construction {}!",
-                               m_memory.size() > 0 ? "succeeded" : "failed");
+                          m_memory.size() > 0 ? "succeeded" : "failed");
     }
 
     DataUnit Read(Address address) noexcept {
@@ -118,46 +116,46 @@ class RandomAccessMemory::Impl final {
 };
 
 template < class ImplDetail >
-UniqueRef< RandomAccessMemory::Impl > RandomAccessMemory::ConstructMemory(Address arg, ImplDetail myself) {
+UniqueRef< ProgramMemory::Impl > ProgramMemory::ConstructMemory(Address arg, ImplDetail myself) {
     myself->Log(LogType::Construction, "Constructing memory of size {} Addresses!", arg);
-    std::pmr::polymorphic_allocator< RandomAccessMemory::Impl > alloc {};
+    std::pmr::polymorphic_allocator< ProgramMemory::Impl > alloc {};
 
-    return allocate_unique< RandomAccessMemory::Impl >(alloc, myself, arg);
+    return allocate_unique< ProgramMemory::Impl >(alloc, myself, arg);
 }
 
-RandomAccessMemory::RandomAccessMemory(std::string name, Address addressableSize) :
+ProgramMemory::ProgramMemory(std::string name, Address addressableSize) :
     m_memory(ConstructMemory(addressableSize, this)), IMemory(std::move(name)) {
 }
 
-RandomAccessMemory::RandomAccessMemory(RandomAccessMemory&&) noexcept = default;
+ProgramMemory::ProgramMemory(ProgramMemory&&) noexcept = default;
 
-RandomAccessMemory& RandomAccessMemory::operator=(RandomAccessMemory&&) noexcept = default;
+ProgramMemory& ProgramMemory::operator=(ProgramMemory&&) noexcept = default;
 
-RandomAccessMemory::~RandomAccessMemory() {
+ProgramMemory::~ProgramMemory() {
     Log(LogType::Destruction, "Destroying memory of size {} Addresses!", m_memory->Size());
 }
 
-RandomAccessMemory::DataUnit RandomAccessMemory::Read(Address address) noexcept {
+ProgramMemory::DataUnit ProgramMemory::Read(Address address) noexcept {
     return m_memory->Read(address);
 }
 
-DataBlock< RandomAccessMemory::DataUnit > RandomAccessMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) {
+DataBlock< ProgramMemory::DataUnit > ProgramMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) {
     return m_memory->ReadBlock(start, dataUnitCount);
 }
 
-void RandomAccessMemory::Write(Address address, DataUnit data) noexcept {
+void ProgramMemory::Write(Address address, DataUnit data) noexcept {
     return m_memory->Write(address, data);
 }
 
-void RandomAccessMemory::WriteBlock(Address start, const DataBlock< DataUnit >& data) {
+void ProgramMemory::WriteBlock(Address start, const DataBlock< DataUnit >& data) {
     return m_memory->WriteBlock(start, data);
 }
 
-RandomAccessMemory::Address RandomAccessMemory::Size() const noexcept {
+ProgramMemory::Address ProgramMemory::Size() const noexcept {
     return m_memory->Size();
 }
 
-const MemoryWatcher& RandomAccessMemory::GetMemoryWatcher() const noexcept {
+const MemoryWatcher& ProgramMemory::GetMemoryWatcher() const noexcept {
     return m_memory->GetMemoryWatcher();
 }
 

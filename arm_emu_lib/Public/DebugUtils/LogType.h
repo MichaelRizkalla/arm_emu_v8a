@@ -3,7 +3,6 @@
 
     #include <API/Api.h>
     #include <Utility/EnumBitfield.h>
-    #include <Utility/StreamableEnum.h>
     #include <cstdint>
 
 namespace arm_emu {

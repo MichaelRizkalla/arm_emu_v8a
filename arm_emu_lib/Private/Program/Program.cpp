@@ -4,34 +4,21 @@
 #include <Allocation/MemoryResourceProbe.h>
 #include <Program/Program.h>
 
-#include <Memory/RandomAccessMemory.h>
+#include <Memory/ProgramMemory.h>
 
 BEGIN_NAMESPACE
 
- ARMEMU_API Program GetTestProgram() {
+ARMEMU_API Program GetTestProgram() {
     auto memory =
-         allocate_unique< IMemory, RandomAccessMemory >(std::pmr::polymorphic_allocator< RandomAccessMemory > {}, "Program", 64_B);
+        allocate_unique< IMemory, ProgramMemory >(std::pmr::polymorphic_allocator< ProgramMemory > {}, "Program", 64_B);
 
-    auto ramMemory = reinterpret_cast< RandomAccessMemory* >(memory.get());
-    
-    ramMemory->Write(0, 0xd10043ff);
-    ramMemory->Write(1, 0x528000a0);
-    ramMemory->Write(2, 0xb9000fe0);
-    ramMemory->Write(3, 0xb9400fe0);
-    ramMemory->Write(4, 0x71000c1f);
-    ramMemory->Write(5, 0x54000061);
-    ramMemory->Write(6, 0x52800060);
-    ramMemory->Write(7, 0x14000007);
-    ramMemory->Write(8, 0xb9400fe0);
-    ramMemory->Write(9, 0x7100141f);
-    ramMemory->Write(10, 0x54000061);
-    ramMemory->Write(11, 0x528000a0);
-    ramMemory->Write(12, 0x14000002);
-    ramMemory->Write(13, 0x52800000);
-    ramMemory->Write(14, 0x910043ff);
-    ramMemory->Write(15, 0xd65f03c0);
+    auto progMemory = reinterpret_cast< ProgramMemory* >(memory.get());
+
+    progMemory->WriteBlock(0, { 0xd10043ff, 0x528000a0, 0xb9000fe0, 0xb9400fe0, 0x71000c1f, 0x54000061, 0x52800060,
+                               0x14000007, 0xb9400fe0, 0x7100141f, 0x54000061, 0x528000a0, 0x14000002, 0x52800000,
+                               0x910043ff, 0xd65f03c0 });
 
     return Program { std::move(memory), 16 };
- }
+}
 
 END_NAMESPACE
