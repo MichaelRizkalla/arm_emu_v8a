@@ -10,7 +10,7 @@ class RandomAccessMemory::Impl final {
   public:
     Impl(Object* logger, Address addressableSize) :
         m_size(addressableSize), m_memory(BuildInitialMemory(m_size)), m_watcher(), m_debugObject(*logger) {
-        m_debugObject.LogTrace(LogType::Construction, "Memory construction {}!",
+        m_debugObject.Log(LogType::Construction, "Memory construction {}!",
                                m_memory.size() > 0 ? "succeeded" : "failed");
     }
 
@@ -73,7 +73,7 @@ class RandomAccessMemory::Impl final {
                                data.Size(), start);
 
         const auto dataSize     = data.Size();
-        const auto blockEndAddr = start + dataSize - 1;
+        const auto blockEndAddr = start + dataSize + 1;
 
         // TODO: think about adding a Singleton<ErrorTracer> (?) to hold all possible error at runtime
         Preconditions(blockEndAddr);

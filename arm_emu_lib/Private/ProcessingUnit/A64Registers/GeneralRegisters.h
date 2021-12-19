@@ -19,6 +19,8 @@ enum class RegisterStatus : std::uint32_t
 };
 
 struct [[nodiscard]] GPRegisters {
+    
+    using Arch64Registers = std::array< std::bitset< 64 >, 32 >;
 
     [[nodiscard]] auto& PC() noexcept {
         return m_PC;
@@ -160,36 +162,61 @@ struct [[nodiscard]] GPRegisters {
     }
 
     auto write(std::uint8_t loc, const std::uint64_t data) noexcept {
+        if (loc == 31) {
+            SP() = data;
+            return;
+        }
         PreConditions(loc);
 
         m_registers[loc] = data;
     }
     auto write(const Bitset& loc, const std::uint64_t data) noexcept {
         auto mLoc = loc.ToULong();
+        if (mLoc == 31) {
+            SP() = data;
+            return;
+        }
         PreConditions(mLoc);
 
         m_registers[mLoc] = data;
     }
     auto write(const Bitset& loc, std::bitset< 64 > data) noexcept {
         auto mLoc = loc.ToULong();
+        if (mLoc == 31) {
+            SP() = std::move(data);
+            return;
+        }
         PreConditions(mLoc);
 
         m_registers[mLoc] = std::move(data);
     }
     auto write(const Bitset& loc, const std::uint32_t data) noexcept {
         auto mLoc = loc.ToULong();
+        if (mLoc == 31) {
+            SP() = static_cast< std::uint64_t >(data);
+            return;
+        }
         PreConditions(mLoc);
 
         m_registers[mLoc] = static_cast< std::uint64_t >(data);
     }
     auto write(const Bitset& loc, const std::bitset< 32 >& data) noexcept {
         auto mLoc = loc.ToULong();
+        if (mLoc == 31) {
+            SP() = data.to_ullong();
+            return;
+        }
         PreConditions(mLoc);
 
         m_registers[mLoc] = data.to_ullong();
     }
     auto write(const Bitset& loc, const Bitset& data) noexcept {
         auto mLoc = loc.ToULong();
+        if (mLoc == 31) {
+            assert(data.Size() <= 64);
+            SP() = data.ToULLong();
+            return;
+        }
         PreConditions(mLoc);
 
         assert(data.Size() <= 64);
@@ -217,10 +244,9 @@ struct [[nodiscard]] GPRegisters {
     };
 
     void PreConditions(std::uint8_t loc) const noexcept {
-        assert(loc >= 0 && loc <= 30);
+        assert(loc >= 0 && loc < m_registers.size());
     }
 
-    using Arch64Registers = std::array< std::bitset< 64 >, 31 >;
 
     static constexpr std::size_t Procedural_link_register_index = 30;
     // TODO: register 30's role as a link on procedure calls.

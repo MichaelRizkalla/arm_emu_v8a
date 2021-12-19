@@ -34,6 +34,10 @@ class Result::Impl final {
         return m_resultElement->GetGPRegisterValue(registerLocation);
     }
 
+    std::uint64_t GetPC() const noexcept {
+        return m_resultElement->GetPC();
+    }
+
     void WaitReady() {
         m_resultElement->WaitReady();
     }
@@ -73,6 +77,10 @@ IResult::State Result::GetState() const noexcept {
 std::uint64_t Result::GetGPRegisterValue(std::uint8_t registerLocation) const {
     assert(registerLocation < 30 && registerLocation >= 0);
     return m_result->GetGPRegisterValue(registerLocation);
+}
+
+std::uint64_t Result::GetPC() const noexcept {
+    return m_result->GetPC();
 }
 
 void Result::WaitReady() {

@@ -8,11 +8,22 @@
 namespace arm_emu {
 
     using ProgramSize = std::size_t;
-    using Program     = std::pair< ProgramSize, IMemory* >;
 
-    ARMEMU_API std::size_t GetLostMem() noexcept;
+    struct [[nodiscard]] Program : private std::pair< ProgramSize, UniqueRef< IMemory > > {
+        Program(UniqueRef< IMemory > program, ProgramSize size) :
+            std::pair< ProgramSize, UniqueRef< IMemory > >(size, std::move(program)) {
+        }
 
-    ARMEMU_API UniqueRef< IMemory > GetProgram();
+        ProgramSize GetProgramSize() const noexcept {
+            return first;
+        }
+
+        IMemory* const GetProgram() const noexcept {
+            return second.get();
+        }
+    };
+
+    ARMEMU_API Program GetTestProgram();
 
 } // namespace arm_emu
 

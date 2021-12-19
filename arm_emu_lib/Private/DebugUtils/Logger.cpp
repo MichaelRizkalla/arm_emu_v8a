@@ -1,3 +1,4 @@
+#include <DebugUtils/Log.h>
 #include <DebugUtils/Logger.h>
 #include <iostream>
 #include <set>
@@ -49,15 +50,15 @@ void Logger::SetLogLevelForTarget(LogLevel state, std::string entity) noexcept {
 }
 #endif // NDEBUG
 
-void Logger::SetLogType(LogType type) noexcept {
+void Log::SetLogType(LogType type) noexcept {
     logType = type;
 }
 
-void Logger::SetLogTarget(std::ostream* os) noexcept {
+void Log::SetLogTarget(std::ostream* os) noexcept {
     logStream = os;
 }
 
-LogType Logger::GetLogType() noexcept {
+LogType Log::GetLogType() noexcept {
     return logType;
 }
 
@@ -66,8 +67,8 @@ std::ostream* Logger::GetLogTarget() noexcept {
 }
 
 void Logger::LogInternal(LogType type, std::string&& logMsg) const {
-    if (static_cast< std::underlying_type_t< LogType > >(type) ||
-        static_cast< std::underlying_type_t< LogType > >(logType) == 0) {
+    if (!static_cast< bool >(static_cast< std::underlying_type_t< LogType > >(type) &
+                            static_cast< std::underlying_type_t< LogType > >(logType))) {
         return;
     }
 
@@ -83,8 +84,8 @@ void Logger::LogInternal(LogType type, std::string&& logMsg) const {
 
 #ifndef NDEBUG
 void Logger::LogTraceInternal(LogType type, std::string&& logMsg) const {
-    if (static_cast< std::underlying_type_t< LogType > >(type) ||
-        static_cast< std::underlying_type_t< LogType > >(logType) == 0) {
+    if (!static_cast< bool >(static_cast< std::underlying_type_t< LogType > >(type) &
+                            static_cast< std::underlying_type_t< LogType > >(logType))) {
         return;
     }
 

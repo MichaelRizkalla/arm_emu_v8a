@@ -66,12 +66,12 @@ const IProcessingUnit::ProcessState* const A64Core::GetCurrentProcessState() con
 }
 
 Result A64Core::Run(Program program) {
-    return m_processingUnit->Run(program);
+    return m_processingUnit->Run(std::move(program));
 }
 
 ControlledResult A64Core::StepIn(Program program) {
     // TODO: balance load
-    return m_processingUnit->StepIn(program);
+    return m_processingUnit->StepIn(std::move(program));
 }
 
 void A64Core::Stop() {

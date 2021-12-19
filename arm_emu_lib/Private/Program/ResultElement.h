@@ -4,6 +4,7 @@
     #include <API/API.h>
     #include <API/HiddenAPI.h>
     #include <Interrupt/Interrupt.h>
+    #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
     #include <Program/IResult.h>
     #include <array>
     #include <bitset>
@@ -16,31 +17,44 @@ BEGIN_NAMESPACE
 
 struct ARMEMU_API ResultElement : public std::enable_shared_from_this< ResultElement > {
 
+    ResultElement(bool isStepInAllowed);
     ~ResultElement();
 
     void Signal(IResult::State state) noexcept;
-    void StoreGPRegisters(std::array< std::bitset< 64 >, 31 > registerData) noexcept;
+    void StoreGPRegisters(GPRegisters::Arch64Registers registerData) noexcept;
+    void StorePC(std::uint64_t programCounter) noexcept;
 
     IResult::State GetState() const noexcept;
     std::uint64_t  GetGPRegisterValue(std::uint8_t registerLocation) const;
+    std::uint64_t  GetPC() const noexcept;
 
     void WaitReady();
     void WaitForState(IResult::State state);
 
-    void      StepInSetup(std::condition_variable_any& condVar) noexcept;
-    void      StepInFinalize() noexcept;
-    Interrupt GetStepInInterrupt() noexcept;
+    bool                         CanStepIn() const noexcept;
+    std::condition_variable_any& StepInSetup(std::condition_variable_any& condVarToTrigger,
+                                             Interrupt                    stepInDone) noexcept;
+    void                         StepInFinalize() noexcept;
+    Interrupt                    GetStepInInterrupt() noexcept;
 
     void StepIn();
+    void SignalStepInValidity(bool isStepInAllowed) noexcept;
 
   private:
-    /* TODO: rework step in function */
-    std::array< std::bitset< 64 >, 31 > m_data {};
-    IResult::State                      m_state { IResult::State::Waiting };
-    std::mutex                          m_mutex {};
-    std::condition_variable             m_condVar {};
-    Interrupt                           m_stepInSource { CreateInterrupt() };
-    std::condition_variable_any*        m_stepInCondVar { nullptr };
+    // TODO: add all read data into frame struct
+    GPRegisters::Arch64Registers m_data {};
+    std::uint64_t                m_programCounter { 0 };
+    IResult::State               m_state { IResult::State::Waiting };
+    std::mutex                   m_mutex {};
+    std::condition_variable      m_condVar {};
+
+    Interrupt                    m_stepInSource { CreateInterrupt() };
+    std::condition_variable_any* m_stepInCondVar { nullptr };
+
+    Interrupt                   m_steppedInInterrupt { nullptr };
+    std::condition_variable_any m_steppedIn {};
+
+    bool m_isStepInAllowed;
 };
 
 END_NAMESPACE

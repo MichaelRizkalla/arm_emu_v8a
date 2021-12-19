@@ -32,6 +32,7 @@ namespace arm_emu {
         virtual bool          IsReady() const noexcept                                = 0;
         virtual State         GetState() const noexcept                               = 0;
         virtual std::uint64_t GetGPRegisterValue(std::uint8_t registerLocation) const = 0;
+        virtual std::uint64_t GetPC() const noexcept                                  = 0;
         virtual void          WaitReady()                                             = 0;
         virtual void          WaitForState(IResult::State state)                      = 0;
         virtual bool          CanStepIn() const noexcept                              = 0;

@@ -15,7 +15,7 @@ MemoryResource::MemoryResource(std::string name, std::pmr::memory_resource* upSt
 }
 
 void* MemoryResource::do_allocate(std::size_t bytes, std::size_t alignment) {
-    LogTrace(LogType::Allocation, "do_allocate called with -> bytes: {}, alignment: {}", bytes, alignment);
+    Log(LogType::Allocation, "do_allocate called with -> bytes: {}, alignment: {}", bytes, alignment);
     auto result = m_upStream->allocate(bytes, alignment);
     if (result) {
         auto& probe = MemoryResourceProbe::GetInstance();
@@ -25,7 +25,7 @@ void* MemoryResource::do_allocate(std::size_t bytes, std::size_t alignment) {
 }
 
 void MemoryResource::do_deallocate(void* ptr, std::size_t bytes, std::size_t alignment) {
-    LogTrace(LogType::Deallocation, "do_deallocate called with -> ptr: {}, bytes: {}, alignment: {}", ptr, bytes,
+    Log(LogType::Deallocation, "do_deallocate called with -> ptr: {}, bytes: {}, alignment: {}", ptr, bytes,
              alignment);
     m_upStream->deallocate(ptr, bytes, alignment);
     auto& probe = MemoryResourceProbe::GetInstance();
@@ -34,7 +34,7 @@ void MemoryResource::do_deallocate(void* ptr, std::size_t bytes, std::size_t ali
 
 bool MemoryResource::do_is_equal(const memory_resource& rhs) const noexcept {
     auto rhsAddr = std::addressof(rhs);
-    LogTrace(LogType::Other, "do_is_equal called with -> this: {}, rhs: {}", static_cast< const void* >(this),
+    Log(LogType::Other, "do_is_equal called with -> this: {}, rhs: {}", static_cast< const void* >(this),
              static_cast< const void* >(rhsAddr));
     return this == rhsAddr;
 }

@@ -7,8 +7,10 @@
 #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
 #include <ProcessingUnit/A64Registers/SystemRegisters.h>
 #include <Program/ResultElement.h>
+#include <Utility/StreamableEnum.h>
 #include <atomic>
 #include <condition_variable>
+#include <queue>
 #include <set>
 
 BEGIN_NAMESPACE
@@ -27,16 +29,22 @@ namespace {
     static const std::pmr::set< IProcessingUnit::ExceptionLevel > supportedExceptionLevels {
         IProcessingUnit::ExceptionLevel::EL0, IProcessingUnit::ExceptionLevel::EL1
     };
+
+    static constexpr const char* instructionLogStatement = "Executing instruction {} as {} from {} group!";
+
 } // namespace
 
 struct A64ProcessState : public A64ProcessingUnit::ProcessState {
+    // TODO: Rework RAM-Stack accesses
+    // now processes shares same RAM, this will not work for multi-threaded apps.
+    // current status of the project is loading all programs on single ProcessingUnit, so it won't cause any bugs
+    // however, it's something to think about once multi-threading is brought up
   private:
-    struct ProgramType {
-        Program m_program;
-        bool    m_stepIn;
+    struct ProgramState {
+        Program                        m_program;
+        bool                           m_stepIn;
+        std::weak_ptr< ResultElement > m_result;
     };
-
-    using ProgramAndResult = std::pair< ProgramType, std::weak_ptr< ResultElement > >;
 
     decltype(auto) PC() {
         return m_gpRegisters.PC();
@@ -82,6 +90,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingImmediateGroup::PCRelativeAddressing::ADR: { // P.879
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::PCRelativeAddressing::ADR),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 std::bitset< 64 > imm;
                 std::bitset< 21 > temp_imm = Concat(immhi, immlo).ToULong();
                 imm                        = SignExtend< 64 >(temp_imm);
@@ -91,6 +104,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, new_addr);
             } break;
             case DataProcessingImmediateGroup::PCRelativeAddressing::ADRP: { // P.880
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::PCRelativeAddressing::ADRP),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 std::bitset< 64 >      imm;
                 std::bitset< 21 + 12 > temp_imm = concate< 21, 12 >(Concat(immhi, immlo).ToULong(), 0);
                 imm                             = SignExtend< 64 >(temp_imm);
@@ -115,6 +133,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingImmediateGroup::AddSubtractImmediate::ADDi_32BIT: { // P.867
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::ADDi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< datasize > imm;
@@ -134,6 +157,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::ADDSi_32BIT: { // P.875
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::ADDSi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< datasize > imm;
@@ -151,6 +179,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::SUBi_32BIT: { // P.1439
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::SUBi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< datasize > imm;
@@ -171,6 +204,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::SUBSi_32BIT: { // P.1449
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::SUBSi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< datasize > imm;
@@ -190,6 +228,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::ADDi_64BIT: { // P.867
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::ADDi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< datasize > imm;
@@ -209,6 +252,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::ADDSi_64BIT: { // P.875
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::ADDSi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< datasize > imm;
@@ -227,6 +275,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::SUBi_64BIT: { // P.1439
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::SUBi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< datasize > imm;
@@ -248,6 +301,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::AddSubtractImmediate::SUBSi_64BIT: { // P.1449
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate::SUBSi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< datasize > imm;
@@ -282,6 +340,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingImmediateGroup::LogicalImmediate::AND_32BIT: { // P.881
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::AND_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N != 0) {
                     throw undefined_behaviour {};
                 }
@@ -299,6 +362,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::ORR_32BIT: { // P.1240
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::ORR_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N != 0) {
                     throw undefined_behaviour {};
                 }
@@ -318,6 +386,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::EOR_32BIT: { // P.1006
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::EOR_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N != 0) {
                     throw undefined_behaviour {};
                 }
@@ -337,6 +410,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::ANDS_32BIT: { // P.885
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::ANDS_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N == 0) {
                     throw undefined_behaviour {};
                 }
@@ -358,6 +436,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::AND_64BIT: { // P.881
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::AND_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 auto [imm, _] = DecodeBitMasks< datasize >(static_cast< bool >(N), imms, immr, true);
@@ -375,6 +458,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::ORR_64BIT: { // P.1240
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::ORR_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 auto [imm, _] = DecodeBitMasks< datasize >(static_cast< bool >(N), imms, immr, true);
@@ -391,6 +479,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::EOR_64BIT: { // P.1006
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::EOR_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 auto [imm, _] = DecodeBitMasks< datasize >(static_cast< bool >(N), imms, immr, true);
@@ -407,6 +500,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingImmediateGroup::LogicalImmediate::ANDS_64BIT: { // // P.885
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate::ANDS_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 auto [imm, _] = DecodeBitMasks< datasize >(static_cast< bool >(N), imms, immr, true);
@@ -437,6 +535,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVN_32BIT: { // P.1215
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVN_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (hw.ToULong() >= 2) {
                     throw undefined_behaviour {};
                 }
@@ -453,6 +556,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVZ_32BIT: { // P.1217
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVZ_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (hw.ToULong() >= 2) {
                     throw undefined_behaviour {};
                 }
@@ -467,6 +575,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVK_32BIT: { // P.1213
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVK_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (hw.ToULong() >= 2) {
                     throw undefined_behaviour {};
                 }
@@ -482,6 +595,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVN_64BIT: { // P.1215
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVN_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::uint8_t            pos = hw.ToULong() << 4;
@@ -495,6 +613,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVZ_64BIT: { // P.1217
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVZ_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::uint8_t            pos = hw.ToULong() << 4;
@@ -506,6 +629,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingImmediateGroup::MoveWideImmediate::MOVK_64BIT: { // P.1213
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate::MOVK_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 std::uint8_t pos    = hw.ToULong() << 4;
@@ -531,6 +659,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingImmediateGroup::Bitfield::SBFM_32BIT: { // P.1288
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::Bitfield::SBFM_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 32;
 
                 auto R = static_cast< int >(immr.ToULong());
@@ -555,6 +688,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, bot_AND_tmask | top_AND_NOT_tmask);
             } break;
             case DataProcessingImmediateGroup::Bitfield::BFM_32BIT: { // P.910
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::Bitfield::BFM_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N != 0 || immr[5] != 0 || imms[5] != 0)
                     throw undefined_behaviour {};
                 constexpr auto datasize = 32;
@@ -576,6 +714,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingImmediateGroup::Bitfield::SBFM_64BIT: { // P.1288
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::Bitfield::SBFM_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 constexpr auto datasize = 64;
 
                 auto R = static_cast< int >(immr.ToULong());
@@ -600,6 +743,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, bot_AND_tmask | top_AND_NOT_tmask);
             } break;
             case DataProcessingImmediateGroup::Bitfield::BFM_64BIT: { // P.910
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingImmediateGroup::Bitfield::BFM_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingImmediate));
+
                 if (N != 1)
                     throw undefined_behaviour {};
                 constexpr auto datasize = 64;
@@ -635,6 +783,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::ConditionalBranching::BCond: { // P.904
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::ConditionalBranching::BCond),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 std::bitset< 64 > offset =
                     SignExtend< 64, 21 >(imm19.Concat(Bitset { 2, 0 }).ToULLong() / sizeof(IMemory::DataUnit));
                 const auto pc = PC() - 1;
@@ -661,6 +814,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case BranchExceptionSystemGroup::ExceptionGeneration::BRK: { // P.925
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::ExceptionGeneration::BRK),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 // TODO
                 // if (AArch64::HaveBTIExt()) always false
                 // SetBTypeCompatible(TRUE);
@@ -690,6 +848,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::PState::CFINV: {
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::PState::CFINV),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 if (!HaveFlagManipulateExt()) {
                     throw unsupported_instruction {};
                 }
@@ -700,6 +863,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
             } break;
             case BranchExceptionSystemGroup::PState::AXFLAG: {
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::PState::AXFLAG),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 if (!HaveFlagManipulateExt())
                     throw unsupported_instruction {};
 
@@ -726,6 +894,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::SystemInstruction::SYS: { // P.1465
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::SystemInstruction::SYS),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 AArch64CheckSystemAccess(0b01, op1.ToULong(), CRn.ToULong(), CRm.ToULong(), op2.ToULong(), Rt.ToULong(),
                                          L.ToULong());
 
@@ -755,6 +928,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::SystemRegisterMove::MSRr: { // P.1223
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::SystemRegisterMove::MSRr),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 auto op0 = static_cast< std::uint8_t >(2) + static_cast< std::uint8_t >(o0);
 
                 AArch64CheckSystemAccess(op0, op1.ToULong(), CRn.ToULong(), CRm.ToULong(), op2.ToULong(), Rt.ToULong(),
@@ -763,6 +941,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SysRegWrite(op0, op1.ToULong(), CRn.ToULong(), CRm.ToULong(), op2.ToULong(), m_gpRegisters.X(Rt));
             } break;
             case BranchExceptionSystemGroup::SystemRegisterMove::MRS: { // P.1219
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::SystemRegisterMove::MRS),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 auto op0 = static_cast< std::uint8_t >(2) + static_cast< std::uint8_t >(o0);
 
                 m_gpRegisters.write(Rt, SysRegRead(op0, op1.ToULong(), CRn.ToULong(), CRm.ToULong(), op2.ToULong()));
@@ -781,6 +964,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::UnconditionalBranchRegister::BR: { // P.922
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchRegister::BR),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 const auto& target = m_gpRegisters.X(Rn);
                 static_assert(std::is_same_v< std::remove_cvref_t< decltype(target) >, std::bitset< 64 > >);
 
@@ -793,6 +981,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case BranchExceptionSystemGroup::UnconditionalBranchRegister::BLR: { // P.919
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchRegister::BLR),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 const auto& target = m_gpRegisters.X(Rn);
                 static_assert(std::is_same_v< std::remove_cvref_t< decltype(target) >, std::bitset< 64 > >);
 
@@ -807,6 +1000,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case BranchExceptionSystemGroup::UnconditionalBranchRegister::RET: { // P.1265
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchRegister::RET),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 const auto& target = m_gpRegisters.X(Rn);
                 static_assert(std::is_same_v< std::remove_cvref_t< decltype(target) >, std::bitset< 64 > >);
                 BranchTo(target.to_ullong(), IProcessingUnit::BranchType::Ret);
@@ -859,12 +1057,22 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::UnconditionalBranchImmediate::B: { // P.905
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchImmediate::B),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 std::bitset< 64 > offset =
                     (SignExtend< 64 >(concate< 26, 2 >(imm26.ToULong(), 0)).to_ullong() / sizeof(IMemory::DataUnit));
                 const auto pc = PC();
                 BranchTo(pc + offset.to_ullong(), IProcessingUnit::BranchType::Dir);
             } break;
             case BranchExceptionSystemGroup::UnconditionalBranchImmediate::BL: { // P.918
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchImmediate::BL),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 std::bitset< 64 > offset =
                     (SignExtend< 64 >(concate< 26, 2 >(imm26.ToULong(), 0)).to_ullong() / sizeof(IMemory::DataUnit));
                 const auto pc = PC();
@@ -882,6 +1090,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case BranchExceptionSystemGroup::CompareAndBranchImmediate::CBZ_32BIT: { // P.939
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate::CBZ_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 constexpr auto datasize = 32;
 
                 auto offset = SignExtend< 64 >(concate< 19, 2 >(imm19.ToULong(), 0));
@@ -895,6 +1108,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case BranchExceptionSystemGroup::CompareAndBranchImmediate::CBNZ_32BIT: { // P.938
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate::CBNZ_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 constexpr auto datasize = 32;
 
                 auto offset = SignExtend< 64 >(concate< 19, 2 >(imm19.ToULong(), 0));
@@ -908,6 +1126,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case BranchExceptionSystemGroup::CompareAndBranchImmediate::CBZ_64BIT: { // P.939
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate::CBZ_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 constexpr auto datasize = 64;
 
                 auto offset = SignExtend< 64 >(concate< 19, 2 >(imm19.ToULong(), 0));
@@ -921,6 +1144,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case BranchExceptionSystemGroup::CompareAndBranchImmediate::CBNZ_64BIT: { // P.938
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate::CBNZ_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::BranchExceptionSystem));
+
                 constexpr auto datasize = 64;
 
                 auto offset = SignExtend< 64 >(concate< 19, 2 >(imm19.ToULong(), 0));
@@ -991,6 +1219,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case LoadStoreGroup::LoadRegisterLiteral::PRFM_LITERAL: { // P.1255
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadRegisterLiteral::PRFM_LITERAL),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
                 // No-op
                 // This system emulation is depending on O(1) memory access, no operation is needed to pre-fetch
             } break;
@@ -1181,6 +1413,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case LoadStoreGroup::LoadStoreRegisterRegisterOffset::PRFMr: { // P.1257
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadStoreRegisterRegisterOffset::PRFMr),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
                 // No-op
                 // This system emulation is depending on O(1) memory access, no operation is needed to pre-fetch
             } break;
@@ -1243,6 +1479,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             } break;
             case LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::STRi_32BIT: { // P.1261 + 88
                 // TODO
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::STRi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
+
                 if (size != 0b10) {
                     throw undefined_behaviour {};
                 }
@@ -1308,6 +1549,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::LDRi_32BIT: { // // P.997 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::LDRi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
+
                 if (size != 0b10) {
                     throw undefined_behaviour {};
                 }
@@ -1378,6 +1624,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::STRi_64BIT: { // P.1261 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::STRi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
+
                 /**/
                 if (size != 0b11) {
                     throw undefined_behaviour {};
@@ -1443,6 +1694,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::LDRi_64BIT: { // P.997 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate::LDRi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::LoadStore));
+
                 if (size != 0b11) {
                     throw undefined_behaviour {};
                 }
@@ -1530,6 +1786,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::SDIV_32BIT: { // P.1293
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::SDIV_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto               operand1 = m_gpRegisters.W(Rn);
@@ -1555,6 +1816,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::ASRV_32BIT: { // P.889
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::ASRV_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto shift_type = DecodeShift(op2);
@@ -1570,6 +1836,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::RORV_32BIT: { // P.1279
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::RORV_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto shift_type = DecodeShift(op2);
@@ -1608,6 +1879,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::SDIV_64BIT: { // P.1293
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::SDIV_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto               operand1 = m_gpRegisters.X(Rn);
@@ -1639,6 +1915,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::ASRV_64BIT: { // P.889
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::ASRV_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize   = 64;
                 auto           shift_type = DecodeShift(op2);
 
@@ -1652,6 +1933,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingTwoSource::RORV_64BIT: { // P.1279
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource::RORV_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type = DecodeShift(op2);
@@ -1694,6 +1980,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::DataProcessingOneSource::RBIT_32BIT: { // P.1263
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::RBIT_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto operand = m_gpRegisters.W(Rn);
@@ -1706,6 +1997,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::REV16_32BIT: { // P.1269
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::REV16_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 int container_size {};
@@ -1754,6 +2050,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::REV_32BIT: { // P.1267
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::REV_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 int container_size {};
@@ -1808,6 +2109,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::RBIT_64BIT: { // P.1263
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::RBIT_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto operand = m_gpRegisters.X(Rn);
@@ -1820,6 +2126,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::REV16_64BIT: { // P.1269
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::REV16_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 int container_size {};
@@ -1868,6 +2179,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::REV32: { // P.1271
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::REV32),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 int container_size {};
@@ -1916,6 +2232,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::REV_64BIT: { // P.1267
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::REV_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 int container_size {};
@@ -2004,6 +2325,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::AUTDA: { // P.897
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::AUTDA),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 auto source_is_sp = false;
                 if (!HavePACExt())
                     throw unsupported_instruction {};
@@ -2059,6 +2385,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::DataProcessingOneSource::AUTDZA: { // P.897
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource::AUTDZA),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (!HavePACExt()) {
                     throw unsupported_instruction {};
                 } else { // Will always throw since instruction is ARMv8p3
@@ -2097,6 +2428,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::LogicalShiftedRegister::AND_32BIT_SHIFTED: { // P.795 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::AND_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (static_cast< bool >(imm6.ToULong() & 0b100000) == true)
                     throw undefined_behaviour {};
                 constexpr auto datasize   = 32;
@@ -2110,6 +2446,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::BIC_32BIT_SHIFTED: { // P.826 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::BIC_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 if (imm6.ToULong() >= 32)
                     throw undefined_instruction {};
@@ -2127,6 +2468,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ORR_32BIT_SHIFTED: { // P.1242
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ORR_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 if (imm6.ToULong() >= 32)
                     throw undefined_instruction {};
@@ -2144,6 +2490,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ORN_32BIT_SHIFTED: { // P.1238
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ORN_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 if (imm6.ToULong() >= 32)
                     throw undefined_instruction {};
@@ -2164,6 +2515,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::EON_32BIT_SHIFTED: { // P.914 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::EON_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 if (imm6.ToULong() >= 32)
                     throw undefined_instruction {};
@@ -2184,6 +2540,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ANDS_32BIT_SHIFTED: { // P.799 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ANDS_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (static_cast< bool >(imm6.ToULong() & 0b100000) == true)
                     throw undefined_behaviour {};
                 constexpr auto datasize   = 32;
@@ -2199,6 +2560,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::BICS_32BIT_SHIFTED: { // P.828 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::BICS_32BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 if (imm6.ToULong() >= 32)
                     throw undefined_instruction {};
@@ -2218,6 +2584,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::AND_64BIT_SHIFTED: { // P.795 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::AND_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 auto           shift_type = DecodeShift(shift);
                 constexpr auto datasize   = 64;
 
@@ -2229,6 +2600,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::BIC_64BIT_SHIFTED: { // P.826 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::BIC_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type   = DecodeShift(shift);
@@ -2244,6 +2620,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ORR_64BIT_SHIFTED: { // P.1242
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ORR_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type   = DecodeShift(shift);
@@ -2258,6 +2639,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ORN_64BIT_SHIFTED: { // P.1238
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ORN_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type   = DecodeShift(shift);
@@ -2276,6 +2662,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::EON_64BIT_SHIFTED: { // P.914 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::EON_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type   = DecodeShift(shift);
@@ -2294,6 +2685,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::ANDS_64BIT_SHIFTED: { // P.799 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::ANDS_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 auto           shift_type = DecodeShift(shift);
                 constexpr auto datasize   = 64;
 
@@ -2307,6 +2703,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::LogicalShiftedRegister::BICS_64BIT_SHIFTED: { // P.828 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister::BICS_64BIT_SHIFTED),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto shift_type   = DecodeShift(shift);
@@ -2337,6 +2738,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADD_32BIT_SHIFTED: { // P.781 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADD_32BIT_SHIFTED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (shift == 3) {
                     throw undefined_behaviour {};
                 }
@@ -2355,6 +2761,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADDS_32BIT_SHIFTED: {
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADDS_32BIT_SHIFTED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (shift == 3) {
                     throw undefined_behaviour {};
                 }
@@ -2381,6 +2792,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADD_64BIT_SHIFTED: { // P.781 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADD_64BIT_SHIFTED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (shift == 3) {
                     throw undefined_behaviour {};
                 }
@@ -2395,6 +2811,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
             } break;
             case DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADDS_64BIT_SHIFTED: {
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister::ADDS_64BIT_SHIFTED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (shift == 3) {
                     throw undefined_behaviour {};
                 }
@@ -2431,6 +2852,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADD_32BIT_EXTENDED: { // P.776 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADD_32BIT_EXTENDED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (imm3.ToULong() > 4) {
                     throw undefined_behaviour {};
                 }
@@ -2447,6 +2873,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADDS_32BIT_EXTENDED: { // P.784 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADDS_32BIT_EXTENDED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (imm3.ToULong() > 4) {
                     throw undefined_behaviour {};
                 }
@@ -2474,6 +2905,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADD_64BIT_EXTENDED: { // P.776 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADD_64BIT_EXTENDED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (imm3.ToULong() > 4) {
                     throw undefined_behaviour {};
                 }
@@ -2490,6 +2926,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
             } break;
             case DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADDS_64BIT_EXTENDED: { // P.784 + 88
+                m_debugObject.Log(
+                    LogType::Instruction, instructionLogStatement, std::bitset< 32 > { instruction.Get() }.to_string(),
+                    Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister::ADDS_64BIT_EXTENDED),
+                    Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 if (imm3.ToULong() > 4) {
                     throw undefined_behaviour {};
                 }
@@ -2525,6 +2966,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::AddSubtractCarry::ADC_32BIT: { // P.772 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::ADC_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 auto [result, _] =
                     AddWithCarry(m_gpRegisters.W(Rn), m_gpRegisters.W(Rm), static_cast< std::uint32_t >(C[0]));
@@ -2532,6 +2978,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::ADCS_32BIT: { // P.774 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::ADCS_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 auto [result, nzcv] =
                     AddWithCarry(m_gpRegisters.W(Rn), m_gpRegisters.W(Rm), static_cast< std::uint32_t >(C[0]));
@@ -2541,6 +2992,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::SBC_32BIT: { // P.1282
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::SBC_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto               operand1 = m_gpRegisters.W(Rn);
@@ -2555,6 +3011,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::SBCS_32BIT: { // P.1284
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::SBCS_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto               operand1 = m_gpRegisters.W(Rn);
@@ -2570,6 +3031,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::ADC_64BIT: { // P.772 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::ADC_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
                 auto [result, _] =
                     AddWithCarry(m_gpRegisters.X(Rn), m_gpRegisters.X(Rm), static_cast< std::uint64_t >(C[0]));
@@ -2577,6 +3043,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::ADCS_64BIT: { // P.774 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::ADCS_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
                 auto [result, nzcv] =
                     AddWithCarry(m_gpRegisters.X(Rn), m_gpRegisters.X(Rm), static_cast< std::uint64_t >(C[0]));
@@ -2586,6 +3057,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::SBC_64BIT: { // P.1282
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::SBC_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto               operand1 = m_gpRegisters.X(Rn);
@@ -2600,6 +3076,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::AddSubtractCarry::SBCS_64BIT: { // P.1284
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry::SBCS_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto               operand1 = m_gpRegisters.X(Rn);
@@ -2633,6 +3114,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::ConditionalCompareRegister::CCMNr_32BIT: { // P.854 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister::CCMNr_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto   datasize = 32;
                 std::bitset< 4 > flags    = nzcv.ToULong();
 
@@ -2649,6 +3135,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareRegister::CCMPr_32BIT: { // P.858 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister::CCMPr_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2666,6 +3157,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareRegister::CCMNr_64BIT: { // P.854 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister::CCMNr_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto   datasize = 64;
                 std::bitset< 4 > flags    = nzcv.ToULong();
 
@@ -2682,6 +3178,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareRegister::CCMPr_64BIT: { // P.858 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister::CCMPr_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2711,6 +3212,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMNi_32BIT: { // P.852 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMNi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2726,6 +3232,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMPi_32BIT: { // P.856 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMPi_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2743,6 +3254,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMNi_64BIT: { // P.852 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMNi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2758,6 +3274,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 SetNZCV(flags);
             } break;
             case DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMPi_64BIT: { // P.856 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate::CCMPi_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 std::bitset< 4 > flags = nzcv.ToULong();
@@ -2790,6 +3311,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSINC_32BIT: { // P.896 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSINC_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
                 auto           operand1 = m_gpRegisters.W(Rn);
                 auto           operand2 = m_gpRegisters.W(Rm);
@@ -2804,6 +3330,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSINV_32BIT: { // P.898 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSINV_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto operand1 = m_gpRegisters.W(Rn);
@@ -2821,6 +3352,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSNEG_32BIT: { // P.900 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSNEG_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto operand1 = m_gpRegisters.W(Rn);
@@ -2842,6 +3378,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 throw not_implemented_feature {};
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSINC_64BIT: { // P.896 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSINC_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
                 auto           operand1 = m_gpRegisters.X(Rn);
                 auto           operand2 = m_gpRegisters.X(Rm);
@@ -2856,6 +3397,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSINV_64BIT: { // P.898 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSINV_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto operand1 = m_gpRegisters.X(Rn);
@@ -2873,6 +3419,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::ConditionalSelect::CSNEG_64BIT: { // P.900 + 88
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect::CSNEG_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto operand1 = m_gpRegisters.X(Rn);
@@ -2903,6 +3454,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         switch (instructionType) {
             case DataProcessingRegisterGroup::DataProcessingThreeSource::MADD_32BIT: { // P.1200
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::MADD_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto operand1 = m_gpRegisters.W(Rn);
@@ -2919,6 +3475,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingThreeSource::MSUB_32BIT: { // P.1224
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::MSUB_32BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 32;
 
                 auto operand1 = m_gpRegisters.W(Rn);
@@ -2935,6 +3496,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingThreeSource::MADD_64BIT: { // P.1200
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::MADD_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto operand1 = m_gpRegisters.X(Rn);
@@ -2951,6 +3517,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingThreeSource::MSUB_64BIT: { // P.1224
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::MSUB_64BIT),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 constexpr auto datasize = 64;
 
                 auto operand1 = m_gpRegisters.X(Rn);
@@ -2967,6 +3538,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, result);
             } break;
             case DataProcessingRegisterGroup::DataProcessingThreeSource::SMADDL: { // P.1297
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::SMADDL),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 std::bitset< 32 > operand1 = m_gpRegisters.W(Rn);
                 std::bitset< 32 > operand2 = m_gpRegisters.W(Rm);
                 std::bitset< 64 > operand3 = m_gpRegisters.X(Ra);
@@ -2978,6 +3554,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_gpRegisters.write(Rd, std::bit_cast< std::uint64_t >(result));
             } break;
             case DataProcessingRegisterGroup::DataProcessingThreeSource::SMSUBL: { // P.1301
+                m_debugObject.Log(LogType::Instruction, instructionLogStatement,
+                                  std::bitset< 32 > { instruction.Get() }.to_string(),
+                                  Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource::SMSUBL),
+                                  Enum::ToChar(A64DecodeGroup::DataProcessingRegister));
+
                 std::bitset< 32 > operand1 = m_gpRegisters.W(Rn);
                 std::bitset< 32 > operand2 = m_gpRegisters.W(Rm);
                 std::bitset< 64 > operand3 = m_gpRegisters.X(Ra);
@@ -3888,25 +4469,37 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         m_status(IProcessingUnit::ProcessStatus::Idle),
         m_upStreamMemory(upStreamMemory),
         m_stackMemory(std::move(stackMemory)),
-        m_programs({}),
+        m_programs(),
         m_watcher(watcher),
         m_debugObject(*logger),
+        m_programMutex(),
         m_stopRunningInterrupt(nullptr),
         m_gpRegisters(*this) {
     }
 
-    Result SetProgram(const Program program) {
-        m_debugObject.LogTrace(LogType::Other, "Adding program {}!", static_cast< const void* const >(program.second));
-        auto resultElement = std::allocate_shared< ResultElement >(std::pmr::polymorphic_allocator< ResultElement > {});
-        m_programs.emplace_back(ProgramType { program, false }, resultElement->weak_from_this());
+    Result SetProgram(Program program) {
+        constexpr bool isStepInAllowed = false;
+        m_debugObject.LogTrace(LogType::Other, "Adding program {}!",
+                               static_cast< const void* const >(program.GetProgram()));
+        auto resultElement =
+            std::allocate_shared< ResultElement >(std::pmr::polymorphic_allocator< ResultElement > {}, isStepInAllowed);
+        {
+            std::unique_lock lock { m_programMutex };
+            m_programs.emplace(std::move(program), isStepInAllowed, resultElement->weak_from_this());
+        }
         return Result { std::move(resultElement) };
     }
 
-    ControlledResult SetProgramToStepIn(const Program program) {
+    ControlledResult SetProgramToStepIn(Program program) {
+        constexpr bool isStepInAllowed = true;
         m_debugObject.LogTrace(LogType::Other, "Adding program {} to step in!",
-                               static_cast< const void* const >(program.second));
-        auto resultElement = std::allocate_shared< ResultElement >(std::pmr::polymorphic_allocator< ResultElement > {});
-        m_programs.emplace_back(ProgramType { program, true }, resultElement->weak_from_this());
+                               static_cast< const void* const >(program.GetProgram()));
+        auto resultElement =
+            std::allocate_shared< ResultElement >(std::pmr::polymorphic_allocator< ResultElement > {}, isStepInAllowed);
+        {
+            std::unique_lock lock { m_programMutex };
+            m_programs.emplace(std::move(program), isStepInAllowed, resultElement->weak_from_this());
+        }
         return ControlledResult { std::move(resultElement) };
     }
 
@@ -3919,7 +4512,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
     }
 
     IMemory const* GetCurrentProgramMemory() const noexcept {
-        return m_programs.size() > 0 ? m_programs.at(0).first.m_program.second : nullptr;
+        return m_programs.size() > 0 ? m_programs.front().m_program.GetProgram() : nullptr;
     }
 
     IProcessingUnit::ProcessStatus GetStatus() const noexcept {
@@ -3929,39 +4522,71 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
     void Run(Interrupt interrupt, std::condition_variable& runProcessCondVar,
              std::condition_variable_any& stepInCondVar) {
         if (m_programs.size() == 0) {
-            m_debugObject.LogTrace(LogType::Other, "Run(): no programs found to run!");
+            m_debugObject.Log(LogType::Other, "Run(): no programs found to run!");
             return;
         }
 
         m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() is running!");
 
-        Program                          currentProgram = m_programs.at(0).first.m_program;
-        bool                             doStepIn       = m_programs.at(0).first.m_stepIn;
-        std::shared_ptr< ResultElement > currentResult  = m_programs.at(0).second.lock();
+        auto                             currentProgramMemory = m_programs.front().m_program.GetProgram();
+        ProgramSize                      currentProgramSize   = m_programs.front().m_program.GetProgramSize();
+        bool                             doStepIn             = m_programs.front().m_stepIn;
+        std::shared_ptr< ResultElement > currentResult        = m_programs.front().m_result.lock();
 
         m_stopRunningInterrupt = interrupt;
         m_status.store(IProcessingUnit::ProcessStatus::Running, std::memory_order_seq_cst);
-
+        Interrupt                    stepInDoneInterrupt {};
+        std::condition_variable_any* stepInDoneCondVar { nullptr };
         if (doStepIn && currentResult) {
-            currentResult->StepInSetup(stepInCondVar);
+            if (!stepInDoneInterrupt) {
+                stepInDoneInterrupt = CreateInterrupt();
+            }
+            stepInDoneCondVar = std::addressof(currentResult->StepInSetup(stepInCondVar, stepInDoneInterrupt));
         }
 
-        while (currentProgram.second && !m_stopRunningInterrupt->IsTriggered()) {
+        while (currentProgramMemory && !m_stopRunningInterrupt->IsTriggered()) {
+            m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() is starting program {} in {} mode!",
+                              static_cast< const void* >(currentProgramMemory), doStepIn ? "StepIn" : "Run");
+
             if (currentResult) {
-                currentResult->Signal(doStepIn ? IResult::State::StepInMode : IResult::State::Running);
+                currentResult->Signal(doStepIn ? IResult::State::Waiting : IResult::State::Running);
             }
-            m_debugObject.LogTrace(LogType::Other, "ProcessingUnit::Run() is starting program {} in {} mode!",
-                                   static_cast< const void* >(currentProgram.second), doStepIn ? "StepIn" : "Run");
-            auto& memory = currentProgram.second;
+
+            auto& memory = currentProgramMemory;
             bool  setup  = true;
             while (!m_stopRunningInterrupt->IsTriggered() &&
                    (!doStepIn || (doStepIn && currentResult) /* If result is destroyed then ignore the program */)) {
                 // TODO: implement program handle
                 if (setup) {
-                    SetupRegisters(currentProgram);
+                    SetupRegisters();
                     setup = false;
                 }
-                if (PC() >= currentProgram.first) {
+
+                if (doStepIn) {
+                    if (currentResult) {
+                        currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
+                        currentResult->StorePC(PC());
+                        // TODO: Store more vars
+                        std::mutex       localMutex {};
+                        std::unique_lock localLock { localMutex };
+                        auto             stepInInterrupt = currentResult->GetStepInInterrupt();
+                        stepInDoneInterrupt->Trigger();
+                        stepInDoneCondVar->notify_one();
+                        currentResult->Signal(IResult::State::StepInMode);
+                        stepInCondVar.wait(localLock, [=]() {
+                            return stepInInterrupt->IsTriggered() || m_stopRunningInterrupt->IsTriggered();
+                        });
+                    } else {
+                        break;
+                    }
+                }
+
+                if (PC() >= currentProgramSize) {
+                    if (doStepIn && currentResult) {
+                        currentResult->SignalStepInValidity(false);
+                        stepInDoneInterrupt->Trigger();
+                        stepInDoneCondVar->notify_one();
+                    }
                     break; // Program ended
                 }
 
@@ -3976,36 +4601,21 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 try {
                     Execute(std::move(instruction), decodeGroup);
                 } catch (undefined_instruction) {
-                    m_debugObject.LogTrace(LogType::Other, "Program {} is using an undefined instruction!",
-                                           static_cast< const void* >(currentProgram.second));
-                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgram.second));
+                    m_debugObject.Log(LogType::Other, "Program {} is using an undefined instruction!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
                 } catch (undefined_behaviour) {
-                    m_debugObject.LogTrace(LogType::Other, "Program {} caused undefined behaviour!",
-                                           static_cast< const void* >(currentProgram.second));
-                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgram.second));
+                    m_debugObject.Log(LogType::Other, "Program {} caused undefined behaviour!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
                 } catch (undefined_register_access) {
-                    m_debugObject.LogTrace(LogType::Other, "Program {} triggered undefined register access!",
-                                           static_cast< const void* >(currentProgram.second));
-                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgram.second));
+                    m_debugObject.Log(LogType::Other, "Program {} triggered undefined register access!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
                 } catch (not_implemented_feature) {
-                    m_debugObject.LogTrace(LogType::Other, "Program {} is running using a non-implemented feature!",
-                                           static_cast< const void* >(currentProgram.second));
-                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgram.second));
-                }
-
-                if (doStepIn) {
-                    if (currentResult) {
-                        currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
-                        // TODO: Store more vars
-                        std::mutex       localMutex {};
-                        std::unique_lock localLock { localMutex };
-                        auto             stepInInterrupt = currentResult->GetStepInInterrupt();
-                        stepInCondVar.wait(localLock, [=]() {
-                            return stepInInterrupt->IsTriggered() || m_stopRunningInterrupt->IsTriggered();
-                        });
-                    } else {
-                        break;
-                    }
+                    m_debugObject.Log(LogType::Other, "Program {} is running using a non-implemented feature!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
                 }
             }
 
@@ -4037,17 +4647,22 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                     // TODO: Store more variables
                 }
             }
-            m_debugObject.LogTrace(LogType::Other, "ProcessingUnit::Run() finished executing program {}!",
-                                   static_cast< const void* >(currentProgram.second));
-            m_programs.erase(m_programs.begin());
+            m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() finished executing program {}!",
+                              static_cast< const void* >(currentProgramMemory));
+            {
+                std::unique_lock lock { m_programMutex };
+                m_programs.pop();
+            }
             if (m_programs.size() > 0) {
-                currentProgram                                 = m_programs.at(0).first.m_program;
-                doStepIn                                       = m_programs.at(0).first.m_stepIn;
-                std::shared_ptr< ResultElement > currentResult = m_programs.at(0).second.lock();
+                auto                             currentProgramMemory = m_programs.front().m_program.GetProgram();
+                ProgramSize                      currentProgramSize   = m_programs.front().m_program.GetProgramSize();
+                bool                             doStepIn             = m_programs.front().m_stepIn;
+                std::shared_ptr< ResultElement > currentResult        = m_programs.front().m_result.lock();
             } else {
-                currentProgram = { 0, nullptr };
-                doStepIn       = false;
-                currentResult  = nullptr;
+                currentProgramMemory = nullptr;
+                currentProgramSize   = 0;
+                doStepIn             = false;
+                currentResult        = nullptr;
             }
         }
 
@@ -4075,19 +4690,23 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         auto status = m_status.load(std::memory_order_seq_cst);
         assert(status != IProcessingUnit::ProcessStatus::Running && "Impossible to reset a running process state!");
 
-        if (status == IProcessingUnit::ProcessStatus::Interrupted) {
-            m_programs.erase(m_programs.begin());
+        if (status == IProcessingUnit::ProcessStatus::Interrupted &&
+            m_programs.size() > 0 /* Interrupted a running a program */) {
+            {
+                std::unique_lock lock { m_programMutex };
+                m_programs.pop();
+            }
+            m_watcher.RecordProcessHandled();
         }
         m_upStreamMemory->ClearCache();
         m_status.store(IProcessingUnit::ProcessStatus::Idle, std::memory_order_seq_cst);
-        m_watcher.RecordProcessHandled();
     }
 
   private:
 #include <ProcessingUnit/InstructionCodeImpl/AArch64Operations/AArch64Operations.h>
 #include <ProcessingUnit/InstructionCodeImpl/SharedOperations/SharedOperations.h>
 
-    void SetupRegisters(const Program& program) {
+    void SetupRegisters() {
         PC() = 0;
         SP() = m_stackMemory->Size() - 1;
     }
@@ -4098,12 +4717,13 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         m_stopRunningInterrupt->Trigger(); // At this point, the interrupt exists
     }
 
-    std::atomic< IProcessingUnit::ProcessStatus > m_status;
-    ICacheMemory*                                 m_upStreamMemory;
-    UniqueRef< IMemory >                          m_stackMemory;
-    std::pmr::vector< ProgramAndResult >          m_programs;
-    A64ProcessingUnitWatcher&                     m_watcher;
-    Object&                                       m_debugObject;
+    std::atomic< IProcessingUnit::ProcessStatus >               m_status;
+    ICacheMemory*                                               m_upStreamMemory;
+    UniqueRef< IMemory >                                        m_stackMemory;
+    std::queue< ProgramState, std::pmr::deque< ProgramState > > m_programs;
+    std::mutex                                                  m_programMutex;
+    A64ProcessingUnitWatcher&                                   m_watcher;
+    Object&                                                     m_debugObject;
 
     // Registers ?
     Interrupt       m_stopRunningInterrupt;
@@ -4124,8 +4744,7 @@ class A64ProcessingUnit::Impl final {
         m_cleanUp(CreateInterrupt()),
         m_debugObject(*logger),
         m_runningThread([&]() { this->InternalRun(); }) {
-        m_debugObject.LogTrace(LogType::Construction, "Processing unit construction succeeded");
-        // TODO: submit a work thread to process and watch it
+        m_debugObject.Log(LogType::Construction, "Processing unit construction succeeded");
     }
 
     DELETE_COPY_CLASS(Impl)
@@ -4138,7 +4757,7 @@ class A64ProcessingUnit::Impl final {
         if (m_runningThread.joinable()) {
             m_runningThread.join();
         }
-        m_debugObject.LogTrace(LogType::Destruction, "Processing unit destruction succeeded");
+        m_debugObject.Log(LogType::Destruction, "Processing unit destruction succeeded");
     }
 
     ICacheMemory const* GetUpStreamMemory() const noexcept {
@@ -4166,49 +4785,11 @@ class A64ProcessingUnit::Impl final {
     }
 
     Result Run(Program program) {
-        m_debugObject.LogTrace(LogType::Other, "Running program {} requested!",
-                               static_cast< const void* const >(program.second));
-
-        auto processStatus = m_processState.GetStatus();
-        if (processStatus == ProcessStatus::Running) {
-            return m_processState.SetProgram(program);
-        }
-
-        if (processStatus == ProcessStatus::Interrupted) {
-            m_debugObject.LogTrace(LogType::Other,
-                                   "Process state is interrupt, waiting for idle status to add the program {}!",
-                                   static_cast< const void* const >(program.second));
-            std::unique_lock lock(m_runProcessMutex);
-            m_runProcessCondVar.wait(lock, [&]() { return m_processState.GetStatus() == ProcessStatus::Idle; });
-        }
-
-        auto result = m_processState.SetProgram(program);
-        m_runProcessInterrupt->Trigger();
-        m_runProcessCondVar.notify_one();
-        return result;
+        return RequestRes< Result >(std::move(program));
     }
 
     ControlledResult StepIn(Program program) {
-        m_debugObject.LogTrace(LogType::Other, "Stepping into program {} requested!",
-                               static_cast< const void* const >(program.second));
-
-        auto processStatus = m_processState.GetStatus();
-        if (processStatus == ProcessStatus::Running) {
-            return m_processState.SetProgramToStepIn(program);
-        }
-
-        if (processStatus == ProcessStatus::Interrupted) {
-            m_debugObject.LogTrace(LogType::Other,
-                                   "Process state is interrupt, waiting for idle status to add the program {}!",
-                                   static_cast< const void* const >(program.second));
-            std::unique_lock lock(m_runProcessMutex);
-            m_runProcessCondVar.wait(lock, [&]() { return m_processState.GetStatus() == ProcessStatus::Idle; });
-        }
-
-        auto result = m_processState.SetProgramToStepIn(program);
-        m_runProcessInterrupt->Trigger();
-        m_runProcessCondVar.notify_one();
-        return result;
+        return RequestRes< ControlledResult >(std::move(program));
     }
 
     void Stop() {
@@ -4243,6 +4824,46 @@ class A64ProcessingUnit::Impl final {
                 m_runProcessInterrupt->Reset();
             }
             ResetProcessState();
+        }
+    }
+
+    template < class Res >
+    Res RequestRes(Program program) {
+        if constexpr (std::same_as< Res, ControlledResult >)
+            m_debugObject.LogTrace(LogType::Other, "Stepping into program {} requested!",
+                                   static_cast< const void* const >(program.GetProgram()));
+        else if constexpr (std::same_as< Res, Result >)
+            m_debugObject.LogTrace(LogType::Other, "Running program {} requested!",
+                                   static_cast< const void* const >(program.GetProgram()));
+        else
+            auto throw_1 = ARM_EMU_EXCEPTION;
+
+        auto processStatus = m_processState.GetStatus();
+        if (processStatus == ProcessStatus::Running) {
+            if constexpr (std::same_as< Res, ControlledResult >)
+                return m_processState.SetProgramToStepIn(std::move(program));
+            else if constexpr (std::same_as< Res, Result >)
+                return m_processState.SetProgram(std::move(program));
+        }
+
+        if (processStatus == ProcessStatus::Interrupted) {
+            m_debugObject.LogTrace(LogType::Other,
+                                   "Process state is interrupt, waiting for idle status to add the program {}!",
+                                   static_cast< const void* const >(program.GetProgram()));
+            std::unique_lock lock(m_runProcessMutex);
+            m_runProcessCondVar.wait(lock, [&]() { return m_processState.GetStatus() == ProcessStatus::Idle; });
+        }
+
+        if constexpr (std::same_as< Res, ControlledResult >) {
+            auto result = m_processState.SetProgramToStepIn(std::move(program));
+            m_runProcessInterrupt->Trigger();
+            m_runProcessCondVar.notify_one();
+            return result;
+        } else if constexpr (std::same_as< Res, Result >) {
+            auto result = m_processState.SetProgram(std::move(program));
+            m_runProcessInterrupt->Trigger();
+            m_runProcessCondVar.notify_one();
+            return result;
         }
     }
 
@@ -4333,12 +4954,12 @@ const A64ProcessingUnit::ProcessState* const A64ProcessingUnit::GetCurrentProces
     return m_processingUnit->GetCurrentProcessState();
 }
 
-Result A64ProcessingUnit::Run(const Program program) {
-    return m_processingUnit->Run(program);
+Result A64ProcessingUnit::Run(Program program) {
+    return m_processingUnit->Run(std::move(program));
 }
 
 ControlledResult A64ProcessingUnit::StepIn(Program program) {
-    return m_processingUnit->StepIn(program);
+    return m_processingUnit->StepIn(std::move(program));
 }
 
 void A64ProcessingUnit::Stop() {

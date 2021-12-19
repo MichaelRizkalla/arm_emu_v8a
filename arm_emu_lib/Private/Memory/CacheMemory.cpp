@@ -59,7 +59,7 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         m_watcher(MemoryWatcher::Hint::CacheMemory),
         m_debugObject(*logger),
         m_segmentCount(ComputeAddressMask(m_size, m_upStreamMemory->Size())) {
-        m_debugObject.LogTrace(LogType::Construction, "Memory construction {}!", m_cache.size() > 0 ? "succeeded" : "failed");
+        m_debugObject.Log(LogType::Construction, "Memory construction {}!", m_cache.size() > 0 ? "succeeded" : "failed");
     }
 
     [[nodiscard]] DataUnit Read(Address address) noexcept final {

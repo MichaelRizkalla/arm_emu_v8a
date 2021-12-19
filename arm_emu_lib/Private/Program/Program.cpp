@@ -8,14 +8,9 @@
 
 BEGIN_NAMESPACE
 
-ARMEMU_API std::size_t GetLostMem() noexcept {
-    auto& probe = MemoryResourceProbe::GetInstance();
-    return probe.GetCurrentAllocationCount();
-}
-
- ARMEMU_API UniqueRef< IMemory > GetProgram() {
+ ARMEMU_API Program GetTestProgram() {
     auto memory =
-         allocate_unique< IMemory, RandomAccessMemory >(std::pmr::polymorphic_allocator< RandomAccessMemory > {}, "Program", 1_MB);
+         allocate_unique< IMemory, RandomAccessMemory >(std::pmr::polymorphic_allocator< RandomAccessMemory > {}, "Program", 64_B);
 
     auto ramMemory = reinterpret_cast< RandomAccessMemory* >(memory.get());
     
@@ -36,7 +31,7 @@ ARMEMU_API std::size_t GetLostMem() noexcept {
     ramMemory->Write(14, 0x910043ff);
     ramMemory->Write(15, 0xd65f03c0);
 
-    return memory;
+    return Program { std::move(memory), 16 };
  }
 
 END_NAMESPACE

@@ -34,6 +34,10 @@ class ControlledResult::Impl final {
         return m_resultElement->GetGPRegisterValue(registerLocation);
     }
 
+    std::uint64_t GetPC() const noexcept {
+        return m_resultElement->GetPC();
+    }
+
     void WaitReady() {
         m_resultElement->WaitReady();
     }
@@ -44,6 +48,10 @@ class ControlledResult::Impl final {
 
     void StepIn() {
         m_resultElement->StepIn();
+    }
+
+    bool CanStepIn() {
+        return m_resultElement->CanStepIn();
     }
 
   private:
@@ -80,6 +88,10 @@ std::uint64_t ControlledResult::GetGPRegisterValue(std::uint8_t registerLocation
     return m_result->GetGPRegisterValue(registerLocation);
 }
 
+std::uint64_t ControlledResult::GetPC() const noexcept {
+    return m_result->GetPC();
+}
+
 void ControlledResult::WaitReady() {
     m_result->WaitReady();
 }
@@ -89,7 +101,7 @@ void ControlledResult::WaitForState(IResult::State state) {
 }
 
 bool ControlledResult::CanStepIn() const noexcept {
-    return true;
+    return m_result->CanStepIn();
 }
 
 void ControlledResult::StepIn() {

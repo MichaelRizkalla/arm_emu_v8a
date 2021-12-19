@@ -22,6 +22,7 @@ namespace arm_emu {
         bool          IsReady() const noexcept final;
         State         GetState() const noexcept final;
         std::uint64_t GetGPRegisterValue(std::uint8_t registerLocation) const final;
+        std::uint64_t GetPC() const noexcept final;
         void          WaitReady() final;
         void          WaitForState(IResult::State state) final;
         bool          CanStepIn() const noexcept final;

@@ -199,7 +199,7 @@ A64CPU::~A64CPU() {
 }
 
 Result A64CPU::Run(Program program) {
-    return m_cpu->Run(program);
+    return m_cpu->Run(std::move(program));
 }
 
 ControlledResult A64CPU::StepIn(Program program) {

@@ -22,12 +22,6 @@ namespace arm_emu {
         static void SetLogLevelForTarget(LogLevel state, std::string entity = UnknownObject) noexcept;
     #endif // NDEBUG
 
-        static void SetLogType(LogType type) noexcept;
-
-        static void SetLogTarget(std::ostream* os) noexcept;
-
-        static LogType GetLogType() noexcept;
-
         [[nodiscard]] Logger(std::string name) : m_name(std::move(name)) {
         }
 
