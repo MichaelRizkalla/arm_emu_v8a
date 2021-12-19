@@ -33,3 +33,8 @@
 
 # Backups
 *.bk
+
+# Visual studio files
+/out/
+/bin/
+/.vs/
