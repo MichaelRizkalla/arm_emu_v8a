@@ -1,4 +1,4 @@
 [submodule "arm_emu_lib_test/GTest"]
-	path = arm_emu_lib_test/GTest/
+	path = arm_emu_lib_test/GTest
 	url = https://github.com/google/googletest.git
 	branch = release-1.11.0
