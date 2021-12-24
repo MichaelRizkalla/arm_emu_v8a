@@ -70,6 +70,10 @@
         #define ARMEMU_API        ARMEMU_EXPORT
         #define ARMEMU_EXPORT_API 1
         #include <API/HiddenAPI.h>
+    #elif defined(ARMEMU_BUILD_TEST)
+        #define ARMEMU_API
+        #define ARMEMU_EXPORT_API
+        #include <API/HiddenAPI.h>
     #else
         #define ARMEMU_API        ARMEMU_IMPORT
         #define ARMEMU_IMPORT_API 1

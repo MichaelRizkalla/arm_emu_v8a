@@ -9,7 +9,11 @@ project(arm_emu_lib_test)
 ################################################################################
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arm_emu_lib")
 set(INCLUDE_DIRS ${LIB_DIR}/Public/ ${LIB_DIR}/Private/ ${LIB_DIR}/Boost/)
-set(SOURCES arm_emu_lib_test.cpp)
+file(GLOB_RECURSE LIB_FILES 
+    "${LIB_DIR}/Private/*.*"
+    "${LIB_DIR}/Public/*.*"
+)
+set(SOURCES arm_emu_lib_test.cpp ${LIB_FILES})
 
 ################################################################################
 ### Add build target
@@ -21,11 +25,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 ################################################################################
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE )
-
-add_dependencies(${PROJECT_NAME} arm_emu_lib)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE arm_emu_lib)
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DARMEMU_BUILD_TEST)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(${PROJECT_NAME} PRIVATE 

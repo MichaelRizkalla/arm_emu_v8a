@@ -10,7 +10,7 @@ project(arm_emu_lib)
 set(INCLUDE_DIRS "Private/" "Public/")    
 set(INCLUDE_BOOST "Boost/")
 
-file(GLOB_RECURSE EMU_LOG 
+file(GLOB_RECURSE LIB_FILES 
     "Private/*.*"
     "Public/*.*"
 )
@@ -18,7 +18,7 @@ file(GLOB_RECURSE EMU_LOG
 ################################################################################
 ### Add build target
 ################################################################################
-add_library(${PROJECT_NAME} SHARED ${EMU_LOG} ${INCLUDE_DIRS})
+add_library(${PROJECT_NAME} SHARED ${LIB_FILES} ${INCLUDE_DIRS})
 
 ################################################################################
 ### Visual studio filters
