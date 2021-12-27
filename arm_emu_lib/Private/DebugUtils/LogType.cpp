@@ -11,16 +11,17 @@ namespace {
 
     using namespace std::literals::string_view_literals;
 
-    static constexpr SmallConstMap< LogType, std::string_view, 10 > logTypeStringMap {
+    static constexpr SmallConstMap< LogType, std::string_view, 11 > logTypeStringMap {
         { { { LogType::None, "None"sv },
             { LogType::Allocation, "Allocation"sv },
             { LogType::Deallocation, "Deallocation"sv },
             { LogType::Construction, "Construction"sv },
             { LogType::Destruction, "Destruction"sv },
+            { LogType::MMU, "MMU"sv },
             { LogType::Instruction, "Instruction"sv },
             { LogType::Other, "Other"sv },
             { LogType::ObjectLifetime, "ObjectLifetime"sv },
-            { LogType::Memory, "Memory"sv },
+            { LogType::MemoryResource, "MemoryResource"sv },
             { LogType::All, "All"sv } } }
     };
 

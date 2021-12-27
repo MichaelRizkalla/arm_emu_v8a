@@ -25,8 +25,6 @@ class [[nodiscard]] ICore : public Object {
                                GetSupportedExtensions() const noexcept                                             = 0;
     [[nodiscard]] virtual bool IsFeatureSupported(IProcessingUnit::Feature feature) const noexcept                 = 0;
     [[nodiscard]] virtual bool IsExceptionSupported(IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept = 0;
-    [[nodiscard]] virtual ICacheMemory const*            GetUpStreamMemory() const noexcept                        = 0;
-    [[nodiscard]] virtual IMemory const*                 GetStackMemory() const noexcept                           = 0;
     [[nodiscard]] virtual IMemory const*                 GetCurrentProgramMemory() const noexcept                  = 0;
     [[nodiscard]] virtual IProcessingUnit::ProcessStatus GetStatus() const noexcept                                = 0;
     [[nodiscard]] virtual const IProcessingUnitWatcher&  GetProcessingUnitWatcher() const noexcept                 = 0;

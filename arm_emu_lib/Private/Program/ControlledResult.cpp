@@ -9,7 +9,7 @@ BEGIN_NAMESPACE
 
 class ControlledResult::Impl final {
   public:
-    Impl(std::shared_ptr< ResultElement >&& resultElement) : m_resultElement(std::move(resultElement)) {
+    Impl(SharedRef< ResultElement >&& resultElement) : m_resultElement(std::move(resultElement)) {
     }
 
     Impl(Impl&&)  = default;
@@ -55,17 +55,16 @@ class ControlledResult::Impl final {
     }
 
   private:
-    std::shared_ptr< ResultElement > m_resultElement;
+    SharedRef< ResultElement > m_resultElement;
 };
 
-UniqueRef< ControlledResult::Impl >
-    ControlledResult::ConstructResultImpl(std::shared_ptr< ResultElement >&& resultElement) {
+UniqueRef< ControlledResult::Impl > ControlledResult::ConstructResultImpl(SharedRef< ResultElement >&& resultElement) {
     std::pmr::polymorphic_allocator< ControlledResult::Impl > alloc {};
 
     return allocate_unique< ControlledResult::Impl >(alloc, std::move(resultElement));
 }
 
-ControlledResult::ControlledResult(std::shared_ptr< ResultElement > resultElement) :
+ControlledResult::ControlledResult(SharedRef< ResultElement > resultElement) :
     m_result(ConstructResultImpl(std::move(resultElement))) {
 }
 

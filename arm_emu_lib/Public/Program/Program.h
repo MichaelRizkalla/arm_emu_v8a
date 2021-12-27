@@ -10,6 +10,9 @@ namespace arm_emu {
     using ProgramSize = std::size_t;
 
     struct [[nodiscard]] Program : private std::pair< ProgramSize, UniqueRef< IMemory > > {
+        constexpr Program() : std::pair< ProgramSize, UniqueRef< IMemory > >(0, nullptr) {
+        }
+
         Program(UniqueRef< IMemory > program, ProgramSize size) :
             std::pair< ProgramSize, UniqueRef< IMemory > >(size, std::move(program)) {
         }
@@ -21,9 +24,20 @@ namespace arm_emu {
         IMemory* const GetProgram() const noexcept {
             return second.get();
         }
+
+        void Reset(UniqueRef< IMemory > program, ProgramSize size) noexcept {
+            assert(((program && size != 0) || (!program && size == 0)) &&
+                   "Either reset to empty program or add proper program size!");
+            first  = size;
+            second = std::move(program);
+        }
+
+        bool Empty() const noexcept {
+            return !static_cast< bool >(second);
+        }
     };
 
-    ARMEMU_API Program GetTestProgram();
+    ARMEMU_API Program GetTestProgram(size_t idx);
 
 } // namespace arm_emu
 

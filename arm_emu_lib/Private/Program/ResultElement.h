@@ -15,7 +15,7 @@
 
 BEGIN_NAMESPACE
 
-struct ARMEMU_API ResultElement : public std::enable_shared_from_this< ResultElement > {
+struct [[nodiscard]] ARMEMU_API ResultElement : public std::enable_shared_from_this< ResultElement > {
 
     ResultElement(bool isStepInAllowed);
     ~ResultElement();
@@ -31,11 +31,11 @@ struct ARMEMU_API ResultElement : public std::enable_shared_from_this< ResultEle
     void WaitReady();
     void WaitForState(IResult::State state);
 
-    bool                         CanStepIn() const noexcept;
-    std::condition_variable_any& StepInSetup(std::condition_variable_any& condVarToTrigger,
-                                             Interrupt                    stepInDone) noexcept;
-    void                         StepInFinalize() noexcept;
-    Interrupt                    GetStepInInterrupt() noexcept;
+    bool                                       CanStepIn() const noexcept;
+    [[nodiscard]] std::condition_variable_any& StepInSetup(std::condition_variable_any& condVarToTrigger,
+                                                           Interrupt                    stepInDone) noexcept;
+    void                                       StepInFinalize() noexcept;
+    [[nodiscard]] Interrupt                    GetStepInInterrupt() noexcept;
 
     void StepIn();
     void SignalStepInValidity(bool isStepInAllowed) noexcept;

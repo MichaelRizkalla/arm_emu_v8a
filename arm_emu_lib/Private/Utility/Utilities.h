@@ -1,18 +1,18 @@
 #if !defined(UTILITIES_HPP_INCLUDED_1951FB0D_26AD_4BA0_A459_0120D0ED63C9)
     #define UTILITIES_HPP_INCLUDED_1951FB0D_26AD_4BA0_A459_0120D0ED63C9
 
+    #include <API/Api.h>
     #include <array>
     #include <bitset>
+    #include <concepts>
     #include <cstdint>
-    #include <exception>
     #include <memory>
     #include <numeric>
     #include <string>
     #include <type_traits>
 
-    #include <concepts>
+BEGIN_NAMESPACE
 
-namespace arm_emu {
     // Used to enforce compile time errors (Unresolved symbol) in functions
     extern int ARM_EMU_EXCEPTION;
 
@@ -68,33 +68,6 @@ namespace arm_emu {
     template < typename TEnum >
     constexpr static auto enum_size_v = enum_size< TEnum >::value;
 
-    //////////////////////////// Exceptions ////////////////////////////
-    class undefined_register_access : public std::exception {
-        [[nodiscard]] virtual const char* what() const noexcept override {
-            return "Register is in undefined state";
-        }
-    };
-    class undefined_behaviour : public std::exception {
-        [[nodiscard]] virtual const char* what() const noexcept override {
-            return "Undefined behaviour";
-        }
-    };
-    class not_implemented_feature : public std::exception {
-        [[nodiscard]] virtual const char* what() const noexcept override {
-            return "Not implemented yet!";
-        }
-    };
-    class unsupported_instruction : public std::exception {
-        [[nodiscard]] virtual const char* what() const noexcept override {
-            return "unsupported instruction due to unsupported feature";
-        }
-    };
-    class undefined_instruction : public std::exception {
-        [[nodiscard]] virtual const char* what() const noexcept override {
-            return "Undefined instruction";
-        }
-    };
-
     //////////////////////////// Helper functions ////////////////////////////
     template < std::size_t N >
     struct get_type {};
@@ -144,6 +117,6 @@ namespace arm_emu {
         return std::bitset< S1 + S2 >(std::move(s1) + std::move(s2));
     }
 
-} // namespace arm_emu
+END_NAMESPACE
 
 #endif // !defined(UTILITIES_HPP_INCLUDED_1951FB0D_26AD_4BA0_A459_0120D0ED63C9)

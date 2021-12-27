@@ -9,7 +9,7 @@ BEGIN_NAMESPACE
 
 class Result::Impl final {
   public:
-    Impl(std::shared_ptr< ResultElement >&& resultElement) : m_resultElement(std::move(resultElement)) {
+    Impl(SharedRef< ResultElement >&& resultElement) : m_resultElement(std::move(resultElement)) {
     }
 
     Impl(Impl&&)  = default;
@@ -47,17 +47,16 @@ class Result::Impl final {
     }
 
   private:
-    std::shared_ptr< ResultElement > m_resultElement;
+    SharedRef< ResultElement > m_resultElement;
 };
 
-UniqueRef< Result::Impl > Result::ConstructResultImpl(std::shared_ptr< ResultElement >&& resultElement) {
+UniqueRef< Result::Impl > Result::ConstructResultImpl(SharedRef< ResultElement >&& resultElement) {
     std::pmr::polymorphic_allocator< Result::Impl > alloc {};
 
     return allocate_unique< Result::Impl >(alloc, std::move(resultElement));
 }
 
-Result::Result(std::shared_ptr< ResultElement > resultElement) :
-    m_result(ConstructResultImpl(std::move(resultElement))) {
+Result::Result(SharedRef< ResultElement > resultElement) : m_result(ConstructResultImpl(std::move(resultElement))) {
 }
 
 Result::Result(Result&&) noexcept = default;

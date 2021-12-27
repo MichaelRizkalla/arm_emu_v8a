@@ -3,6 +3,7 @@
 
     #include <API/Api.h>
     #include <CPU/ICPU.h>
+    #include <CPU/SystemSettings.h>
     #include <DebugUtils/Object.h>
     #include <Utility/UniqueRef.h>
     #include <vector>
@@ -15,10 +16,8 @@ class [[nodiscard]] A64CPU : public ICPU, public Object {
   public:
     static constexpr const char* Default_name = "A64CPU";
 
-    A64CPU(std::uint8_t coreCount, std::uint8_t threadPerCoreCount, std::uint64_t L1Size, std::uint64_t L2Size,
-           std::uint64_t L3Size, std::uint64_t stackSize, std::uint64_t ramSize);
-    A64CPU(std::string name, std::uint8_t coreCount, std::uint8_t threadPerCoreCount, std::uint64_t L1Size,
-           std::uint64_t L2Size, std::uint64_t L3Size, std::uint64_t stackSize, std::uint64_t ramSize);
+    A64CPU(const SystemSettings& settings);
+    A64CPU(std::string name, const SystemSettings& settings);
     A64CPU(A64CPU&&) noexcept;
     A64CPU& operator=(A64CPU&&) noexcept;
     virtual ~A64CPU();
@@ -28,7 +27,7 @@ class [[nodiscard]] A64CPU : public ICPU, public Object {
 
     Result           Run(Program program) final;
     ControlledResult StepIn(Program program) final;
-    void   Stop() final;
+    void             Stop() final;
 
     [[nodiscard]] std::uint8_t GetCoreCount() const noexcept final;
     [[nodiscard]] std::uint8_t GetThreadsPerCoreCount() const noexcept final;
@@ -45,10 +44,7 @@ class [[nodiscard]] A64CPU : public ICPU, public Object {
     UniqueRef< Impl > m_cpu;
 
     template < class ImplDetail >
-    [[nodiscard]] static UniqueRef< Impl > ConstructCPU(std::uint8_t coreCount, std::uint8_t threadPerCoreCount,
-                                                        std::uint64_t L1Size, std::uint64_t L2Size,
-                                                        std::uint64_t L3Size, std::uint64_t stackSize,
-                                                        std::uint64_t ramSize, ImplDetail detail);
+    [[nodiscard]] static UniqueRef< Impl > ConstructCPU(const SystemSettings& settings, ImplDetail detail);
 };
 
 END_NAMESPACE

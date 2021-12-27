@@ -48,7 +48,7 @@ namespace arm_emu {
 
         template < class... Args >
         [[nodiscard]] static auto Formatter(const char* logMsg, Args&&... args) {
-            // TODO: better format
+            // TODO: Add better formatting
             return std::vformat(logMsg, std::make_format_args(std::forward< Args >(args)...));
         }
 

@@ -66,6 +66,14 @@
     #define ARMEMU_EXPORT ARMEMU_DLL(dllexport)
     #define ARMEMU_IMPORT ARMEMU_DLL(dllimport)
 
+    #define ARMEMU_LOG_NONE  0
+    #define ARMEMU_LOG_ALL   1
+    #define ARMEMU_LOG_OTHER 2
+
+    #ifndef ARMEMU_LOG_TYPE
+        #define ARMEMU_LOG_TYPE ARMEMU_LOG_OTHER
+    #endif // ARMEMU_LOG_TYPE
+
     #if defined(ARMEMU_BUILD_DLL)
         #define ARMEMU_API        ARMEMU_EXPORT
         #define ARMEMU_EXPORT_API 1

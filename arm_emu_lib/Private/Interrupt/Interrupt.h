@@ -2,6 +2,7 @@
     #define INTERRUPT_H_INCLUDED_872A6495_498C_42D0_A712_936D80859C7C
 
     #include <API/Api.h>
+    #include <Utility/UniqueRef.h>
     #include <atomic>
     #include <memory>
 
@@ -23,7 +24,7 @@ struct Interrupt_ {
     std::atomic< bool > m_interrupted { false };
 };
 
-using Interrupt = std::shared_ptr< Interrupt_ >;
+using Interrupt = SharedRef< Interrupt_ >;
 
 Interrupt CreateInterrupt();
 

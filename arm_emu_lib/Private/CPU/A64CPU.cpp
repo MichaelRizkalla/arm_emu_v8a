@@ -2,6 +2,7 @@
 #include <CPU/A64CPU.h>
 #include <Core/A64Core.h>
 #include <Memory/CacheMemory.h>
+#include <Memory/MemoryManagementUnit.h>
 #include <Memory/RandomAccessMemory.h>
 #include <Module/A64Module.h>
 #include <ProcessingUnit/A64ProcessingUnit.h>
@@ -9,30 +10,30 @@
 
 BEGIN_NAMESPACE
 
-// TODO: finish A64CPU::Impl and load balance
+// TODO: Add load balancer
 
 class A64CPU::Impl {
   public:
-    Impl(Object* logger, std::uint8_t coreCount, std::uint8_t threadPerCoreCount, std::uint64_t L1Size,
-         std::uint64_t L2Size, std::uint64_t L3Size, std::uint64_t stackSize, std::uint64_t ramSize) :
+    Impl(Object* logger, const SystemSettings& settings) :
         m_debugObject(*logger),
-        m_ram(ConstructRAM(ramSize)),
-        m_l3Cache(ConstructL3Cache(m_ram.get(), L3Size)),
-        m_cores(static_cast< std::size_t >(coreCount)) {
-        // TODO: construct the CPU and connect it
-        std::pmr::vector< UniqueRef< ICacheMemory > > l1Caches { static_cast< std::size_t >(coreCount) *
-                                                                 static_cast< std::size_t >(threadPerCoreCount) };
-        std::pmr::vector< UniqueRef< ICacheMemory > > l2Caches { static_cast< std::size_t >(coreCount) };
-        std::pmr::vector< UniqueRef< IMemory > >      stacks { static_cast< std::size_t >(coreCount) *
-                                                          static_cast< std::size_t >(threadPerCoreCount) };
+        m_ram(ConstructRAM(settings.RamSize)),
+        m_l3Cache(ConstructL3Cache(m_ram.get(), settings.L3CacheSize)),
+        m_cores(static_cast< std::size_t >(settings.nCores)),
+        m_mmu(
+            std::allocate_shared< MemoryManagementUnit >(std::pmr::polymorphic_allocator< MemoryManagementUnit > {})) {
+
+        std::pmr::vector< UniqueRef< ICacheMemory > > l1Caches { static_cast< std::size_t >(settings.nCores) *
+                                                                 static_cast< std::size_t >(settings.nThreadsPerCore) };
+        std::pmr::vector< UniqueRef< ICacheMemory > > l2Caches { static_cast< std::size_t >(settings.nCores) };
 
         std::pmr::vector< UniqueRef< IProcessingUnit > > processingUnits {
-            static_cast< std::size_t >(coreCount) * static_cast< std::size_t >(threadPerCoreCount)
+            static_cast< std::size_t >(settings.nCores) * static_cast< std::size_t >(settings.nThreadsPerCore)
         };
-        std::pmr::vector< std::pmr::vector< UniqueRef< ICore > > > cores { static_cast< std::size_t >(coreCount) };
+        std::pmr::vector< std::pmr::vector< UniqueRef< ICore > > > cores { static_cast< std::size_t >(
+            settings.nCores) };
 
         std::pmr::polymorphic_allocator< CacheMemory > cacheAlloc {};
-        // TODO: Create class StackMemory : public IMemory "?"
+
         std::pmr::polymorphic_allocator< RandomAccessMemory > ramAlloc {};
         std::pmr::polymorphic_allocator< A64ProcessingUnit >  processingUnitAlloc {};
         std::pmr::polymorphic_allocator< A64Core >            coreAlloc {};
@@ -44,28 +45,34 @@ class A64CPU::Impl {
 
         for (auto& l2Cache : l2Caches) {
             l2Cache = allocate_unique< ICacheMemory, CacheMemory >(cacheAlloc, "L2Cache", cacheConfig, m_l3Cache.get(),
-                                                                   L2Size);
+                                                                   settings.L2CacheSize);
         }
         std::uint64_t cIdx = 0;
         for (auto& l1Cache : l1Caches) {
-            l1Cache = allocate_unique< ICacheMemory, CacheMemory >(cacheAlloc, "L1Cache", cacheConfig,
-                                                                   l2Caches.at(cIdx / coreCount).get(), L1Size);
+            l1Cache = allocate_unique< ICacheMemory, CacheMemory >(
+                cacheAlloc, "L1Cache", cacheConfig, l2Caches.at(cIdx / settings.nCores).get(), settings.L1CacheSize);
             ++cIdx;
         }
-        for (auto& stack : stacks) {
-            stack = allocate_unique< IMemory, RandomAccessMemory >(ramAlloc, "Stack", stackSize);
+
+        const auto processMemorySize = settings.StackSize + settings.HeapSize;
+        const auto neededSize        = processMemorySize * processingUnits.size();
+
+        if (neededSize > settings.RamSize) {
+            throw cpu_creation_failure { "CPU requires more RAM size than specified" };
         }
 
         cIdx = 0;
         for (auto& processingUnit : processingUnits) {
             processingUnit = allocate_unique< IProcessingUnit, A64ProcessingUnit >(
-                processingUnitAlloc, "ProcessingUnit", l1Caches.at(cIdx).get(),
-                std::move(std::exchange(stacks[cIdx], nullptr)));
+                processingUnitAlloc, "ProcessingUnit", l1Caches.at(cIdx).get(), processMemorySize,
+                MemoryManagementUnitProxy { m_mmu });
+
+            m_mmu->AddProcess(processingUnit.get(), cIdx * processMemorySize, (cIdx + 1) * processMemorySize);
             ++cIdx;
         }
         cIdx = 0;
         for (auto& coreVec : cores) {
-            coreVec.resize(static_cast< std::size_t >(threadPerCoreCount));
+            coreVec.resize(static_cast< std::size_t >(settings.nThreadsPerCore));
             for (auto& core : coreVec) {
                 core = allocate_unique< ICore, A64Core >(coreAlloc, "Thread",
                                                          std::move(std::exchange(processingUnits[cIdx], nullptr)),
@@ -91,7 +98,7 @@ class A64CPU::Impl {
 
     ControlledResult StepIn(Program program) {
         // TODO: load balance
-        return m_cores.at(0)->StepIn(std::move(program));        
+        return m_cores.at(0)->StepIn(std::move(program));
     }
 
     void Stop() {
@@ -158,35 +165,30 @@ class A64CPU::Impl {
     std::pmr::vector< UniqueRef< IModule > > m_cores;
     UniqueRef< IMemory >                     m_ram;
     UniqueRef< IMemory >                     m_l3Cache;
+    SharedRef< MemoryManagementUnit >        m_mmu;
 };
 
 template < class ImplDetail >
-UniqueRef< A64CPU::Impl > A64CPU::ConstructCPU(std::uint8_t coreCount, std::uint8_t threadPerCoreCount,
-                                               std::uint64_t L1Size, std::uint64_t L2Size, std::uint64_t L3Size,
-                                               std::uint64_t stackSize, std::uint64_t ramSize, ImplDetail myself) {
-    assert(coreCount > 0 && threadPerCoreCount > 0 && L1Size > 0 && L2Size > 0 && L3Size > 0 && stackSize > 0 &&
-           ramSize > 0 && "All CPU system settings has to be larger than 0 for a valid CPU!");
+UniqueRef< A64CPU::Impl > A64CPU::ConstructCPU(const SystemSettings& settings, ImplDetail myself) {
+    assert(settings.nCores > 0 && settings.nThreadsPerCore > 0 && settings.L1CacheSize > 0 &&
+           settings.L2CacheSize > 0 && settings.L3CacheSize > 0 && settings.RamSize > 0 && settings.StackSize > 0 &&
+           "All CPU system settings has to be larger than 0 for a valid CPU!");
     myself->Log(LogType::Construction,
-        "Constructing CPU with {} cores, {} threads per core, {} L1 cache, {} L2 cache, {} L3 cache, {} stack and {} "
-        "ram",
-        coreCount, threadPerCoreCount, L1Size, L2Size, L3Size, stackSize, ramSize);
+                "Constructing CPU with {} cores, {} threads per core, {} L1 cache, {} L2 cache, {} L3 cache, {} ram "
+                "and {} stack",
+                settings.nCores, settings.nThreadsPerCore, settings.L1CacheSize, settings.L2CacheSize,
+                settings.L3CacheSize, settings.StackSize, settings.RamSize);
 
     std::pmr::polymorphic_allocator< A64CPU::Impl > alloc {};
 
-    return allocate_unique< A64CPU::Impl >(alloc, myself, coreCount, threadPerCoreCount, L1Size, L2Size, L3Size,
-                                           stackSize, ramSize);
+    return allocate_unique< A64CPU::Impl >(alloc, myself, settings);
 }
 
-A64CPU::A64CPU(std::uint8_t coreCount, std::uint8_t threadPerCoreCount, std::uint64_t L1Size, std::uint64_t L2Size,
-               std::uint64_t L3Size, std::uint64_t stackSize, std::uint64_t ramSize) :
-    Object(Default_name),
-    m_cpu(ConstructCPU(coreCount, threadPerCoreCount, L1Size, L2Size, L3Size, stackSize, ramSize, this)) {
+A64CPU::A64CPU(const SystemSettings& settings) : Object(Default_name), m_cpu(ConstructCPU(settings, this)) {
 }
 
-A64CPU::A64CPU(std::string name, std::uint8_t coreCount, std::uint8_t threadPerCoreCount, std::uint64_t L1Size,
-               std::uint64_t L2Size, std::uint64_t L3Size, std::uint64_t stackSize, std::uint64_t ramSize) :
-    Object(std::move(name)),
-    m_cpu(ConstructCPU(coreCount, threadPerCoreCount, L1Size, L2Size, L3Size, stackSize, ramSize, this)) {
+A64CPU::A64CPU(std::string name, const SystemSettings& settings) :
+    Object(std::move(name)), m_cpu(ConstructCPU(settings, this)) {
 }
 
 A64CPU::A64CPU(A64CPU&&) noexcept = default;
@@ -203,7 +205,7 @@ Result A64CPU::Run(Program program) {
 }
 
 ControlledResult A64CPU::StepIn(Program program) {
-    // TODO: balance load
+    // TODO: load balance
     return m_cpu->StepIn(std::move(program));
 }
 

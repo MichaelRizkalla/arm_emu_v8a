@@ -5,6 +5,7 @@
     #include <DebugUtils/Object.h>
     #include <Utility/Singleton.h>
     #include <cstdint>
+    #include <mutex>
     #include <utility>
     #include <vector>
 
@@ -36,9 +37,10 @@ class MemoryResourceProbe {
     [[nodiscard]] size_t                                  GetDeallocationCount() const noexcept;
 
   private:
+    std::mutex                       m_mutex; // Needed to ensure vector atomic access
     std::vector< AllocationRequest > m_allocatedMemory;
-    size_t                           m_allocationCount;
-    size_t                           m_freeCount;
+    std::size_t                      m_allocationCount;
+    std::size_t                      m_freeCount;
 };
 
 END_NAMESPACE

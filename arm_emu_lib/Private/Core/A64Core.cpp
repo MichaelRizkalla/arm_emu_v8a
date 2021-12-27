@@ -41,14 +41,6 @@ bool A64Core::IsExceptionSupported(IProcessingUnit::ExceptionLevel exceptionLeve
     return m_processingUnit->IsExceptionSupported(exceptionLevel);
 }
 
-ICacheMemory const* A64Core::GetUpStreamMemory() const noexcept {
-    return m_processingUnit->GetUpStreamMemory();
-}
-
-IMemory const* A64Core::GetStackMemory() const noexcept {
-    return m_processingUnit->GetStackMemory();
-}
-
 IMemory const* A64Core::GetCurrentProgramMemory() const noexcept {
     return m_processingUnit->GetCurrentProgramMemory();
 }

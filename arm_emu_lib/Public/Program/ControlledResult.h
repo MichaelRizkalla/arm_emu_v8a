@@ -9,7 +9,7 @@ namespace arm_emu {
 
     class ARMEMU_API ControlledResult final : public IResult {
       public:
-        ControlledResult(std::shared_ptr< ResultElement > resultElement);
+        ControlledResult(SharedRef< ResultElement > resultElement);
         ControlledResult(ControlledResult&&) noexcept;
         ControlledResult& operator=(ControlledResult&&) noexcept;
         ~ControlledResult() final;
@@ -31,7 +31,7 @@ namespace arm_emu {
         class Impl;
         UniqueRef< Impl > m_result;
 
-        static UniqueRef< Impl > ConstructResultImpl(std::shared_ptr< ResultElement >&& resultElement);
+        static UniqueRef< Impl > ConstructResultImpl(SharedRef< ResultElement >&& resultElement);
     };
 
 } // namespace arm_emu

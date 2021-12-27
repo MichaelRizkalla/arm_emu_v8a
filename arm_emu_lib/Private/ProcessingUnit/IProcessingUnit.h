@@ -63,11 +63,9 @@ class [[nodiscard]] IProcessingUnit : public Object {
     [[nodiscard]] virtual ExtensionVersion                     GetCurrentExtensionVersion() const noexcept        = 0;
     [[nodiscard]] virtual const std::pmr::vector< Extension >& GetSupportedExtensions() const noexcept            = 0;
     [[nodiscard]] virtual bool                                 IsFeatureSupported(Feature feature) const noexcept = 0;
-    [[nodiscard]] virtual bool                IsExceptionSupported(ExceptionLevel exceptionLevel) const noexcept  = 0;
-    [[nodiscard]] virtual ICacheMemory const* GetUpStreamMemory() const noexcept                                  = 0;
-    [[nodiscard]] virtual IMemory const*      GetStackMemory() const noexcept                                     = 0;
-    [[nodiscard]] virtual IMemory const*      GetCurrentProgramMemory() const noexcept                            = 0;
-    [[nodiscard]] virtual ProcessStatus       GetStatus() const noexcept                                          = 0;
+    [[nodiscard]] virtual bool           IsExceptionSupported(ExceptionLevel exceptionLevel) const noexcept       = 0;
+    [[nodiscard]] virtual IMemory const* GetCurrentProgramMemory() const noexcept                                 = 0;
+    [[nodiscard]] virtual ProcessStatus  GetStatus() const noexcept                                               = 0;
     [[nodiscard]] virtual const IProcessingUnitWatcher& GetProcessingUnitWatcher() const noexcept                 = 0;
 
     [[nodiscard]] virtual const ProcessState* const GetCurrentProcessState() const noexcept = 0;

@@ -7,16 +7,19 @@ BEGIN_NAMESPACE
 
 IMPLEMENT_AS_SINGLETON(MemoryResourceProbe)
 
-MemoryResourceProbe::MemoryResourceProbe() noexcept : m_allocatedMemory(0), m_allocationCount(0), m_freeCount(0) {
+MemoryResourceProbe::MemoryResourceProbe() noexcept :
+    m_allocatedMemory(0), m_allocationCount(0), m_freeCount(0), m_mutex() {
 }
 
 void MemoryResourceProbe::OnAllocation(AllocationSize allocationSize, AllocationAlignment alignment) noexcept {
+    std::scoped_lock lock { m_mutex };
     m_allocatedMemory.emplace_back(allocationSize, alignment);
     ++m_allocationCount;
 }
 
 void MemoryResourceProbe::OnDeallocation(AllocationSize deallocationSize, AllocationAlignment alignment) noexcept {
-    auto allocation = std::find(m_allocatedMemory.begin(), m_allocatedMemory.end(),
+    std::scoped_lock lock { m_mutex };
+    auto             allocation = std::find(m_allocatedMemory.begin(), m_allocatedMemory.end(),
                                 AllocationRequest { deallocationSize, alignment });
     if (allocation != m_allocatedMemory.end()) {
         m_allocatedMemory.erase(allocation);

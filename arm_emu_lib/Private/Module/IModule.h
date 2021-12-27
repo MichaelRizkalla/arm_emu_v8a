@@ -30,8 +30,6 @@ class [[nodiscard]] IModule : public Object {
                                                                  IProcessingUnit::Feature feature) const noexcept = 0;
     [[nodiscard]] virtual bool                IsExceptionSupported(std::uint8_t                    coreNumber,
                                                                    IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept = 0;
-    [[nodiscard]] virtual ICacheMemory const* GetUpStreamMemory(std::uint8_t coreNumber) const noexcept       = 0;
-    [[nodiscard]] virtual IMemory const*      GetStackMemory(std::uint8_t coreNumber) const noexcept          = 0;
     [[nodiscard]] virtual IMemory const*      GetCurrentProgramMemory(std::uint8_t coreNumber) const noexcept = 0;
     [[nodiscard]] virtual IProcessingUnit::ProcessStatus GetStatus(std::uint8_t coreNumber) const noexcept    = 0;
     [[nodiscard]] virtual const IProcessingUnit::ProcessState* const

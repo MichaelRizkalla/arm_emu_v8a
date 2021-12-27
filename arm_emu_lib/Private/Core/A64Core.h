@@ -27,8 +27,6 @@ class [[nodiscard]] A64Core : public ICore {
     [[nodiscard]] const std::pmr::vector< IProcessingUnit::Extension >& GetSupportedExtensions() const noexcept final;
     [[nodiscard]] bool IsFeatureSupported(IProcessingUnit::Feature feature) const noexcept final;
     [[nodiscard]] bool IsExceptionSupported(IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept final;
-    [[nodiscard]] ICacheMemory const*            GetUpStreamMemory() const noexcept final;
-    [[nodiscard]] IMemory const*                 GetStackMemory() const noexcept final;
     [[nodiscard]] IMemory const*                 GetCurrentProgramMemory() const noexcept final;
     [[nodiscard]] IProcessingUnit::ProcessStatus GetStatus() const noexcept final;
     [[nodiscard]] const IProcessingUnitWatcher&  GetProcessingUnitWatcher() const noexcept final;

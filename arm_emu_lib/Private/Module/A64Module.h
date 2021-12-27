@@ -35,8 +35,6 @@ class [[nodiscard]] A64Module : public IModule {
                                                          IProcessingUnit::Feature feature) const noexcept final;
     [[nodiscard]] bool                IsExceptionSupported(std::uint8_t                    threadNumber,
                                                            IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept final;
-    [[nodiscard]] ICacheMemory const* GetUpStreamMemory(std::uint8_t threadNumber) const noexcept final;
-    [[nodiscard]] IMemory const*      GetStackMemory(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] IMemory const*      GetCurrentProgramMemory(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] IProcessingUnit::ProcessStatus GetStatus(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] const IProcessingUnitWatcher&

@@ -7,12 +7,21 @@ BEGIN_NAMESPACE
 
 namespace {
     static std::ostream* logStream = &std::cout;
-    static LogType       logType   = LogType::Other;
+    static LogType       logType =
+#if ARMEMU_LOG_TYPE == 0
+        LogType::None;
+#elif ARMEMU_LOG_TYPE == 1
+        LogType::All;
+#elif ARMEMU_LOG_TYPE == 2
+        LogType::Other;
+#endif
+
 #ifndef NDEBUG
     static std::set< std::string > logTraceEntities { Logger::AllEntities };
     static std::set< std::string > logNormalOnly {};
     static std::set< std::string > neverLogEntities {};
 #endif // NDEBUG
+
 } // namespace
 
 #ifndef NDEBUG
@@ -68,7 +77,7 @@ std::ostream* Logger::GetLogTarget() noexcept {
 
 void Logger::LogInternal(LogType type, std::string&& logMsg) const {
     if (!static_cast< bool >(static_cast< std::underlying_type_t< LogType > >(type) &
-                            static_cast< std::underlying_type_t< LogType > >(logType))) {
+                             static_cast< std::underlying_type_t< LogType > >(logType))) {
         return;
     }
 
@@ -85,7 +94,7 @@ void Logger::LogInternal(LogType type, std::string&& logMsg) const {
 #ifndef NDEBUG
 void Logger::LogTraceInternal(LogType type, std::string&& logMsg) const {
     if (!static_cast< bool >(static_cast< std::underlying_type_t< LogType > >(type) &
-                            static_cast< std::underlying_type_t< LogType > >(logType))) {
+                             static_cast< std::underlying_type_t< LogType > >(logType))) {
         return;
     }
 

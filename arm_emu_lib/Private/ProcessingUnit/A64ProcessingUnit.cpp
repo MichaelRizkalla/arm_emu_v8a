@@ -1,5 +1,6 @@
 
 #include <Interrupt/Interrupt.h>
+#include <Memory/MemoryManagementUnit.h>
 #include <ProcessingUnit/A64Instruction/Instruction.h>
 #include <ProcessingUnit/A64InstructionManager/A64InstructionManager.h>
 #include <ProcessingUnit/A64ProcessingUnit.h>
@@ -7,6 +8,7 @@
 #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
 #include <ProcessingUnit/A64Registers/SystemRegisters.h>
 #include <Program/ResultElement.h>
+#include <Utility/Exceptions.h>
 #include <Utility/StreamableEnum.h>
 #include <atomic>
 #include <condition_variable>
@@ -35,15 +37,73 @@ namespace {
 } // namespace
 
 struct A64ProcessState : public A64ProcessingUnit::ProcessState {
-    // TODO: Rework RAM-Stack accesses
-    // now processes shares same RAM, this will not work for multi-threaded apps.
-    // current status of the project is loading all programs on single ProcessingUnit, so it won't cause any bugs
-    // however, it's something to think about once multi-threading is brought up
   private:
     struct ProgramState {
         Program                        m_program;
         bool                           m_stepIn;
         std::weak_ptr< ResultElement > m_result;
+    };
+
+    struct GPRegistersProxy : public GPRegisters {
+
+        GPRegistersProxy(const IProcessingUnit::ProcessState& PE, IMemory* const upStreamMemory,
+                         MemoryManagementUnitProxy* const mmu) :
+            GPRegisters(PE), m_upStreamMemory(upStreamMemory), m_mmu(mmu) {
+        }
+        ~GPRegistersProxy() = default;
+
+        auto write(std::uint8_t loc, const std::uint64_t data) noexcept {
+            if (loc == 31) {
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), data);
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+        auto write(const Bitset& loc, const std::uint64_t data) noexcept {
+            auto mLoc = loc.ToULong();
+            if (mLoc == 31) {
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), data);
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+        auto write(const Bitset& loc, std::bitset< 64 > data) noexcept {
+            auto mLoc = loc.ToULong();
+            if (mLoc == 31) {
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), data.to_ullong());
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+        auto write(const Bitset& loc, const std::uint32_t data) noexcept {
+            auto mLoc = loc.ToULong();
+            if (mLoc == 31) {
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), static_cast< std::uint64_t >(data));
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+        auto write(const Bitset& loc, const std::bitset< 32 >& data) noexcept {
+            auto mLoc = loc.ToULong();
+            if (mLoc == 31) {
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), data.to_ullong());
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+        auto write(const Bitset& loc, const Bitset& data) noexcept {
+            auto mLoc = loc.ToULong();
+            if (mLoc == 31) {
+                assert(data.Size() <= 64);
+                m_upStreamMemory->Write(m_mmu->Translate(SP().to_ullong()), data.ToULLong());
+                return;
+            }
+            return GPRegisters::write(loc, data);
+        }
+
+      private:
+        IMemory* const                   m_upStreamMemory { nullptr };
+        MemoryManagementUnitProxy* const m_mmu { nullptr };
     };
 
     decltype(auto) PC() {
@@ -606,7 +666,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 std::bitset< datasize > result { 0 };
                 auto                    imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
-                    result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
+                    result[i] = static_cast< bool >(
+                        (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
                 }
                 result.flip();
 
@@ -624,7 +685,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 std::bitset< datasize > result(0);
                 auto                    imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
-                    result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
+                    result[i] = static_cast< bool >(
+                        (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
                 }
                 m_gpRegisters.write(Rd, result);
             } break;
@@ -641,7 +703,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 auto imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
-                    result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
+                    result[i] = static_cast< bool >(
+                        (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
                 }
                 m_gpRegisters.write(Rd, result);
             } break;
@@ -1241,7 +1304,45 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         throw not_implemented_feature {};
     }
     void Execute(Instruction&& instruction, LoadStoreGroup::LoadStoreRegisterPairPreIndexed instructionType) {
-        throw not_implemented_feature {};
+
+        switch (instructionType) {
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STP_32BIT: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_32BIT: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STP_32BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_32BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STGP: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDPSW: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STP_64BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_64BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STP_64BIT: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_64BIT: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::STP_128BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+            case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_128BIT_SIMD: {
+                throw not_implemented_feature {};
+            } break;
+        }
     }
     void Execute(Instruction&& instruction, LoadStoreGroup::LoadStoreRegisterUnscaledImmediate instructionType) {
         throw not_implemented_feature {};
@@ -1536,7 +1637,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                     data = m_gpRegisters.W(Rt);
                 }
                 // ALU::Mem[address, datasize / 8, AccType::NORMAL] = data;
-                m_upStreamMemory->Write(address.to_ullong(), data.to_ullong());
+                m_upStreamMemory->Write(m_mmu.Translate(address.to_ullong()), data.to_ullong());
 
                 if (wback) {
                     if (postindex) {
@@ -1597,7 +1698,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
 
                 // data = ALU::Mem[address, datasize / 8, AccType::NORMAL];
-                data = m_upStreamMemory->Read(address.to_ullong());
+                data = m_upStreamMemory->Read(m_mmu.Translate(address.to_ullong()));
                 m_gpRegisters.write(Rt, data);
 
                 if (wback) {
@@ -1681,7 +1782,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                     data = m_gpRegisters.X(Rt);
                 }
                 // ALU::Mem[address, datasize / 8, AccType::NORMAL] = data;
-                m_upStreamMemory->Write(address.to_ullong(), data.to_ullong());
+                m_upStreamMemory->Write(m_mmu.Translate(address.to_ullong()), data.to_ullong());
 
                 if (wback) {
                     if (postindex) {
@@ -1742,7 +1843,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
 
                 // data = ALU::Mem[address, datasize / 8, AccType::NORMAL];
-                data = m_upStreamMemory->Read(address.to_ullong());
+                data = m_upStreamMemory->Read(m_mmu.Translate(address.to_ullong()));
                 m_gpRegisters.write(Rt, data);
 
                 if (wback) {
@@ -4465,16 +4566,17 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
   public:
     A64ProcessState(Object* logger, A64ProcessingUnitWatcher& watcher, ICacheMemory* upStreamMemory,
-                    UniqueRef< IMemory > stackMemory) :
+                    IMemory::Address allocatedSize, MemoryManagementUnitProxy mmuProxy) :
         m_status(IProcessingUnit::ProcessStatus::Idle),
         m_upStreamMemory(upStreamMemory),
-        m_stackMemory(std::move(stackMemory)),
+        m_mmu(std::move(mmuProxy)),
+        m_allocatedSize(allocatedSize),
         m_programs(),
         m_watcher(watcher),
         m_debugObject(*logger),
         m_programMutex(),
         m_stopRunningInterrupt(nullptr),
-        m_gpRegisters(*this) {
+        m_gpRegisters(*this, m_upStreamMemory, std::addressof(m_mmu)) {
     }
 
     Result SetProgram(Program program) {
@@ -4503,14 +4605,6 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         return ControlledResult { std::move(resultElement) };
     }
 
-    ICacheMemory const* GetUpStreamMemory() const noexcept {
-        return m_upStreamMemory;
-    }
-
-    IMemory const* GetStackMemory() const noexcept {
-        return m_stackMemory.get();
-    }
-
     IMemory const* GetCurrentProgramMemory() const noexcept {
         return m_programs.size() > 0 ? m_programs.front().m_program.GetProgram() : nullptr;
     }
@@ -4528,10 +4622,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() is running!");
 
-        auto                             currentProgramMemory = m_programs.front().m_program.GetProgram();
-        ProgramSize                      currentProgramSize   = m_programs.front().m_program.GetProgramSize();
-        bool                             doStepIn             = m_programs.front().m_stepIn;
-        std::shared_ptr< ResultElement > currentResult        = m_programs.front().m_result.lock();
+        auto                       currentProgramMemory = m_programs.front().m_program.GetProgram();
+        ProgramSize                currentProgramSize   = m_programs.front().m_program.GetProgramSize();
+        bool                       doStepIn             = m_programs.front().m_stepIn;
+        SharedRef< ResultElement > currentResult        = m_programs.front().m_result.lock();
 
         m_stopRunningInterrupt = interrupt;
         m_status.store(IProcessingUnit::ProcessStatus::Running, std::memory_order_seq_cst);
@@ -4556,7 +4650,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             bool  setup  = true;
             while (!m_stopRunningInterrupt->IsTriggered() &&
                    (!doStepIn || (doStepIn && currentResult) /* If result is destroyed then ignore the program */)) {
-                // TODO: implement program handle
+
                 if (setup) {
                     SetupRegisters();
                     setup = false;
@@ -4564,9 +4658,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
                 if (doStepIn) {
                     if (currentResult) {
+                        // TODO: Store entire frame instead of GP, PC only
                         currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
                         currentResult->StorePC(PC());
-                        // TODO: Store more vars
+
                         std::mutex       localMutex {};
                         std::unique_lock localLock { localMutex };
                         auto             stepInInterrupt = currentResult->GetStepInInterrupt();
@@ -4616,6 +4711,17 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                     m_debugObject.Log(LogType::Other, "Program {} is running using a non-implemented feature!",
                                       static_cast< const void* >(currentProgramMemory));
                     ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
+                } catch (invalid_physical_memory_access) {
+                    m_debugObject.Log(LogType::Other, "Program {} is had either a stack or a heap overflow!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
+                } catch (untracked_processing_unit) {
+                    m_debugObject.Log(LogType::Other, "The processing unit is untracked in the MMU!");
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
+                } catch (...) {
+                    m_debugObject.Log(LogType::Other, "Program {} threw an unexpected exception!",
+                                      static_cast< const void* >(currentProgramMemory));
+                    ExitProgramWithInterrupt(static_cast< const void* >(currentProgramMemory));
                 }
             }
 
@@ -4623,6 +4729,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_status.store(IProcessingUnit::ProcessStatus::Interrupted, std::memory_order_seq_cst);
                 if (currentResult) {
                     currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
+                    currentResult->StorePC(PC());
                     currentResult->Signal(Result::State::Interrupted);
                 }
 
@@ -4630,6 +4737,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 if (doStepIn) {
                     currentResult->StepInFinalize();
                 }
+                stepInDoneInterrupt->Trigger();
+                stepInDoneCondVar->notify_one();
                 return;
             }
 
@@ -4641,11 +4750,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 currentResult->StepInFinalize();
             }
             if (currentResult) {
+                // TODO: Store entire frame instead of GP, PC only
                 currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
+                currentResult->StorePC(PC());
                 currentResult->Signal(Result::State::Ready);
-                if (doStepIn) {
-                    // TODO: Store more variables
-                }
             }
             m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() finished executing program {}!",
                               static_cast< const void* >(currentProgramMemory));
@@ -4654,10 +4762,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_programs.pop();
             }
             if (m_programs.size() > 0) {
-                auto                             currentProgramMemory = m_programs.front().m_program.GetProgram();
-                ProgramSize                      currentProgramSize   = m_programs.front().m_program.GetProgramSize();
-                bool                             doStepIn             = m_programs.front().m_stepIn;
-                std::shared_ptr< ResultElement > currentResult        = m_programs.front().m_result.lock();
+                auto                       currentProgramMemory = m_programs.front().m_program.GetProgram();
+                ProgramSize                currentProgramSize   = m_programs.front().m_program.GetProgramSize();
+                bool                       doStepIn             = m_programs.front().m_stepIn;
+                SharedRef< ResultElement > currentResult        = m_programs.front().m_result.lock();
             } else {
                 currentProgramMemory = nullptr;
                 currentProgramSize   = 0;
@@ -4669,11 +4777,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         if (interrupt->IsTriggered()) {
             m_status.store(IProcessingUnit::ProcessStatus::Interrupted, std::memory_order_seq_cst);
             if (currentResult) {
+                // TODO: Store entire frame instead of GP, PC only
                 currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
+                currentResult->StorePC(PC());
                 currentResult->Signal(Result::State::Interrupted);
-                if (doStepIn) {
-                    // TODO: Store more variables
-                }
             }
 
             m_watcher.RecordProcessInterrupted();
@@ -4708,7 +4815,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
     void SetupRegisters() {
         PC() = 0;
-        SP() = m_stackMemory->Size() - 1;
+        SP() = m_allocatedSize - 1;
     }
 
     void ExitProgramWithInterrupt(const void* programAddress) const {
@@ -4718,23 +4825,25 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
     }
 
     std::atomic< IProcessingUnit::ProcessStatus >               m_status;
-    ICacheMemory*                                               m_upStreamMemory;
-    UniqueRef< IMemory >                                        m_stackMemory;
+    ICacheMemory* const                                         m_upStreamMemory;
+    MemoryManagementUnitProxy                                   m_mmu;
+    IMemory::Address                                            m_allocatedSize;
     std::queue< ProgramState, std::pmr::deque< ProgramState > > m_programs;
     std::mutex                                                  m_programMutex;
     A64ProcessingUnitWatcher&                                   m_watcher;
     Object&                                                     m_debugObject;
 
     // Registers ?
-    Interrupt       m_stopRunningInterrupt;
-    GPRegisters     m_gpRegisters;
-    SystemRegisters m_sysRegisters;
+    Interrupt        m_stopRunningInterrupt;
+    GPRegistersProxy m_gpRegisters;
+    SystemRegisters  m_sysRegisters;
 };
 
 class A64ProcessingUnit::Impl final {
   public:
-    Impl(Object* logger, ICacheMemory* upStreamMemory, UniqueRef< IMemory > stackMemory) :
-        m_processState(logger, m_watcher, upStreamMemory, std::move(stackMemory)),
+    Impl(Object* logger, ICacheMemory* upStreamMemory, IMemory::Address allocatedSize,
+         MemoryManagementUnitProxy mmuProxy) :
+        m_processState(logger, m_watcher, upStreamMemory, allocatedSize, mmuProxy),
         m_watcher(),
         m_runProcessMutex(),
         m_runProcessCondVar(),
@@ -4758,14 +4867,6 @@ class A64ProcessingUnit::Impl final {
             m_runningThread.join();
         }
         m_debugObject.Log(LogType::Destruction, "Processing unit destruction succeeded");
-    }
-
-    ICacheMemory const* GetUpStreamMemory() const noexcept {
-        return m_processState.GetUpStreamMemory();
-    }
-
-    IMemory const* GetStackMemory() const noexcept {
-        return m_processState.GetStackMemory();
     }
 
     IMemory const* GetCurrentProgramMemory() const noexcept {
@@ -4880,24 +4981,29 @@ class A64ProcessingUnit::Impl final {
 };
 
 template < class ImplDetail >
-UniqueRef< A64ProcessingUnit::Impl > A64ProcessingUnit::ConstructProcessingUnit(ICacheMemory*        upStreamMemory,
-                                                                                UniqueRef< IMemory > stackMemory,
-                                                                                ImplDetail           myself) {
-    myself->Log(LogType::Construction, "Constructing A64ProcessingUnit, with upStreamMemory: {}",
-                static_cast< void* >(upStreamMemory));
+UniqueRef< A64ProcessingUnit::Impl >
+    A64ProcessingUnit::ConstructProcessingUnit(ICacheMemory* upStreamMemory, IMemory::Address allocatedSize,
+                                               MemoryManagementUnitProxy mmuProxy, ImplDetail myself) {
+    myself->Log(LogType::Construction,
+                "Constructing A64ProcessingUnit with upStreamMemory {} and program address space of {}",
+                static_cast< void* >(upStreamMemory), allocatedSize);
     std::pmr::polymorphic_allocator< A64ProcessingUnit::Impl > alloc {};
 
-    return allocate_unique< A64ProcessingUnit::Impl >(alloc, myself, upStreamMemory, std::move(stackMemory));
+    return allocate_unique< A64ProcessingUnit::Impl >(alloc, myself, upStreamMemory, allocatedSize, mmuProxy);
 }
 
-A64ProcessingUnit::A64ProcessingUnit(std::string name, ICacheMemory* upStreamMemory, UniqueRef< IMemory > stackMemory) :
-    IProcessingUnit(std::move(name)),
-    m_processingUnit(ConstructProcessingUnit(upStreamMemory, std::move(stackMemory), this)) {
+A64ProcessingUnit::A64ProcessingUnit(std::string name, ICacheMemory* upStreamMemory, IMemory::Address allocatedSize,
+                                     MemoryManagementUnitProxy mmuProxy) :
+    IProcessingUnit(std::move(name)), m_processingUnit(nullptr) {
+    mmuProxy.Attach(this);
+    m_processingUnit = ConstructProcessingUnit(upStreamMemory, allocatedSize, mmuProxy, this);
 }
 
-A64ProcessingUnit::A64ProcessingUnit(ICacheMemory* upStreamMemory, UniqueRef< IMemory > stackMemory) :
-    IProcessingUnit(Default_name),
-    m_processingUnit(ConstructProcessingUnit(upStreamMemory, std::move(stackMemory), this)) {
+A64ProcessingUnit::A64ProcessingUnit(ICacheMemory* upStreamMemory, IMemory::Address allocatedSize,
+                                     MemoryManagementUnitProxy mmuProxy) :
+    IProcessingUnit(Default_name), m_processingUnit(nullptr) {
+    mmuProxy.Attach(this);
+    m_processingUnit = ConstructProcessingUnit(upStreamMemory, allocatedSize, mmuProxy, this);
 }
 
 A64ProcessingUnit::A64ProcessingUnit(A64ProcessingUnit&&) noexcept = default;
@@ -4928,14 +5034,6 @@ bool A64ProcessingUnit::IsFeatureSupported(Feature feature) const noexcept {
 
 bool A64ProcessingUnit::IsExceptionSupported(ExceptionLevel exceptionLevel) const noexcept {
     return supportedExceptionLevels.find(exceptionLevel) != supportedExceptionLevels.end();
-}
-
-ICacheMemory const* A64ProcessingUnit::GetUpStreamMemory() const noexcept {
-    return m_processingUnit->GetUpStreamMemory();
-}
-
-IMemory const* A64ProcessingUnit::GetStackMemory() const noexcept {
-    return m_processingUnit->GetStackMemory();
 }
 
 IMemory const* A64ProcessingUnit::GetCurrentProgramMemory() const noexcept {

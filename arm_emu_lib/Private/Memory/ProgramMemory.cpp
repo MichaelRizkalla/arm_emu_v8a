@@ -73,7 +73,7 @@ class ProgramMemory::Impl final {
         const auto dataSize     = data.Size();
         const auto blockEndAddr = start + dataSize;
 
-        // TODO: think about adding a Singleton<ErrorTracer> (?) to hold all possible error at runtime
+        // TODO: think about adding a Singleton<ErrorTracer> (?) to hold all possible error at runtime, and print stack trace
         Preconditions(blockEndAddr - 1);
 
         if (blockEndAddr > m_memory.size()) {

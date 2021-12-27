@@ -70,16 +70,6 @@ bool A64Module::IsExceptionSupported(std::uint8_t                    threadNumbe
     return m_cores.at(threadNumber)->IsExceptionSupported(exceptionLevel);
 }
 
-ICacheMemory const* A64Module::GetUpStreamMemory(std::uint8_t threadNumber) const noexcept {
-    CorePreConditions(threadNumber);
-    return m_cores.at(threadNumber)->GetUpStreamMemory();
-}
-
-IMemory const* A64Module::GetStackMemory(std::uint8_t threadNumber) const noexcept {
-    CorePreConditions(threadNumber);
-    return m_cores.at(threadNumber)->GetStackMemory();
-}
-
 IMemory const* A64Module::GetCurrentProgramMemory(std::uint8_t threadNumber) const noexcept {
     CorePreConditions(threadNumber);
     return m_cores.at(threadNumber)->GetCurrentProgramMemory();
@@ -101,12 +91,12 @@ const IProcessingUnitWatcher& A64Module::GetProcessingUnitWatcher(std::uint8_t t
 }
 
 Result A64Module::Run(Program program) {
-    // TODO: balance load
+    // TODO: load balance
     return m_cores.at(0)->Run(std::move(program));
 }
 
 ControlledResult A64Module::StepIn(Program program) {
-    // TODO: balance load
+    // TODO: load balance
     return m_cores.at(0)->StepIn(std::move(program));
 }
 

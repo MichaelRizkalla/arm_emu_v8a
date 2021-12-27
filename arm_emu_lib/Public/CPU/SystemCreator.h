@@ -3,35 +3,14 @@
 
     #include <API/Api.h>
     #include <CPU/ICPU.h>
+    #include <CPU/SystemSettings.h>
     #include <Utility/UniqueRef.h>
     #include <cstdint>
+    #include <exception>
     #include <functional>
     #include <memory>
 
 namespace arm_emu {
-
-    enum class CPUType
-    {
-        A64,
-
-        A32, /* Unavailable */
-
-        T32, /* Unavailable */
-    };
-
-    struct SystemSettings {
-        CPUType      CPUType;
-        std::uint8_t nCores;
-        std::uint8_t nThreadsPerCore;
-
-        std::uint64_t L1CacheSize;
-        std::uint64_t L2CacheSize;
-        std::uint64_t L3CacheSize;
-
-        std::uint64_t StackSize;
-
-        std::uint64_t RamSize;
-    };
 
     class SystemCreator {
       public:

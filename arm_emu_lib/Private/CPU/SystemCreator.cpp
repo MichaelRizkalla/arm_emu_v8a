@@ -26,9 +26,7 @@ UniqueRef< ICPU > SystemCreator::CreateCPU(const SystemSettings& settings) {
 
             auto _cpu = alloc.allocate(1);
 
-            std::allocator_traits< decltype(alloc) >::construct(
-                alloc, _cpu, settings.nCores, settings.nThreadsPerCore, settings.L1CacheSize, settings.L2CacheSize,
-                settings.L3CacheSize, settings.StackSize, settings.RamSize);
+            std::allocator_traits< decltype(alloc) >::construct(alloc, _cpu, settings);
 
             return UniqueRef< ICPU >(_cpu, CPUDeleterFunc< A64CPU >);
         } break;
@@ -49,9 +47,7 @@ UniqueRef< ICPU > SystemCreator::CreateCPU(std::string name, const SystemSetting
 
             auto _cpu = alloc.allocate(1);
 
-            std::allocator_traits< decltype(alloc) >::construct(
-                alloc, _cpu, name, settings.nCores, settings.nThreadsPerCore, settings.L1CacheSize,
-                settings.L2CacheSize, settings.L3CacheSize, settings.StackSize, settings.RamSize);
+            std::allocator_traits< decltype(alloc) >::construct(alloc, _cpu, name, settings);
 
             return UniqueRef< ICPU >(_cpu, CPUDeleterFunc< A64CPU >);
         } break;
