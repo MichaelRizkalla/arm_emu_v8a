@@ -2,6 +2,3 @@
 	path = Common/GTest
 	url = https://github.com/google/googletest.git
 	branch = release-1.11.0
-[submodule "Common/Format/fmt"]
-	path = Common/Format/
-	url = https://github.com/fmtlib/fmt.git
