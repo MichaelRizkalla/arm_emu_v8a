@@ -15,7 +15,7 @@ namespace test {
         using namespace arm_emu::literals;
 
         arm_emu::SystemSettings sys {};
-        sys.CPUType         = arm_emu::CPUType::A64;
+        sys.cpuType         = arm_emu::CPUType::A64;
         sys.nCores          = 4;
         sys.nThreadsPerCore = 2;
         sys.L1CacheSize     = 256_KB;

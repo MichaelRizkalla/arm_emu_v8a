@@ -20,13 +20,13 @@ namespace {
 } // namespace
 
 template <>
-std::string_view Enum::ToChar(CppStandard value) {
-    return cppStandardStringMap.At(value);
+std::string_view Enum::ToChar(CppStandard enumValue) {
+    return cppStandardStringMap.At(enumValue);
 }
 
 template <>
-std::ostream& operator<<(std::ostream& os, CppStandard value) {
-    os << Enum::ToChar(value);
+std::ostream& operator<<(std::ostream& os, CppStandard enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

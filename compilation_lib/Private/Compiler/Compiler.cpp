@@ -31,13 +31,13 @@ namespace {
 } // namespace
 
 template <>
-std::string_view Enum::ToChar(ClangVersion value) {
-    return clangVersionStringMap.At(value);
+std::string_view Enum::ToChar(ClangVersion enumValue) {
+    return clangVersionStringMap.At(enumValue);
 }
 
 template <>
-std::ostream& operator<<(std::ostream& os, ClangVersion value) {
-    os << Enum::ToChar(value);
+std::ostream& operator<<(std::ostream& os, ClangVersion enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

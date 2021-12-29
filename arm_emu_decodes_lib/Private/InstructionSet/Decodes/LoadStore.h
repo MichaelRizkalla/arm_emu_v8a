@@ -93,7 +93,7 @@ class ARMEMU_API LoadStoreGroup final : public DecodeGroup< A64LoadStoreGroup > 
     DELETE_MOVE_CLASS(LoadStoreGroup)
 
   public:
-    DECLARE_AS_SINGLETON(LoadStoreGroup)
+    DECLARE_AS_SINGLETON(LoadStoreGroup, true)
 
     enum class AdvancedSIMDLoadStoreMultipleStructures : std::uint32_t
     {

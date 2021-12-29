@@ -66,7 +66,7 @@ class ARMEMU_API BranchExceptionSystemGroup final : public DecodeGroup< A64Branc
     DELETE_MOVE_CLASS(BranchExceptionSystemGroup)
 
   public:
-    DECLARE_AS_SINGLETON(BranchExceptionSystemGroup)
+    DECLARE_AS_SINGLETON(BranchExceptionSystemGroup, true)
 
     enum class ConditionalBranching : std::uint32_t
     {

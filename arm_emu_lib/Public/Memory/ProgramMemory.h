@@ -7,7 +7,7 @@
 
 namespace arm_emu {
 
-    class [[nodiscard]] ARMEMU_API ProgramMemory : public IMemory {
+      class [[nodiscard]] ARMEMU_API ProgramMemory final : public IMemory {
       private:
         static constexpr size_t      Default_memory_size = 1_KB;
         static constexpr const char* Default_name        = "ProgramMemory";

@@ -4681,7 +4681,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                         stepInDoneInterrupt->Trigger();
                         stepInDoneCondVar->notify_one();
                         currentResult->Signal(IResult::State::StepInMode);
-                        stepInCondVar.wait(localLock, [=]() {
+                        stepInCondVar.wait(localLock, [&]() {
                             return stepInInterrupt->IsTriggered() || m_stopRunningInterrupt->IsTriggered();
                         });
                     } else {
@@ -4923,7 +4923,7 @@ class A64ProcessingUnit::Impl final {
         while (!m_cleanUp->IsTriggered()) {
             std::unique_lock lock(m_runProcessMutex);
             m_runProcessCondVar.wait(
-                lock, [=]() { return m_runProcessInterrupt->IsTriggered() || m_cleanUp->IsTriggered(); });
+                lock, [&]() { return m_runProcessInterrupt->IsTriggered() || m_cleanUp->IsTriggered(); });
 
             if (m_cleanUp->IsTriggered()) {
                 break; // Cleanup triggered

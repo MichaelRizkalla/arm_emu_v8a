@@ -22,13 +22,13 @@ namespace {
 } // namespace
 
 template <>
-std::string_view Enum::ToChar(WarningOptions value) {
-    return warningOptionsStringMap.At(value);
+std::string_view Enum::ToChar(WarningOptions enumValue) {
+    return warningOptionsStringMap.At(enumValue);
 }
 
 template <>
-std::ostream& operator<<(std::ostream& os, WarningOptions value) {
-    os << Enum::ToChar(value);
+std::ostream& operator<<(std::ostream& os, WarningOptions enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

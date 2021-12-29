@@ -20,13 +20,13 @@ namespace {
 } // namespace
 
 template <>
-std::string_view Enum::ToChar(OptimizationLevel value) {
-    return optimizationLevelStringMap.At(value);
+std::string_view Enum::ToChar(OptimizationLevel enumValue) {
+    return optimizationLevelStringMap.At(enumValue);
 }
 
 template <>
-std::ostream& operator<<(std::ostream& os, OptimizationLevel value) {
-    os << Enum::ToChar(value);
+std::ostream& operator<<(std::ostream& os, OptimizationLevel enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

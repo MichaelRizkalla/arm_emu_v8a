@@ -9,59 +9,32 @@ BEGIN_NAMESPACE
 
 template < class Type, class Allocator = std::allocator< Type > >
 class DefaultSingletonManager {
-    Type m_instance;
-
   public:
-    [[nodiscard]] DefaultSingletonManager() noexcept = default;
-    DELETE_COPY_CLASS(DefaultSingletonManager)
-    DELETE_MOVE_CLASS(DefaultSingletonManager)
+    STATIC_CLASS(DefaultSingletonManager)
 
-    [[nodiscard]] Type& GetInstance() noexcept {
-        return m_instance;
-    }
-};
-
-template < class Type, class Allocator = std::allocator< Type > >
-class SingletonManager {
-    Type m_instance;
-
-  public:
-    template < class... Args, class Enable = std::enable_if_t< std::is_constructible_v< Type, Args... > > >
-    [[nodiscard]] SingletonManager(Args&&... args) : m_instance(std::forward< Args >(args)...) {
-    }
-    DELETE_COPY_CLASS(SingletonManager)
-    DELETE_MOVE_CLASS(SingletonManager)
-
-    [[nodiscard]] Type& GetInstance() noexcept {
+    [[nodiscard]] static Type& GetInstance() noexcept(std::is_nothrow_default_constructible_v< Type >) requires(
+        !std::is_constructible_v< Type >) {
+        static Type m_instance {};
         return m_instance;
     }
 };
 
 // In header file use:
-    #define DECLARE_AS_SINGLETON(Typename)                             \
-      private:                                                         \
-        static DefaultSingletonManager< Typename > m_singletonManager; \
-        friend decltype(m_singletonManager);                           \
-                                                                       \
-      public:                                                          \
-        [[nodiscard]] static Typename& GetInstance() noexcept(noexcept(m_singletonManager.GetInstance()));
-
-    #define DECLARE_AS_PARAMETERED_SINGLETON(Typename)          \
-      private:                                                  \
-        static SingletonManager< Typename > m_singletonManager; \
-        friend decltype(m_singletonManager);                    \
-                                                                \
-      public:                                                   \
-        [[nodiscard]] static Typename& GetInstance() noexcept(noexcept(m_singletonManager.GetInstance()));
+    #define DECLARE_AS_SINGLETON(Typename, x)                     \
+      private:                                                 \
+        friend DefaultSingletonManager< Typename >;            \
+                                                               \
+      public:                                                  \
+        [[nodiscard]] static Typename& GetInstance() noexcept( \
+            noexcept(x));
 
 // In source file use:
 // #define IMPLEMENT_AS_SINGLETON(Typename) decltype(Typename::m_singletonManager) Typename::m_singletonManager {};
 
-    #define IMPLEMENT_AS_SINGLETON(Typename, ...)                                                          \
-        decltype(Typename::m_singletonManager) Typename::m_singletonManager { __VA_ARGS__ };               \
-                                                                                                           \
-        Typename& Typename::GetInstance() noexcept(noexcept(Typename::m_singletonManager.GetInstance())) { \
-            return m_singletonManager.GetInstance();                                                       \
+    #define IMPLEMENT_AS_SINGLETON(Typename)                                                                       \
+                                                                                                                   \
+        Typename& Typename::GetInstance() noexcept(noexcept(std::is_nothrow_default_constructible_v< Typename >)) { \
+            return DefaultSingletonManager< Typename >::GetInstance();                                             \
         }
 
 END_NAMESPACE

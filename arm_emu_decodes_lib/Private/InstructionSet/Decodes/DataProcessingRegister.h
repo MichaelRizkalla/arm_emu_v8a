@@ -69,7 +69,7 @@ class ARMEMU_API DataProcessingRegisterGroup final : public DecodeGroup< A64Data
     DELETE_MOVE_CLASS(DataProcessingRegisterGroup)
 
   public:
-    DECLARE_AS_SINGLETON(DataProcessingRegisterGroup)
+    DECLARE_AS_SINGLETON(DataProcessingRegisterGroup, true)
 
     enum class DataProcessingTwoSource : std::uint32_t
     {

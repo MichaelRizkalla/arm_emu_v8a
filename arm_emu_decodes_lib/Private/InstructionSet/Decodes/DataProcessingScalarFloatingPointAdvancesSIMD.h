@@ -159,7 +159,7 @@ class ARMEMU_API DataProcessingScalarFloatingPointAdvancedSIMDGroup final
     DELETE_MOVE_CLASS(DataProcessingScalarFloatingPointAdvancedSIMDGroup)
 
   public:
-    DECLARE_AS_SINGLETON(DataProcessingScalarFloatingPointAdvancedSIMDGroup)
+    DECLARE_AS_SINGLETON(DataProcessingScalarFloatingPointAdvancedSIMDGroup, true)
 
     enum class CryptographicAES : std::uint32_t
     {

@@ -21,7 +21,7 @@ void CPUDeleterFunc(void* ptr) noexcept {
 }
 
 UniqueRef< ICPU > SystemCreator::CreateCPU(const SystemSettings& settings) {
-    switch (settings.CPUType) {
+    switch (settings.cpuType) {
         case CPUType::A64: {
             std::pmr::polymorphic_allocator< A64CPU > alloc {};
 
@@ -42,7 +42,7 @@ UniqueRef< ICPU > SystemCreator::CreateCPU(const SystemSettings& settings) {
 }
 
 UniqueRef< ICPU > SystemCreator::CreateCPU(std::string name, const SystemSettings& settings) {
-    switch (settings.CPUType) {
+    switch (settings.cpuType) {
         case CPUType::A64: {
             std::pmr::polymorphic_allocator< A64CPU > alloc {};
 

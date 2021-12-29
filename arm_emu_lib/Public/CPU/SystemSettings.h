@@ -7,7 +7,7 @@
 namespace arm_emu {
 
     struct SystemSettings {
-        alignas(8) CPUType CPUType;
+        alignas(8) CPUType cpuType;
         alignas(8) std::uint8_t nCores;
         alignas(8) std::uint8_t nThreadsPerCore;
 

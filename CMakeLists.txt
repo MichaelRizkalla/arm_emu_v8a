@@ -58,6 +58,7 @@ add_subdirectory(arm_emu_lib)
 add_subdirectory(compilation_lib)
 
 if (BUILD_TESTS)
+    set(BUILD_SHARED_LIBS OFF)
     set(BUILD_GMOCK OFF)
     set(INSTALL_GTEST OFF)
     add_subdirectory(Common/GTest)

@@ -32,7 +32,7 @@ class ARMEMU_API ReservedGroup final : public DecodeGroup< A64ReservedGroup > {
     DELETE_MOVE_CLASS(ReservedGroup)
 
   public:
-    DECLARE_AS_SINGLETON(ReservedGroup)
+    DECLARE_AS_SINGLETON(ReservedGroup, true)
 
   private:
     template < A64ReservedGroup InstructionClass >

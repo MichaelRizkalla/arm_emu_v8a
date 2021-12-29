@@ -54,7 +54,7 @@ class ARMEMU_API DataProcessingImmediateGroup final : public DecodeGroup< A64Dat
     DELETE_MOVE_CLASS(DataProcessingImmediateGroup)
 
   public:
-    DECLARE_AS_SINGLETON(DataProcessingImmediateGroup)
+    DECLARE_AS_SINGLETON(DataProcessingImmediateGroup, true)
 
     enum class PCRelativeAddressing : std::uint32_t
     {

@@ -26,7 +26,7 @@ class MemoryResourceProbe {
     using AllocationAlignment = size_t;
     using AllocationRequest   = std::pair< AllocationSize, AllocationAlignment >;
 
-    DECLARE_AS_SINGLETON(MemoryResourceProbe)
+    DECLARE_AS_SINGLETON(MemoryResourceProbe, true)
 
     void OnAllocation(AllocationSize allocationSize, AllocationAlignment alignment) noexcept;
     void OnDeallocation(AllocationSize deallocationSize, AllocationAlignment alignment) noexcept;

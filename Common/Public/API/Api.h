@@ -54,7 +54,19 @@
         #elif defined(__GNUC__)
             #define ARMEMU_COMPILER_GNUC
             #define ARMEMU_INTERFACE_ONLY
-            #define ARMEMU_DLL(cond) __attribute__((visibility("default")))
+            #ifdef ARMEMU_BUILD_DLL
+                #define ARMEMU_DLL(cond) [[gnu::visibility("default")]]
+            #else
+                #define ARMEMU_DLL(cond)
+            #endif
+        #elif defined(__clang__)
+            #define ARMEMU_COMPILER_CLANG
+            #define ARMEMU_INTERFACE_ONLY
+            #ifdef ARMEMU_BUILD_DLL
+                #define ARMEMU_DLL(cond) __attribute__ ((visibility ("default")))
+            #else
+                #define ARMEMU_DLL(cond)
+            #endif
         #else
             #error "Unsupported compiler"
         #endif
