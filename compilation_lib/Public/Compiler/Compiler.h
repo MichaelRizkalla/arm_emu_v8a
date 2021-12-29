@@ -32,15 +32,27 @@ struct CompilationResult {
     std::pmr::unordered_map< std::uint32_t, Location > m_locations;
 };
 
-class [[nodicard]] Compiler : public Object {
-    static constexpr const char* Default_name          = "Compiler";
-    static constexpr const char* Obj_dump_name         = "llvm-objdump.exe";
-    static constexpr const char* Default_compiler_name = "clang++";
+enum class ClangVersion : std::uint32_t
+{
+    Version10 = 10,
+    Version11 = 11,
+    Version12 = 12,
+    Version13 = 13,
+};
+
+class [[nodiscard]] Compiler : public Object {
+    static constexpr const char* Default_name = "Compiler";
+    static constexpr const char* Obj_dump_name =
+    #ifdef ARMEMU_OS_WINDOWS
+        "llvm-objdump.exe";
+    #else
+        "llvm-objdump-";
+    #endif
 
   public:
     static std::optional< Compiler > FindCompiler(std::vector< std::filesystem::path > searchPaths) noexcept;
 
-    Compiler(std::filesystem::path compilerPath);
+    Compiler(std::filesystem::path compilerPath, ClangVersion version);
     Compiler(Compiler&&) noexcept;
     Compiler& operator=(Compiler&&) noexcept;
     ~Compiler();
@@ -56,10 +68,11 @@ class [[nodicard]] Compiler : public Object {
                                                const std::pmr::vector< std::filesystem::path >& libraries);
 
   private:
-    Compiler(std::filesystem::path compilerPath, bool);
+    Compiler(std::filesystem::path compilerPath, ClangVersion, bool);
 
     std::array< std::uint32_t, 3 > m_compilerOptions;
     std::filesystem::path          m_compiler;
+    ClangVersion                   m_version;
 };
 
 END_NAMESPACE

@@ -3,6 +3,7 @@
 #include <CPU/SystemCreator.h>
 
 #include <CPU/A64CPU.h>
+#include <memory_resource>
 
 BEGIN_NAMESPACE
 

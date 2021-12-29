@@ -39,13 +39,13 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API std::string_view Enum::ToChar(LogType logType) {
-    return logTypeStringMap.At(logType);
+ARMEMU_API std::string_view Enum::ToChar(LogType enumValue) {
+    return logTypeStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LogType logType) {
-    os << Enum::ToChar(logType);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LogType enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

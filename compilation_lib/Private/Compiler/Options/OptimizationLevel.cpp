@@ -20,7 +20,7 @@ namespace {
 } // namespace
 
 template <>
-static std::string_view Enum::ToChar(OptimizationLevel value) {
+std::string_view Enum::ToChar(OptimizationLevel value) {
     return optimizationLevelStringMap.At(value);
 }
 

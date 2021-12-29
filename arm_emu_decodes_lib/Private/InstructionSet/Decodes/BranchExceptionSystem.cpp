@@ -157,134 +157,134 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64BranchExceptionSystemGroup elem) {
-    return A64BranchExceptionSystemGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64BranchExceptionSystemGroup enumValue) {
+    return A64BranchExceptionSystemGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64BranchExceptionSystemGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64BranchExceptionSystemGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::ConditionalBranching elem) {
-    return A64ConditionalBranchingStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::ConditionalBranching enumValue) {
+    return A64ConditionalBranchingStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::ConditionalBranching elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::ConditionalBranching enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::ExceptionGeneration elem) {
-    return A64ExceptionGenerationStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::ExceptionGeneration enumValue) {
+    return A64ExceptionGenerationStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::ExceptionGeneration elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::ExceptionGeneration enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::Hints elem) {
-    return A64HintsStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::Hints enumValue) {
+    return A64HintsStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::Hints elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::Hints enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::Barriers elem) {
-    return A64BarriersStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::Barriers enumValue) {
+    return A64BarriersStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::Barriers elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::Barriers enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::PState elem) {
-    return A64PStateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::PState enumValue) {
+    return A64PStateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::PState elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::PState enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::SystemInstruction elem) {
-    return A64SystemInstructionStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::SystemInstruction enumValue) {
+    return A64SystemInstructionStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::SystemInstruction elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::SystemInstruction enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::SystemRegisterMove elem) {
-    return A64SystemRegisterMoveStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::SystemRegisterMove enumValue) {
+    return A64SystemRegisterMoveStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::SystemRegisterMove elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::SystemRegisterMove enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchRegister elem) {
-    return A64UnconditionalBranchRegisterStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchRegister enumValue) {
+    return A64UnconditionalBranchRegisterStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::UnconditionalBranchRegister elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::UnconditionalBranchRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchImmediate elem) {
-    return A64UnconditionalBranchImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::UnconditionalBranchImmediate enumValue) {
+    return A64UnconditionalBranchImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::UnconditionalBranchImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::UnconditionalBranchImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate elem) {
-    return A64CompareAndBranchImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::CompareAndBranchImmediate enumValue) {
+    return A64CompareAndBranchImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::CompareAndBranchImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::CompareAndBranchImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(BranchExceptionSystemGroup::TestAndBranchImmediate elem) {
-    return A64TestAndBranchImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(BranchExceptionSystemGroup::TestAndBranchImmediate enumValue) {
+    return A64TestAndBranchImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::TestAndBranchImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, BranchExceptionSystemGroup::TestAndBranchImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

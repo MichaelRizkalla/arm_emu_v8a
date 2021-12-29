@@ -33,26 +33,26 @@ namespace arm_emu {
 
         [[nodiscard]] virtual DataUnit              Read(Address address) noexcept                               = 0;
         [[nodiscard]] virtual DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount)        = 0;
-        [[nodiscard]] virtual void                  Write(Address address, DataUnit data)                        = 0;
-        [[nodiscard]] virtual void                  WriteBlock(Address start, const DataBlock< DataUnit >& data) = 0;
+        virtual void                                Write(Address address, DataUnit data)                        = 0;
+        virtual void                                WriteBlock(Address start, const DataBlock< DataUnit >& data) = 0;
         [[nodiscard]] virtual Address               Size() const noexcept                                        = 0;
         [[nodiscard]] virtual const MemoryWatcher&  GetMemoryWatcher() const noexcept                            = 0;
     };
 
     namespace literals {
-        [[nodiscard]] constexpr IMemory::Address operator""_B(std::uint64_t value) noexcept {
+        [[nodiscard]] constexpr IMemory::Address operator""_B(unsigned long long value) noexcept {
             return static_cast< std::uint64_t >((static_cast< double >(value) / sizeof(IMemory::DataUnit)) *
                                                 Byte_t::num / Byte_t::den);
         }
-        [[nodiscard]] constexpr IMemory::Address operator""_KB(std::uint64_t value) noexcept {
+        [[nodiscard]] constexpr IMemory::Address operator""_KB(unsigned long long value) noexcept {
             return static_cast< std::uint64_t >((static_cast< double >(value) / sizeof(IMemory::DataUnit)) *
                                                 KiloByte_t::num / KiloByte_t::den);
         }
-        [[nodiscard]] constexpr IMemory::Address operator""_MB(std::uint64_t value) noexcept {
+        [[nodiscard]] constexpr IMemory::Address operator""_MB(unsigned long long value) noexcept {
             return static_cast< std::uint64_t >((static_cast< double >(value) / sizeof(IMemory::DataUnit)) *
                                                 MegaByte_t::num / MegaByte_t::den);
         }
-        [[nodiscard]] constexpr IMemory::Address operator""_GB(std::uint64_t value) noexcept {
+        [[nodiscard]] constexpr IMemory::Address operator""_GB(unsigned long long value) noexcept {
             return static_cast< std::uint64_t >((static_cast< double >(value) / sizeof(IMemory::DataUnit)) *
                                                 GigaByte_t::num / GigaByte_t::den);
         }

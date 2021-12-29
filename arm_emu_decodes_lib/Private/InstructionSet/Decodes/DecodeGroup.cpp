@@ -25,13 +25,13 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64DecodeGroup A64DecodeGroupType) {
-    return A64DecodeGroupStringMap.At(A64DecodeGroupType);
+ARMEMU_API std::string_view Enum::ToChar(A64DecodeGroup enumValue) {
+    return A64DecodeGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DecodeGroup A64DecodeGroupType) {
-    os << Enum::ToChar(A64DecodeGroupType);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DecodeGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

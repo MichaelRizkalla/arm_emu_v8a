@@ -22,7 +22,7 @@ namespace arm_emu {
     /// @return UniqueRef<Type, std::function<void(Type*)>>
     template < class Type, class Allocator, class... TArgs, std::enable_if_t< !std::is_array_v< Type >, int > = 0 >
     UniqueRef< Type > allocate_unique(Allocator alloc, TArgs... args) {
-        using allocator_type = std::allocator_traits< Allocator >::template rebind_alloc< Type >;
+        using allocator_type = typename std::allocator_traits< Allocator >::template rebind_alloc< Type >;
 
         auto custom_deleter = [](Type* ptr, allocator_type m_alloc) {
             static_assert(0 < sizeof(Type), "can't delete an incomplete type");
@@ -48,7 +48,7 @@ namespace arm_emu {
     template < class Type, class ConstructedType, class Allocator, class... TArgs,
                std::enable_if_t< !std::is_array_v< Type >, int > = 0 >
     UniqueRef< Type > allocate_unique(Allocator alloc, TArgs... args) {
-        using constructor = std::allocator_traits< Allocator >::template rebind_alloc< ConstructedType >;
+        using constructor = typename std::allocator_traits< Allocator >::template rebind_alloc< ConstructedType >;
 
         auto custom_deleter = [](Type* ptr, constructor c_alloc) {
             static_assert(0 < sizeof(ConstructedType), "can't delete an incomplete type");
@@ -70,7 +70,7 @@ namespace arm_emu {
     UniqueRef< ArrayType, std::function< void(std::remove_extent_t< ArrayType >*) > >
         allocate_unique(Allocator alloc, const std::size_t size) {
         using Type           = std::remove_extent_t< ArrayType >;
-        using allocator_type = std::allocator_traits< Allocator >::template rebind_alloc< Type >;
+        using allocator_type = typename std::allocator_traits< Allocator >::template rebind_alloc< Type >;
 
         auto custom_array_deleter = [](Type* ptr, allocator_type m_alloc, std::size_t m_size) {
             static_assert(0 < sizeof(Type), "can't delete an incomplete type");

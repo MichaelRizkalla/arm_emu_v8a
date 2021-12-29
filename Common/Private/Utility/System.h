@@ -25,7 +25,7 @@ struct System {
 
         const auto submitCommand = [](const std::string &cmd, const std::filesystem::path &out,
                                       const std::filesystem::path &err) {
-            return std::format(R"({} 1>"{}" 2>"{}")", cmd, out.string(), err.string());
+            return fmt::format(R"({} 1>"{}" 2>"{}")", cmd, out.string(), err.string());
         };
 
         const auto result = std::system(submitCommand(command, stdoutPath, stderrPath).c_str());

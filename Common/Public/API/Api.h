@@ -6,7 +6,6 @@
     #elif defined(_WIN32)
         #define ARMEMU_OS_WINDOWS_X86
     #elif defined(__linux__)
-        #error "Linux is not yet supported!"
         #define ARMEMU_OS_LINUX
     #else
         #error "Undefined-unsupported platform"

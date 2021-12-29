@@ -22,7 +22,7 @@ namespace {
 } // namespace
 
 template <>
-static std::string_view Enum::ToChar(WarningOptions value) {
+std::string_view Enum::ToChar(WarningOptions value) {
     return warningOptionsStringMap.At(value);
 }
 

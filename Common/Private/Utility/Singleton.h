@@ -9,15 +9,14 @@ BEGIN_NAMESPACE
 
 template < class Type, class Allocator = std::allocator< Type > >
 class DefaultSingletonManager {
-    Type m_instance {};
+    Type m_instance;
 
   public:
-    [[nodiscard]] constexpr DefaultSingletonManager() noexcept = default;
+    [[nodiscard]] DefaultSingletonManager() noexcept = default;
     DELETE_COPY_CLASS(DefaultSingletonManager)
     DELETE_MOVE_CLASS(DefaultSingletonManager)
 
-    [[nodiscard]] constexpr Type& GetInstance() noexcept(std::is_nothrow_default_constructible_v< Type >) requires(
-        !std::is_constructible_v< Type >) {
+    [[nodiscard]] Type& GetInstance() noexcept {
         return m_instance;
     }
 };
@@ -28,13 +27,12 @@ class SingletonManager {
 
   public:
     template < class... Args, class Enable = std::enable_if_t< std::is_constructible_v< Type, Args... > > >
-    [[nodiscard]] constexpr SingletonManager(Args&&... args) : m_instance(std::forward< Args >(args)...) {
+    [[nodiscard]] SingletonManager(Args&&... args) : m_instance(std::forward< Args >(args)...) {
     }
     DELETE_COPY_CLASS(SingletonManager)
     DELETE_MOVE_CLASS(SingletonManager)
 
-    [[nodiscard]] constexpr Type& GetInstance() noexcept(std::is_nothrow_default_constructible_v< Type >) requires(
-        !std::is_constructible_v< Type >) {
+    [[nodiscard]] Type& GetInstance() noexcept {
         return m_instance;
     }
 };

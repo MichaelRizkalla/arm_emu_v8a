@@ -759,236 +759,235 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64LoadStoreGroup elem) {
-    return A64LoadStoreGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64LoadStoreGroup enumValue) {
+    return A64LoadStoreGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64LoadStoreGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64LoadStoreGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructures elem) {
-    return AdvancedSIMDLoadStoreMultipleStructuresStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructures enumValue) {
+    return AdvancedSIMDLoadStoreMultipleStructuresStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructures elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructures enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructuresPostIndexed elem) {
-    return AdvancedSIMDLoadStoreMultipleStructuresPostIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructuresPostIndexed enumValue) {
+    return AdvancedSIMDLoadStoreMultipleStructuresPostIndexedStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                      os,
-                                    LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructuresPostIndexed elem) {
-    os << Enum::ToChar(elem);
+                                    LoadStoreGroup::AdvancedSIMDLoadStoreMultipleStructuresPostIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructure elem) {
-    return AdvancedSIMDLoadStoreSingleStructureStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructure enumValue) {
+    return AdvancedSIMDLoadStoreSingleStructureStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructure elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructure enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructurePostIndexed elem) {
-    return AdvancedSIMDLoadStoreSingleStructurePostIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructurePostIndexed enumValue) {
+    return AdvancedSIMDLoadStoreSingleStructurePostIndexedStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                   os,
-                                    LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructurePostIndexed elem) {
-    os << Enum::ToChar(elem);
+                                    LoadStoreGroup::AdvancedSIMDLoadStoreSingleStructurePostIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreMemoryTag elem) {
-    return LoadStoreMemoryTagStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreMemoryTag enumValue) {
+    return LoadStoreMemoryTagStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreMemoryTag elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreMemoryTag enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreExclusive elem) {
-    return LoadStoreExclusiveStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreExclusive enumValue) {
+    return LoadStoreExclusiveStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreExclusive elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreExclusive enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LdaprStlrUnscaledImmediate elem) {
-    return LdaprStlrUnscaledImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LdaprStlrUnscaledImmediate enumValue) {
+    return LdaprStlrUnscaledImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LdaprStlrUnscaledImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LdaprStlrUnscaledImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadRegisterLiteral elem) {
-    return LoadRegisterLiteralStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadRegisterLiteral enumValue) {
+    return LoadRegisterLiteralStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadRegisterLiteral elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadRegisterLiteral enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreNoAllocatePairOffset elem) {
-    return LoadStoreNoAllocatePairOffsetStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreNoAllocatePairOffset enumValue) {
+    return LoadStoreNoAllocatePairOffsetStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreNoAllocatePairOffset elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreNoAllocatePairOffset enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairPostIndexed elem) {
-    return LoadStoreRegisterPairPostIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairPostIndexed enumValue) {
+    return LoadStoreRegisterPairPostIndexedStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairPostIndexed elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairPostIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairOffset elem) {
-    return LoadStoreRegisterPairOffsetStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairOffset enumValue) {
+    return LoadStoreRegisterPairOffsetStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairOffset elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairOffset enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairPreIndexed elem) {
-    return LoadStoreRegisterPairPreIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPairPreIndexed enumValue) {
+    return LoadStoreRegisterPairPreIndexedStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairPreIndexed elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPairPreIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnscaledImmediate elem) {
-    return LoadStoreRegisterUnscaledImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnscaledImmediate enumValue) {
+    return LoadStoreRegisterUnscaledImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnscaledImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnscaledImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterImmediatePostIndexed elem) {
-    return LoadStoreRegisterImmediatePostIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterImmediatePostIndexed enumValue) {
+    return LoadStoreRegisterImmediatePostIndexedStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterImmediatePostIndexed elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterImmediatePostIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnprivileged elem) {
-    return LoadStoreRegisterUnprivilegedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnprivileged enumValue) {
+    return LoadStoreRegisterUnprivilegedStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnprivileged elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnprivileged enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterImmediatePreIndexed elem) {
-    return LoadStoreRegisterImmediatePreIndexedStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterImmediatePreIndexed enumValue) {
+    return LoadStoreRegisterImmediatePreIndexedStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterImmediatePreIndexed elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterImmediatePreIndexed enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::AtomicMemoryOperation elem) {
-    return AtomicMemoryOperationStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::AtomicMemoryOperation enumValue) {
+    return AtomicMemoryOperationStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AtomicMemoryOperation elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::AtomicMemoryOperation enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterRegisterOffset elem) {
-    return LoadStoreRegisterRegisterOffsetStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterRegisterOffset enumValue) {
+    return LoadStoreRegisterRegisterOffsetStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterRegisterOffset elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterRegisterOffset enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPAC elem) {
-    return LoadStoreRegisterPACStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterPAC enumValue) {
+    return LoadStoreRegisterPACStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPAC elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterPAC enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate elem) {
-    return LoadStoreRegisterUnsignedImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(LoadStoreGroup::LoadStoreRegisterUnsignedImmediate enumValue) {
+    return LoadStoreRegisterUnsignedImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnsignedImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, LoadStoreGroup::LoadStoreRegisterUnsignedImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

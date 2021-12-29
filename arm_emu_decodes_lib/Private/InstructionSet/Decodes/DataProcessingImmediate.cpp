@@ -94,90 +94,90 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64DataProcessingImmediateGroup elem) {
-    return A64DataProcessingImmediateGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64DataProcessingImmediateGroup enumValue) {
+    return A64DataProcessingImmediateGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingImmediateGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingImmediateGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::PCRelativeAddressing elem) {
-    return PCRelativeAddressingStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::PCRelativeAddressing enumValue) {
+    return PCRelativeAddressingStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::PCRelativeAddressing elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::PCRelativeAddressing enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate elem) {
-    return AddSubtractImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediate enumValue) {
+    return AddSubtractImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::AddSubtractImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::AddSubtractImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediateTag elem) {
-    return AddSubtractImmediateTagStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::AddSubtractImmediateTag enumValue) {
+    return AddSubtractImmediateTagStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::AddSubtractImmediateTag elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::AddSubtractImmediateTag enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate elem) {
-    return LogicalImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::LogicalImmediate enumValue) {
+    return LogicalImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::LogicalImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::LogicalImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate elem) {
-    return MoveWideImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::MoveWideImmediate enumValue) {
+    return MoveWideImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::MoveWideImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::MoveWideImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::Bitfield elem) {
-    return BitfieldStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::Bitfield enumValue) {
+    return BitfieldStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::Bitfield elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::Bitfield enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingImmediateGroup::Extract elem) {
-    return ExtractStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingImmediateGroup::Extract enumValue) {
+    return ExtractStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::Extract elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingImmediateGroup::Extract enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

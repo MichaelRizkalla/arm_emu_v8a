@@ -18,13 +18,13 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64ReservedGroup elem) {
-    return A64ReservedGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64ReservedGroup enumValue) {
+    return A64ReservedGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64ReservedGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64ReservedGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

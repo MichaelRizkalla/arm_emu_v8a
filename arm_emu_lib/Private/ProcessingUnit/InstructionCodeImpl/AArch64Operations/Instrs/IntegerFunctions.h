@@ -8,7 +8,8 @@
 /// <param name="immediate"></param>
 /// <returns></returns>
 template < std::size_t M >
-[[nodiscard]] auto DecodeBitMasks(bool immN, const Bitset& imms, const Bitset& immr, bool immediate) {
+[[nodiscard]] std::pair< std::bitset< M >, std::bitset< M > > DecodeBitMasks(bool immN, const Bitset& imms,
+                                                                             const Bitset& immr, bool immediate) {
     assert(imms.Size() == 6 && immr.Size() == 6);
 
     std::bitset< M > tmask, wmask;

@@ -20,7 +20,7 @@ namespace {
 } // namespace
 
 template <>
-static std::string_view Enum::ToChar(CppStandard value) {
+std::string_view Enum::ToChar(CppStandard value) {
     return cppStandardStringMap.At(value);
 }
 

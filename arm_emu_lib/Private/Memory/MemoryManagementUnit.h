@@ -5,6 +5,7 @@
     #include <DebugUtils/Object.h>
     #include <Memory/IMemory.h>
     #include <exception>
+    #include <memory_resource>
     #include <unordered_map>
 
 BEGIN_NAMESPACE
@@ -33,6 +34,9 @@ class [[nodiscard]] MemoryManagementUnit final : public Object {
     struct PhysicalAddressRange {
         IMemory::Address m_start;
         IMemory::Address m_end;
+
+        PhysicalAddressRange(IMemory::Address start, IMemory::Address end) : m_start(start), m_end(end) {
+        }
     };
 
   public:
@@ -42,14 +46,13 @@ class [[nodiscard]] MemoryManagementUnit final : public Object {
     DEFAULT_DTOR(MemoryManagementUnit)
 
     /// @brief Add a process to be tracked by MMU
-    [[nodiscard]] void             AddProcess(void* processAddress, IMemory::Address startAddressSpace,
-                                              IMemory::Address endAddressSpace);
+    void AddProcess(void* processAddress, IMemory::Address startAddressSpace, IMemory::Address endAddressSpace);
 
-    /// @brief Translates virtual address to the physical address in storage   
+    /// @brief Translates virtual address to the physical address in storage
     [[nodiscard]] IMemory::Address Translate(void* processAddress, IMemory::Address virtualAddress) const;
 
     /// @brief Returns number of mappings
-    [[nodiscard]] std::size_t      Count() const noexcept;
+    [[nodiscard]] std::size_t Count() const noexcept;
 
   private:
     std::pmr::unordered_map< void*, PhysicalAddressRange > m_mappings;

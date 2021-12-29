@@ -1930,568 +1930,564 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64DataProcessingScalarFloatingPointAdvancedSIMDGroup elem) {
-    return A64DataProcessingScalarFloatingPointAdvancedSIMDGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64DataProcessingScalarFloatingPointAdvancedSIMDGroup enumValue) {
+    return A64DataProcessingScalarFloatingPointAdvancedSIMDGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingScalarFloatingPointAdvancedSIMDGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingScalarFloatingPointAdvancedSIMDGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicAES elem) {
-    return CryptographicAESStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicAES enumValue) {
+    return CryptographicAESStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                        os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicAES elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicAES enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA elem) {
-    return CryptographicThreeRegisterSHAStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA enumValue) {
+    return CryptographicThreeRegisterSHAStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                     os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA elem) {
-    return CryptographicTwoRegisterSHAStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA enumValue) {
+    return CryptographicTwoRegisterSHAStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarCopy elem) {
-    return AdvancedSIMDScalarCopyStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarCopy enumValue) {
+    return AdvancedSIMDScalarCopyStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                              os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarCopy elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarCopy enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameFP16 elem) {
-    return AdvancedSIMDScalarThreeSameFP16StringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameFP16 enumValue) {
+    return AdvancedSIMDScalarThreeSameFP16StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                       os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameFP16 elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameFP16 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(
-    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneousFP16 elem) {
-    return AdvancedSIMDScalarTwoRegisterMiscellaneousFP16StringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(
+    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneousFP16 enumValue) {
+    return AdvancedSIMDScalarTwoRegisterMiscellaneousFP16StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(
     std::ostream&                                                                                      os,
-    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneousFP16 elem) {
-    os << Enum::ToChar(elem);
+    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneousFP16 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameExtraction elem) {
-    return AdvancedSIMDScalarThreeSameExtractionStringMap.At(elem);
+ARMEMU_API std::string_view
+    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameExtraction enumValue) {
+    return AdvancedSIMDScalarThreeSameExtractionStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                             os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameExtraction elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSameExtraction enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneous elem) {
-    return AdvancedSIMDScalarTwoRegisterMiscellaneousStringMap.At(elem);
+ARMEMU_API std::string_view
+    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneous enumValue) {
+    return AdvancedSIMDScalarTwoRegisterMiscellaneousStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                                  os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneous elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarTwoRegisterMiscellaneous enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarPairwise elem) {
-    return AdvancedSIMDScalarPairwiseStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarPairwise enumValue) {
+    return AdvancedSIMDScalarPairwiseStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarPairwise elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarPairwise enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeDifferent elem) {
-    return AdvancedSIMDScalarThreeDifferentStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeDifferent enumValue) {
+    return AdvancedSIMDScalarThreeDifferentStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                        os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeDifferent elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeDifferent enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSame elem) {
-    return AdvancedSIMDScalarThreeSameStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSame enumValue) {
+    return AdvancedSIMDScalarThreeSameStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSame elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarThreeSame enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarShiftByImmediate elem) {
-    return AdvancedSIMDScalarShiftByImmediateStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarShiftByImmediate enumValue) {
+    return AdvancedSIMDScalarShiftByImmediateStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                          os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarShiftByImmediate elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarShiftByImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarXIndexedElement elem) {
-    return AdvancedSIMDScalarXIndexedElementStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarXIndexedElement enumValue) {
+    return AdvancedSIMDScalarXIndexedElementStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                         os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarXIndexedElement elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDScalarXIndexedElement enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTableLookup elem) {
-    return AdvancedSIMDTableLookupStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTableLookup enumValue) {
+    return AdvancedSIMDTableLookupStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                               os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTableLookup elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTableLookup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDPermute elem) {
-    return AdvancedSIMDPermuteStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDPermute enumValue) {
+    return AdvancedSIMDPermuteStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                           os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDPermute elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDPermute enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDExtract elem) {
-    return AdvancedSIMDExtractStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDExtract enumValue) {
+    return AdvancedSIMDExtractStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                           os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDExtract elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDExtract enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDCopy elem) {
-    return AdvancedSIMDCopyStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDCopy enumValue) {
+    return AdvancedSIMDCopyStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                        os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDCopy elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDCopy enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSameFP16 elem) {
-    return AdvancedSIMDThreeSameFP16StringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSameFP16 enumValue) {
+    return AdvancedSIMDThreeSameFP16StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSameFP16 elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSameFP16 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneousFP16 elem) {
-    return AdvancedSIMDTwoRegisterMiscellaneousFP16StringMap.At(elem);
+ARMEMU_API std::string_view
+    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneousFP16 enumValue) {
+    return AdvancedSIMDTwoRegisterMiscellaneousFP16StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                                os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneousFP16 elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneousFP16 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeRegisterExtension elem) {
-    return AdvancedSIMDThreeRegisterExtensionStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeRegisterExtension enumValue) {
+    return AdvancedSIMDThreeRegisterExtensionStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                          os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeRegisterExtension elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeRegisterExtension enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneous elem) {
-    return AdvancedSIMDTwoRegisterMiscellaneousStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneous enumValue) {
+    return AdvancedSIMDTwoRegisterMiscellaneousStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                            os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneous elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDTwoRegisterMiscellaneous enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDAcrossLanes elem) {
-    return AdvancedSIMDAcrossLanesStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDAcrossLanes enumValue) {
+    return AdvancedSIMDAcrossLanesStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                               os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDAcrossLanes elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDAcrossLanes enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeDifferent elem) {
-    return AdvancedSIMDThreeDifferentStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeDifferent enumValue) {
+    return AdvancedSIMDThreeDifferentStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeDifferent elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeDifferent enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSame elem) {
-    return AdvancedSIMDThreeSameStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSame enumValue) {
+    return AdvancedSIMDThreeSameStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                             os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSame elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDThreeSame enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDModifiedImmediate elem) {
-    return AdvancedSIMDModifiedImmediateStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDModifiedImmediate enumValue) {
+    return AdvancedSIMDModifiedImmediateStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                     os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDModifiedImmediate elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDModifiedImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDShiftByImmediate elem) {
-    return AdvancedSIMDShiftByImmediateStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDShiftByImmediate enumValue) {
+    return AdvancedSIMDShiftByImmediateStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                    os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDShiftByImmediate elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDShiftByImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDVectorXIndexedElement elem) {
-    return AdvancedSIMDVectorXIndexedElementStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDVectorXIndexedElement enumValue) {
+    return AdvancedSIMDVectorXIndexedElementStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                         os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDVectorXIndexedElement elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::AdvancedSIMDVectorXIndexedElement enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterIMM2 elem) {
-    return CryptographicThreeRegisterIMM2StringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterIMM2 enumValue) {
+    return CryptographicThreeRegisterIMM2StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                      os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterIMM2 elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterIMM2 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA512 elem) {
-    return CryptographicThreeRegisterSHA512StringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA512 enumValue) {
+    return CryptographicThreeRegisterSHA512StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                        os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA512 elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicThreeRegisterSHA512 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicFourRegister elem) {
-    return CryptographicFourRegisterStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicFourRegister enumValue) {
+    return CryptographicFourRegisterStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
-    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicFourRegister elem) {
-    os << Enum::ToChar(elem);
+    operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicFourRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::XAR elem) {
-    return XARStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::XAR enumValue) {
+    return XARStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::XAR elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingScalarFloatingPointAdvancedSIMDGroup::XAR enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA512 elem) {
-    return CryptographicTwoRegisterSHA512StringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA512 enumValue) {
+    return CryptographicTwoRegisterSHA512StringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                      os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA512 elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::CryptographicTwoRegisterSHA512 enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndFixedPoint elem) {
-    return ConversionFloatingPointAndFixedPointStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndFixedPoint enumValue) {
+    return ConversionFloatingPointAndFixedPointStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                            os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndFixedPoint elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndFixedPoint enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndInteger elem) {
-    return ConversionFloatingPointAndIntegerStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndInteger enumValue) {
+    return ConversionFloatingPointAndIntegerStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                         os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndInteger elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::ConversionFloatingPointAndInteger enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingOneSource elem) {
-    return FloatingPointDataProcessingOneSourceStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingOneSource enumValue) {
+    return FloatingPointDataProcessingOneSourceStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                            os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingOneSource elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingOneSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointCompare elem) {
-    return FloatingPointCompareStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointCompare enumValue) {
+    return FloatingPointCompareStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                            os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointCompare elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointCompare enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointImmediate elem) {
-    return FloatingPointImmediateStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointImmediate enumValue) {
+    return FloatingPointImmediateStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream& operator<<(std::ostream&                                                              os,
-                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointImmediate elem) {
-    os << Enum::ToChar(elem);
+                                    DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalCompare elem) {
-    return FloatingPointConditionalCompareStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalCompare enumValue) {
+    return FloatingPointConditionalCompareStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                       os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalCompare elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalCompare enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingTwoSource elem) {
-    return FloatingPointDataProcessingTwoSourceStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingTwoSource enumValue) {
+    return FloatingPointDataProcessingTwoSourceStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                            os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingTwoSource elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingTwoSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalSelect elem) {
-    return FloatingPointConditionalSelectStringMap.At(elem);
+ARMEMU_API std::string_view
+           Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalSelect enumValue) {
+    return FloatingPointConditionalSelectStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                      os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalSelect elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointConditionalSelect enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view
-    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingThreeSource elem) {
-    return FloatingPointDataProcessingThreeSourceStringMap.At(elem);
+ARMEMU_API std::string_view
+    Enum::ToChar(DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingThreeSource enumValue) {
+    return FloatingPointDataProcessingThreeSourceStringMap.At(enumValue);
 }
 
 template <>
 ARMEMU_API std::ostream&
            operator<<(std::ostream&                                                                              os,
-               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingThreeSource elem) {
-    os << Enum::ToChar(elem);
+               DataProcessingScalarFloatingPointAdvancedSIMDGroup::FloatingPointDataProcessingThreeSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

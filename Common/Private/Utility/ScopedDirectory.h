@@ -4,7 +4,7 @@
     #include <API/Api.h>
     #include <chrono>
     #include <filesystem>
-    #include <format>
+    #include <fmt/format.h>
 
 BEGIN_NAMESPACE
 
@@ -15,7 +15,7 @@ struct [[nodiscard]] ScopedDirectory {
         for (auto trial = 0; trial < N_trials; ++trial) {
             const auto path =
                 std::filesystem::temp_directory_path() /
-                std::format("{}-{}-{:04x}", name,
+                fmt::format("{}-{}-{:04x}", name,
                             std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()), trial);
 
             if (std::filesystem::create_directories(path)) {

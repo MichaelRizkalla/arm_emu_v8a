@@ -37,6 +37,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DARMEMU_BUILD_TEST -DARMEMU_LOG_TYPE=ARMEMU_LOG_NONE)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE gtest)
+target_link_libraries(${PROJECT_NAME} PRIVATE gtest fmt::fmt-header-only)
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${EMU_INSTALL_DIR}/)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${EMU_INSTALL_DIR}/)

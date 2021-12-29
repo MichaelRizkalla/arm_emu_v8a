@@ -3,6 +3,7 @@
 #include <API/HiddenAPI.h>
 #include <Memory/ProgramMemory.h>
 #include <Program/Program.h>
+#include <memory_resource>
 
 BEGIN_NAMESPACE
 

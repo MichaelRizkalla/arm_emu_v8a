@@ -19,7 +19,7 @@ enum class RegisterStatus : std::uint32_t
 };
 
 struct [[nodiscard]] GPRegisters {
-    
+
     using Arch64Registers = std::array< std::bitset< 64 >, 31 >;
 
     [[nodiscard]] auto& PC() noexcept {
@@ -100,7 +100,7 @@ struct [[nodiscard]] GPRegisters {
         }
     }
 
-    [[nodiscard]] void WSP(std::uint32_t data) noexcept { // Width 32
+    void WSP(std::uint32_t data) noexcept { // Width 32
         switch (m_PE.EL.to_ulong()) {
             case 0:
                 m_SPEL0.m_value = data;
@@ -120,7 +120,7 @@ struct [[nodiscard]] GPRegisters {
         }
     }
 
-    [[nodiscard]] void WSP(const std::bitset< 32 >& data) noexcept { // Width 32
+    void WSP(const std::bitset< 32 >& data) noexcept { // Width 32
         switch (m_PE.EL.to_ulong()) {
             case 0:
                 m_SPEL0.m_value = data.to_ullong();
@@ -220,7 +220,6 @@ struct [[nodiscard]] GPRegisters {
     void PreConditions(std::uint8_t loc) const noexcept {
         assert(loc >= 0 && loc < m_registers.size());
     }
-
 
     static constexpr std::size_t Procedural_link_register_index = 30;
     // TODO: register 30's role as a link on procedure calls.

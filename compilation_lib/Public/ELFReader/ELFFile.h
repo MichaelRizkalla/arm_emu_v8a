@@ -5,6 +5,7 @@
     #include <ELFReader/Entries/FileHeader.h>
     #include <Utility/UniqueRef.h>
     #include <map>
+    #include <memory_resource>
 
 BEGIN_NAMESPACE
 

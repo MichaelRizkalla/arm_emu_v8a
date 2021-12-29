@@ -14,6 +14,10 @@ namespace test {
         struct TestStruct {
             arm_emu::UniqueRef< int >               val1;
             arm_emu::UniqueRef< SharedRef< void > > val2;
+
+            TestStruct(arm_emu::UniqueRef< int > v1, arm_emu::UniqueRef< SharedRef< void > > v2) :
+                val1(std::move(v1)), val2(std::move(v2)) {
+            }
         };
 
     } // namespace

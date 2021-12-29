@@ -58,11 +58,11 @@ void MemoryWatcher::RecordAccessResult(MemoryAccessResult result) {
     }
 }
 
-size_t MemoryWatcher::GetHitCount() const noexcept {
+std::size_t MemoryWatcher::GetHitCount() const noexcept {
     return m_hits;
 }
 
-size_t MemoryWatcher::GetMissCount() const noexcept {
+std::size_t MemoryWatcher::GetMissCount() const noexcept {
     return m_misses;
 }
 
@@ -74,55 +74,55 @@ double MemoryWatcher::GetHitRatio() const noexcept {
     return m_hits / static_cast< double >(m_hits + m_misses);
 }
 
-size_t MemoryWatcher::GetReadCount() const noexcept {
+std::size_t MemoryWatcher::GetReadCount() const noexcept {
     return m_memory.m_readCount;
 }
 
-size_t MemoryWatcher::GetReadBlockCount() const noexcept {
+std::size_t MemoryWatcher::GetReadBlockCount() const noexcept {
     return m_memory.m_readBlockCount;
 }
 
-size_t MemoryWatcher::GetAllReadCount() const noexcept {
+std::size_t MemoryWatcher::GetAllReadCount() const noexcept {
     return m_memory.m_readCount + m_memory.m_readBlockCount;
 }
 
-size_t MemoryWatcher::GetWriteCount() const noexcept {
+std::size_t MemoryWatcher::GetWriteCount() const noexcept {
     return m_memory.m_writeCount;
 }
 
-size_t MemoryWatcher::GetWriteBlockCount() const noexcept {
+std::size_t MemoryWatcher::GetWriteBlockCount() const noexcept {
     return m_memory.m_writeBlockCount;
 }
 
-size_t MemoryWatcher::GetAllWriteCount() const noexcept {
+std::size_t MemoryWatcher::GetAllWriteCount() const noexcept {
     return m_memory.m_writeCount + m_memory.m_writeBlockCount;
 }
 
-size_t MemoryWatcher::GetUpStreamReadCount() const noexcept {
+std::size_t MemoryWatcher::GetUpStreamReadCount() const noexcept {
     return m_upStreamMemory.m_readCount;
 }
 
-size_t MemoryWatcher::GetUpStreamReadBlockCount() const noexcept {
+std::size_t MemoryWatcher::GetUpStreamReadBlockCount() const noexcept {
     return m_upStreamMemory.m_readBlockCount;
 }
 
-size_t MemoryWatcher::GetAllUpStreamReadCount() const noexcept {
+std::size_t MemoryWatcher::GetAllUpStreamReadCount() const noexcept {
     return m_upStreamMemory.m_readCount + m_upStreamMemory.m_readBlockCount;
 }
 
-size_t MemoryWatcher::GetUpStreamWriteCount() const noexcept {
+std::size_t MemoryWatcher::GetUpStreamWriteCount() const noexcept {
     return m_upStreamMemory.m_writeCount;
 }
 
-size_t MemoryWatcher::GetUpStreamWriteBlockCount() const noexcept {
+std::size_t MemoryWatcher::GetUpStreamWriteBlockCount() const noexcept {
     return m_upStreamMemory.m_writeBlockCount;
 }
 
-size_t MemoryWatcher::GetAllUpStreamWriteCount() const noexcept {
+std::size_t MemoryWatcher::GetAllUpStreamWriteCount() const noexcept {
     return m_upStreamMemory.m_writeCount + m_upStreamMemory.m_writeBlockCount;
 }
 
-size_t MemoryWatcher::GetMemoryAccessCount() const noexcept {
+std::size_t MemoryWatcher::GetMemoryAccessCount() const noexcept {
     switch (m_hint) {
         case Hint::RandomAccessMemory:
             return GetAllReadCount() + GetAllWriteCount();

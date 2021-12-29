@@ -13,6 +13,9 @@ class [[nodiscard]] A64InstructionHandler {
   public:
     A64InstructionHandler(Object* debugObject, IMemory* instructionMemory, IMemory* upStreamMemory);
 
+    A64InstructionHandler(A64InstructionHandler&&);
+    A64InstructionHandler& operator=(A64InstructionHandler&&);
+
     ~A64InstructionHandler();
 
   private:

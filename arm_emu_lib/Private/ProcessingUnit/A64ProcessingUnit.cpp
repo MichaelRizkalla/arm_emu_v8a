@@ -1,4 +1,5 @@
 
+#include <Instruction/Instruction.h>
 #include <Interrupt/Interrupt.h>
 #include <Memory/MemoryManagementUnit.h>
 #include <ProcessingUnit/A64InstructionManager/A64InstructionManager.h>
@@ -6,7 +7,6 @@
 #include <ProcessingUnit/A64ProcessingUnitWatcher.h>
 #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
 #include <ProcessingUnit/A64Registers/SystemRegisters.h>
-#include <Instruction/Instruction.h>
 #include <Program/ResultElement.h>
 #include <Utility/Exceptions.h>
 #include <Utility/StreamableEnum.h>
@@ -42,6 +42,13 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         Program                        m_program;
         bool                           m_stepIn;
         std::weak_ptr< ResultElement > m_result;
+
+        ProgramState(Program program, bool stepIn, std::weak_ptr< ResultElement > result) :
+            m_program(std::move(program)), m_stepIn(stepIn), m_result(result) {
+        }
+
+        DEFAULT_MOVE_CLASS(ProgramState)
+        DEFAULT_DTOR(ProgramState)
     };
 
     struct GPRegistersProxy : public GPRegisters {
@@ -899,6 +906,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             case BranchExceptionSystemGroup::ExceptionGeneration::DCPS3: {
                 throw not_implemented_feature {};
             } break;
+            default: {
+                throw undefined_instruction {};
+            } break;
         }
     }
     void Execute(Instruction&& instruction, BranchExceptionSystemGroup::Hints instructionType) {
@@ -942,9 +952,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 C = C_;
                 V = 0;
             } break;
-            default:
+            default: {
                 throw undefined_instruction {};
-                break;
+            } break;
         }
     }
     void Execute(Instruction&& instruction, BranchExceptionSystemGroup::SystemInstruction instructionType) {
@@ -1341,6 +1351,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             } break;
             case LoadStoreGroup::LoadStoreRegisterPairPreIndexed::LDP_128BIT_SIMD: {
                 throw not_implemented_feature {};
+            } break;
+            default: {
+                throw undefined_instruction {};
             } break;
         }
     }
@@ -4857,7 +4870,7 @@ class A64ProcessingUnit::Impl final {
     }
 
     DELETE_COPY_CLASS(Impl)
-    DEFAULT_MOVE_CLASS(Impl)
+    DELETE_MOVE_CLASS(Impl)
 
     ~Impl() {
         m_cleanUp->Trigger();

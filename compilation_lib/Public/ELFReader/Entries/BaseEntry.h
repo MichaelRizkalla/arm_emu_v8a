@@ -7,6 +7,7 @@
     #include <cstddef>
     #include <cstdint>
     #include <functional>
+    #include <memory_resource>
 
 BEGIN_NAMESPACE
 

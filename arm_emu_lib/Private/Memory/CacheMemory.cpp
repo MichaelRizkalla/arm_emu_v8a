@@ -5,6 +5,7 @@ TODO: Implement multi threading access
 
 #include <Memory/CacheMemory.h>
 #include <Memory/MemoryWatcher.h>
+#include <memory_resource>
 
 BEGIN_NAMESPACE
 
@@ -59,7 +60,8 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         m_watcher(MemoryWatcher::Hint::CacheMemory),
         m_debugObject(*logger),
         m_segmentCount(ComputeAddressMask(m_size, m_upStreamMemory->Size())) {
-        m_debugObject.Log(LogType::Construction, "Memory construction {}!", m_cache.size() > 0 ? "succeeded" : "failed");
+        m_debugObject.Log(LogType::Construction, "Memory construction {}!",
+                          m_cache.size() > 0 ? "succeeded" : "failed");
     }
 
     [[nodiscard]] DataUnit Read(Address address) noexcept final {
@@ -265,8 +267,8 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
 };
 
 template < class ImplDetail >
-static UniqueRef< CacheMemory::Impl > CacheMemory::ConstructMemory(IMemory* upStreamMemory, Address size,
-                                                                   const Config& config, ImplDetail detail) {
+UniqueRef< CacheMemory::Impl > CacheMemory::ConstructMemory(IMemory* upStreamMemory, Address size, const Config& config,
+                                                            ImplDetail detail) {
     detail->Log(LogType::Construction, "Constructing Memory of size {} Addresses!", size);
     if (config.m_cacheWriteStrategy == CacheWriteStrategy::WriteThrough) {
         if (config.m_memoryMapping == CacheMemoryMapping::DirectMapping) {

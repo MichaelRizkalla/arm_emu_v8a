@@ -34,7 +34,7 @@ template < std::size_t N, std::size_t M >
 }
 
 template < std::size_t N, std::size_t M >
-[[nodiscard]] auto SignExtend(std::bitset< M > x) const {
+[[nodiscard]] std::bitset< N > SignExtend(std::bitset< M > x) const {
     static_assert(N >= M);
     auto             val          = Replicate< N - M >(std::bitset< 1 > { x[M - 1] });
     std::bitset< N > return_value = concate< N - M, M >(val, x);
@@ -42,7 +42,7 @@ template < std::size_t N, std::size_t M >
 }
 
 template < std::size_t N, std::size_t M >
-[[nodiscard]] auto ZeroExtend(std::bitset< M > x) const {
+[[nodiscard]] std::bitset< N > ZeroExtend(std::bitset< M > x) const {
     static_assert(N >= M);
     return std::bitset< N >(x.to_ullong());
 }

@@ -1,7 +1,8 @@
 // AddWithCarry()
 // Integer addition with carry input, returning result and NZCV flags
 template < std::size_t N >
-[[nodiscard]] auto AddWithCarry(std::bitset< N > x, std::bitset< N > y, bool carry_in) {
+[[nodiscard]] std::pair< std::bitset< N >, std::bitset< 4 > > AddWithCarry(std::bitset< N > x, std::bitset< N > y,
+                                                                           bool carry_in) {
     using T  = std::uint64_t;
     using ST = std::make_signed_t< T >;
 

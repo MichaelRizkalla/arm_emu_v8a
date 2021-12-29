@@ -9,12 +9,6 @@ class A64InstructionHandler::Impl {
         m_debugObject(*debugObject), m_instructionMemory(instructionMemory), m_upStreamMemory(upStreamMemory) {
     }
 
-    Impl(Impl&&)  = default;
-    Impl& operator=(Impl&&) = default;
-
-    Impl(const Impl&)       = delete;
-    Impl& operator=(const Impl&) = delete;
-
     ~Impl() {
         m_debugObject.Log(LogType::Destruction, "Destroying A64InstructionHandler!");
     }
@@ -26,7 +20,7 @@ class A64InstructionHandler::Impl {
 };
 
 template < class ImplDetail >
-[[nodiscard]] static UniqueRef< A64InstructionHandler::Impl >
+[[nodiscard]] UniqueRef< A64InstructionHandler::Impl >
     A64InstructionHandler::ConstructInstructionHandler(IMemory* instructionMemory, IMemory* upStreamMemory,
                                                        ImplDetail myself) {
     myself->Log(LogType::Construction,
@@ -40,6 +34,10 @@ template < class ImplDetail >
 A64InstructionHandler::A64InstructionHandler(Object* debugObject, IMemory* instructionMemory, IMemory* upStreamMemory) :
     m_instructionHandler(ConstructInstructionHandler(instructionMemory, upStreamMemory, debugObject)) {
 }
+
+A64InstructionHandler::A64InstructionHandler(A64InstructionHandler&&) = default;
+
+A64InstructionHandler& A64InstructionHandler::operator=(A64InstructionHandler&&) = default;
 
 A64InstructionHandler::~A64InstructionHandler() = default;
 

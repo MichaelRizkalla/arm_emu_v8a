@@ -4,6 +4,8 @@
 #include <ELFReader/ELFReader.h>
 #include <Utility/StreamableEnum.h>
 #include <Utility/System.h>
+#include <Utility/Utilities.h>
+#include <memory_resource>
 #include <regex>
 
 BEGIN_NAMESPACE
@@ -12,28 +14,57 @@ namespace {
     static inline constexpr std::size_t optimizationLevelLocation = 0;
     static inline constexpr std::size_t cppStandardLocation       = 1;
     static inline constexpr std::size_t warningOptionsLocation    = 2;
+
+    namespace {
+
+        using namespace std::literals::string_view_literals;
+
+        static constexpr SmallConstMap< ClangVersion, std::string_view, 6 > clangVersionStringMap { { {
+            { ClangVersion::Version10, "10"sv },
+            { ClangVersion::Version11, "11"sv },
+            { ClangVersion::Version12, "12"sv },
+            { ClangVersion::Version13, "13"sv },
+        } } };
+
+    } // namespace
+
 } // namespace
+
+template <>
+std::string_view Enum::ToChar(ClangVersion value) {
+    return clangVersionStringMap.At(value);
+}
+
+template <>
+std::ostream& operator<<(std::ostream& os, ClangVersion value) {
+    os << Enum::ToChar(value);
+    return os;
+}
 
 std::optional< Compiler > Compiler::FindCompiler(std::vector< std::filesystem::path > searchPaths) noexcept {
     for (const auto& path : searchPaths) {
         if (std::error_code errorCode {};
             std::filesystem::is_regular_file(path, errorCode) || std::filesystem::is_symlink(path, errorCode)) {
-            if (const auto [result, out, err] = System::Call(std::format("{} --version", path.string()));
+            if (const auto [result, out, err] = System::Call(fmt::format("{} --version", path.string()));
                 out.find("clang") != std::string::npos) {
-                return Compiler { path, true };
+
+                auto version      = out.substr(out.find("clang version ") + 14, 2);
+                auto clangVersion = static_cast< ClangVersion >(std::stoi(version));
+
+                return Compiler { path, clangVersion, true };
             }
         }
     }
     return std::nullopt;
 }
 
-Compiler::Compiler(std::filesystem::path compilerPath) :
-    m_compiler(compilerPath), m_compilerOptions({ 0, 0, 0 }), Object(Default_name) {
+Compiler::Compiler(std::filesystem::path compilerPath, ClangVersion version) :
+    m_compiler(compilerPath), m_compilerOptions({ 0, 0, 0 }), m_version(version), Object(Default_name) {
 }
 
-Compiler::Compiler(std::filesystem::path compilerPath, bool) :
-    m_compiler(compilerPath), m_compilerOptions({ 0, 0, 0 }), Object(Default_name) {
-    Log(LogType::Compiler, "Found clang compiler at path: {}", m_compiler.string());
+Compiler::Compiler(std::filesystem::path compilerPath, ClangVersion version, bool) :
+    m_compiler(compilerPath), m_compilerOptions({ 0, 0, 0 }), m_version(version), Object(Default_name) {
+    Log(LogType::Compiler, "Found clang-{} compiler at path: {}", Enum::ToChar(m_version), m_compiler.string());
 }
 
 Compiler::Compiler(Compiler&&) noexcept = default;
@@ -59,7 +90,7 @@ void Compiler::SetOption(WarningOptions warningOptions) noexcept {
 std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path&                     sourceFilePath,
                                                      const std::pmr::vector< std::filesystem::path >& libraries) {
     ScopedDirectory dir {};
-
+    Log(LogType::None, "dir");
     const auto cppFile         = dir.Path() / "src.cpp";
     const auto asmFile         = dir.Path() / "src.s";
     const auto objFile         = dir.Path() / "src.o";
@@ -75,10 +106,10 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
 
     std::string includeLibrariesCommand { "" };
     for (const auto& libraryPath : libraries) {
-        includeLibrariesCommand.append(std::format(R"(-I"{}" )", libraryPath.string()));
+        includeLibrariesCommand.append(fmt::format(R"(-I"{}" )", libraryPath.string()));
     }
 
-    const auto buildCommand = std::format(
+    const auto buildCommand = fmt::format(
         R"({} -std={} "{}" -c -o "{}" -{} -g -{} -save-temps=obj --target=aarch64-none-elf -march=armv8-a -mfpu=vfp -mfloat-abi=hard -nostdinc {} -D__ELF__ -D_LIBCPP_HAS_NO_THREADS)",
         m_compiler.string(), Enum::ToChar(static_cast< CppStandard >(m_compilerOptions[cppStandardLocation])),
         cppFile.string(), objFile.string(),
@@ -98,9 +129,14 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
         std::pmr::polymorphic_allocator< std::pmr::vector< std::uint8_t > > {}, FileUtility::Read(objFile));
     auto elfFile = ELFReader::ParseObjectFile(objFile, std::move(objectData), *this);
 
+    std::string objDumpEntity { Obj_dump_name };
+#ifndef ARMEMU_OS_WINDOWS
+    objDumpEntity.insert(13, Enum::ToChar(m_version).data());
+#endif // !ARMEMU_OS_WINDOWS
+
     const auto disassembleCommand =
-        std::format(R"({} --disassemble --demangle --line-numbers --full-leading-addr --source "{}")",
-                    (m_compiler.parent_path() / Obj_dump_name).string(), objFile.string());
+        fmt::format(R"({} --disassemble --demangle --line-numbers --full-leading-addr --source "{}")",
+                    (m_compiler.parent_path() / objDumpEntity.c_str()).string(), objFile.string());
     Log(LogType::Compiler, "Executing disassemble commands: '{}'", disassembleCommand);
 
     const auto [disassemblyResult, disassembly, disassemblyError] = System::Call(disassembleCommand);

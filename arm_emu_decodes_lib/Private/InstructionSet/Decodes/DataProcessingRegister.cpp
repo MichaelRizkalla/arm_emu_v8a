@@ -213,145 +213,145 @@ namespace {
 } // namespace
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(A64DataProcessingRegisterGroup elem) {
-    return A64DataProcessingRegisterGroupStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(A64DataProcessingRegisterGroup enumValue) {
+    return A64DataProcessingRegisterGroupStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingRegisterGroup elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, A64DataProcessingRegisterGroup enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource elem) {
-    return DataProcessingTwoSourceStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingTwoSource enumValue) {
+    return DataProcessingTwoSourceStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingTwoSource elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingTwoSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource elem) {
-    return DataProcessingOneSourceStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingOneSource enumValue) {
+    return DataProcessingOneSourceStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingOneSource elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingOneSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister elem) {
-    return LogicalShiftedRegisterStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::LogicalShiftedRegister enumValue) {
+    return LogicalShiftedRegisterStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::LogicalShiftedRegister elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::LogicalShiftedRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister elem) {
-    return AddSubtractShiftedRegisterStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractShiftedRegister enumValue) {
+    return AddSubtractShiftedRegisterStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractShiftedRegister elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractShiftedRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister elem) {
-    return AddSubtractExtendedRegisterStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractExtendedRegister enumValue) {
+    return AddSubtractExtendedRegisterStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractExtendedRegister elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractExtendedRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry elem) {
-    return AddSubtractCarryStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::AddSubtractCarry enumValue) {
+    return AddSubtractCarryStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractCarry elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::AddSubtractCarry enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::RotateRightIntoFlags elem) {
-    return RotateRightIntoFlagsStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::RotateRightIntoFlags enumValue) {
+    return RotateRightIntoFlagsStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::RotateRightIntoFlags elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::RotateRightIntoFlags enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::EvaluateIntoFlags elem) {
-    return EvaluateIntoFlagsStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::EvaluateIntoFlags enumValue) {
+    return EvaluateIntoFlagsStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::EvaluateIntoFlags elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::EvaluateIntoFlags enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister elem) {
-    return ConditionalCompareRegisterStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareRegister enumValue) {
+    return ConditionalCompareRegisterStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalCompareRegister elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalCompareRegister enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate elem) {
-    return ConditionalCompareImmediateStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalCompareImmediate enumValue) {
+    return ConditionalCompareImmediateStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalCompareImmediate elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalCompareImmediate enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect elem) {
-    return ConditionalSelectStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::ConditionalSelect enumValue) {
+    return ConditionalSelectStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalSelect elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::ConditionalSelect enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 
 template <>
-ARMEMU_API static std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource elem) {
-    return DataProcessingThreeSourceStringMap.At(elem);
+ARMEMU_API std::string_view Enum::ToChar(DataProcessingRegisterGroup::DataProcessingThreeSource enumValue) {
+    return DataProcessingThreeSourceStringMap.At(enumValue);
 }
 
 template <>
-ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingThreeSource elem) {
-    os << Enum::ToChar(elem);
+ARMEMU_API std::ostream& operator<<(std::ostream& os, DataProcessingRegisterGroup::DataProcessingThreeSource enumValue) {
+    os << Enum::ToChar(enumValue);
     return os;
 }
 

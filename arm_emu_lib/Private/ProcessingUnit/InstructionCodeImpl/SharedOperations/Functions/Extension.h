@@ -1,6 +1,6 @@
 
-[[nodiscard]] bool HasArchVersion(IProcessingUnit::ExtensionVersion extensionVersion) const noexcept {
-    return extensionVersion <= extensionVersion;
+[[nodiscard]] bool HasArchVersion(IProcessingUnit::ExtensionVersion extVersion) const noexcept {
+    return extVersion <= extensionVersion;
 }
 
 [[nodiscard]] bool HaveVirtHostExt() noexcept {

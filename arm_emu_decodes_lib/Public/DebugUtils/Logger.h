@@ -5,7 +5,7 @@
     #include <DebugUtils/Clock.h>
     #include <DebugUtils/LogLevel.h>
     #include <DebugUtils/LogType.h>
-    #include <format>
+    #include <fmt/format.h>
     #include <ostream>
     #include <string>
 
@@ -49,7 +49,7 @@ namespace arm_emu {
         template < class... Args >
         [[nodiscard]] static auto Formatter(const char* logMsg, Args&&... args) {
             // TODO: Add better formatting
-            return std::vformat(logMsg, std::make_format_args(std::forward< Args >(args)...));
+            return fmt::vformat(logMsg, fmt::make_format_args(std::forward< Args >(args)...));
         }
 
         [[nodiscard]] static std::ostream* GetLogTarget() noexcept;

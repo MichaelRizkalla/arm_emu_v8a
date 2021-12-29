@@ -18,6 +18,7 @@ file(GLOB_RECURSE LIB_FILES
 ### Add build target
 ################################################################################
 add_library(${PROJECT_NAME} SHARED ${LIB_FILES} ${INCLUDE_DIRS})
+#add_dependencies(${PROJECT_NAME} fmt)
 
 ################################################################################
 ### Configure target
@@ -25,4 +26,6 @@ add_library(${PROJECT_NAME} SHARED ${LIB_FILES} ${INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DARMEMU_BUILD_DLL -DARMEMU_LOG_TYPE=ARMEMU_LOG_NONE)
 
-install(TARGETS ${PROJECT_NAME} LIBRARY RUNTIME DESTINATION ${EMU_INSTALL_DIR}/)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt-header-only)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION ${EMU_INSTALL_DIR}/)

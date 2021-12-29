@@ -22,7 +22,7 @@ file(GLOB_RECURSE LIB_FILES
 ### Add build target
 ################################################################################
 add_library(${PROJECT_NAME} SHARED ${LIB_FILES} ${INCLUDE_DIRS})
-add_dependencies(${PROJECT_NAME} arm_emu_decodes_lib)
+add_dependencies(${PROJECT_NAME} ${DECODE_PROJ})
 
 ################################################################################
 ### Configure target
@@ -30,6 +30,6 @@ add_dependencies(${PROJECT_NAME} arm_emu_decodes_lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS} ${DECODES_INCLUDE})
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DARMEMU_BUILD_DLL)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE arm_emu_decodes_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${DECODE_PROJ} fmt::fmt-header-only)
 
-install(TARGETS ${PROJECT_NAME} LIBRARY RUNTIME DESTINATION ${EMU_INSTALL_DIR}/)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${EMU_INSTALL_DIR}/)

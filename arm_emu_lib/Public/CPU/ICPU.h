@@ -194,9 +194,9 @@ namespace arm_emu {
         EL3 = 0b11,
     };
 
-    class cpu_creation_failure : public std::exception {
+    class cpu_creation_failure : public std::runtime_error {
       public:
-        cpu_creation_failure(const char* message = "Generic CPU creation failure!") : std::exception { message } {};
+        cpu_creation_failure(const char* message = "Generic CPU creation failure!") : std::runtime_error { message } {};
     };
 
     /// @brief CPUDebugger will be used to extract MemoryWatcher and ProcessingUnitWatcher as well as peeking into cache memory
