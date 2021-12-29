@@ -6,12 +6,18 @@ project(arm_emu_lib_test)
 ################################################################################
 ### Includes
 ################################################################################
+set(DECODE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arm_emu_decodes_lib")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arm_emu_lib")
-set(GTEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/GTest/googletest/")
-set(INCLUDE_DIRS ${LIB_DIR}/Public/ ${LIB_DIR}/Private/ ${LIB_DIR}/Boost/ ${GTEST_DIR}/include/ ${CMAKE_CURRENT_SOURCE_DIR})
+set(GTEST_DIR "${COMMON_DIR}/GTest/googletest/")
+set(INCLUDE_DIRS ${LIB_DIR}/Public/ ${LIB_DIR}/Private/ ${DECODE_DIR}/Public/ 
+                    ${DECODE_DIR}/Private/ ${GTEST_DIR}/include/ ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE LIB_FILES 
     "${LIB_DIR}/Private/*.*"
     "${LIB_DIR}/Public/*.*"
+    "${DECODE_DIR}/Private/*.*"
+    "${DECODE_DIR}/Public/*.*"
+    "${COMMON_DIR}/Private/*.*"
+    "${COMMON_DIR}/Public/*.*"
 )
 file(GLOB_RECURSE TEST_FILES 
     "Tests/*.*"

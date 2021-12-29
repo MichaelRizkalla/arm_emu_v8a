@@ -24,13 +24,12 @@ namespace test {
         sys.StackSize       = 12_KB;
         sys.RamSize         = 100_MB;
 
-        auto m_cpu = arm_emu::SystemCreator::CreateCPU(sys);
-        auto prog = arm_emu::GetTestProgram(programNumber);
+        auto m_cpu    = arm_emu::SystemCreator::CreateCPU(sys);
+        auto prog     = arm_emu::test::GetSampleProgram(programNumber);
         auto stepCtrl = m_cpu->StepIn(std::move(prog));
 
         while (!stepCtrl.CanStepIn())
             ;
-
         while (stepCtrl.CanStepIn()) {
             stepCtrl.StepIn();
         }

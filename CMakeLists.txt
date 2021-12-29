@@ -6,12 +6,15 @@ cmake_minimum_required(VERSION 3.19.2)
 ################################################################################
 ### Programming language version
 ################################################################################
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EMU_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(COMMON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Common)
 
 set(BUILD_TESTS "Builds arm_emu_lib tests" OFF)
+
+include_directories(${COMMON_DIR}/Private/ ${COMMON_DIR}/Public/ ${COMMON_DIR}/Boost/)
 
 ################################################################################
 ### Compiler flags
@@ -49,11 +52,14 @@ endif()
 ### Projects
 ################################################################################
 project(ARM_EMU_PROJ)
+add_subdirectory(arm_emu_decodes_lib)
 add_subdirectory(arm_emu_lib)
+add_subdirectory(compilation_lib)
 
 if (BUILD_TESTS)
     set(BUILD_GMOCK OFF)
     set(INSTALL_GTEST OFF)
-    add_subdirectory(arm_emu_lib_test/GTest)
+    add_subdirectory(Common/GTest)
     add_subdirectory(arm_emu_lib_test)
+    add_subdirectory(compilation_lib_test)
 endif()

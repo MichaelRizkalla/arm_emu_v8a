@@ -37,7 +37,9 @@ namespace arm_emu {
         }
     };
 
-    ARMEMU_API Program GetTestProgram(size_t idx);
+    namespace test {
+        ARMEMU_API Program GetSampleProgram(size_t idx);
+    }
 
 } // namespace arm_emu
 

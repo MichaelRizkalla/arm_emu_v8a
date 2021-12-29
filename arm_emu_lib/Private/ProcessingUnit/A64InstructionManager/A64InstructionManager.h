@@ -2,8 +2,8 @@
     #define A64INSTRUCTIONMANAGER_H_INCLUDED_57014F19_76A7_4FC8_AB95_026CCF6E210F
 
     #include <API/Api.h>
-    #include <ProcessingUnit/A64Instruction/Instruction.h>
-    #include <ProcessingUnit/A64InstructionSet/A64InstructionSet.h>
+    #include <Instruction/Instruction.h>
+    #include <InstructionSet/A64InstructionSet.h>
     #include <Utility/Bitset.h>
     #include <concepts>
 

@@ -1,12 +1,12 @@
 
 #include <Interrupt/Interrupt.h>
 #include <Memory/MemoryManagementUnit.h>
-#include <ProcessingUnit/A64Instruction/Instruction.h>
 #include <ProcessingUnit/A64InstructionManager/A64InstructionManager.h>
 #include <ProcessingUnit/A64ProcessingUnit.h>
 #include <ProcessingUnit/A64ProcessingUnitWatcher.h>
 #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
 #include <ProcessingUnit/A64Registers/SystemRegisters.h>
+#include <Instruction/Instruction.h>
 #include <Program/ResultElement.h>
 #include <Utility/Exceptions.h>
 #include <Utility/StreamableEnum.h>
