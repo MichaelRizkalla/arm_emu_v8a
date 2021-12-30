@@ -22,14 +22,14 @@ include_directories(${COMMON_DIR}/Private/ ${COMMON_DIR}/Public/ ${COMMON_DIR}/B
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     add_compile_options(-Wall -fexceptions 
                         -Wno-unknown-pragmas 
-                        -Wno-1unused-function -O3 -fPIC)
-    add_link_options(-s -fPIC)
+                        -Wno-1unused-function -O3)
+    add_link_options(-s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -fexceptions 
                         -Wno-unknown-pragmas 
-                        -Wno-unused-function -O3 -fPIC)
-    add_link_options(-s -fPIC)
+                        -Wno-unused-function -O3)
+    add_link_options(-s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     string(REGEX REPLACE "/W[3|4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -56,6 +56,7 @@ add_subdirectory(Common/Format)
 add_subdirectory(arm_emu_decodes_lib)
 add_subdirectory(arm_emu_lib)
 add_subdirectory(compilation_lib)
+add_subdirectory(arm_emu)
 
 if (BUILD_TESTS)
     set(BUILD_SHARED_LIBS OFF)
