@@ -29,13 +29,8 @@ class ControlledResult::Impl final {
         return m_resultElement->GetState();
     }
 
-    std::uint64_t GetGPRegisterValue(std::uint8_t registerLocation) const {
-        assert(registerLocation < 30 && registerLocation >= 0);
-        return m_resultElement->GetGPRegisterValue(registerLocation);
-    }
-
-    std::uint64_t GetPC() const noexcept {
-        return m_resultElement->GetPC();
+    IResult::ResultFrame GetResultFrame() const {
+        return m_resultElement->GetResultFrame();
     }
 
     void WaitReady() {
@@ -82,13 +77,8 @@ IResult::State ControlledResult::GetState() const noexcept {
     return m_result->GetState();
 }
 
-std::uint64_t ControlledResult::GetGPRegisterValue(std::uint8_t registerLocation) const {
-    assert(registerLocation < 30 && registerLocation >= 0);
-    return m_result->GetGPRegisterValue(registerLocation);
-}
-
-std::uint64_t ControlledResult::GetPC() const noexcept {
-    return m_result->GetPC();
+IResult::ResultFrame ControlledResult::GetResultFrame() const {
+    return m_result->GetResultFrame();
 }
 
 void ControlledResult::WaitReady() {

@@ -15,7 +15,11 @@ A64Core::A64Core(A64Core&&) noexcept = default;
 
 A64Core& A64Core::operator=(A64Core&&) noexcept = default;
 
-A64Core::~A64Core() = default;
+A64Core::~A64Core() {
+    // Processing unit uses m_memory until destroyed, so ensure it's being destroyed first
+    m_processingUnit.reset();
+    m_memory.reset();
+}
 
 IProcessingUnit::ArchitectureProfile A64Core::GetExecutionState() const noexcept {
     return m_processingUnit->GetExecutionState();
@@ -68,6 +72,10 @@ ControlledResult A64Core::StepIn(Program program) {
 
 void A64Core::Stop() {
     m_processingUnit->Stop();
+}
+
+void A64Core::Reset() noexcept {
+    m_processingUnit->Reset();
 }
 
 END_NAMESPACE

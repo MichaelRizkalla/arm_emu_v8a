@@ -25,13 +25,13 @@ class [[nodiscard]] IModule : public Object {
     [[nodiscard]] virtual IProcessingUnit::ExtensionVersion
         GetCurrentExtensionVersion(std::uint8_t coreNumber) const noexcept = 0;
     [[nodiscard]] virtual const std::pmr::vector< IProcessingUnit::Extension >&
-                                              GetSupportedExtensions(std::uint8_t coreNumber) const noexcept      = 0;
-    [[nodiscard]] virtual bool                IsFeatureSupported(std::uint8_t             coreNumber,
-                                                                 IProcessingUnit::Feature feature) const noexcept = 0;
-    [[nodiscard]] virtual bool                IsExceptionSupported(std::uint8_t                    coreNumber,
-                                                                   IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept = 0;
-    [[nodiscard]] virtual IMemory const*      GetCurrentProgramMemory(std::uint8_t coreNumber) const noexcept = 0;
-    [[nodiscard]] virtual IProcessingUnit::ProcessStatus GetStatus(std::uint8_t coreNumber) const noexcept    = 0;
+                                         GetSupportedExtensions(std::uint8_t coreNumber) const noexcept      = 0;
+    [[nodiscard]] virtual bool           IsFeatureSupported(std::uint8_t             coreNumber,
+                                                            IProcessingUnit::Feature feature) const noexcept = 0;
+    [[nodiscard]] virtual bool           IsExceptionSupported(std::uint8_t                    coreNumber,
+                                                              IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept = 0;
+    [[nodiscard]] virtual IMemory const* GetCurrentProgramMemory(std::uint8_t coreNumber) const noexcept   = 0;
+    [[nodiscard]] virtual IProcessingUnit::ProcessStatus GetStatus(std::uint8_t coreNumber) const noexcept = 0;
     [[nodiscard]] virtual const IProcessingUnit::ProcessState* const
         GetCurrentProcessState(std::uint8_t coreNumber) const noexcept = 0;
     [[nodiscard]] virtual const IProcessingUnitWatcher&
@@ -40,6 +40,7 @@ class [[nodiscard]] IModule : public Object {
     virtual Result           Run(Program program)    = 0;
     virtual ControlledResult StepIn(Program program) = 0;
     virtual void             Stop()                  = 0;
+    virtual void             Reset() noexcept        = 0;
 
     [[nodiscard]] virtual std::uint8_t GetCoreCount() const noexcept = 0;
 };

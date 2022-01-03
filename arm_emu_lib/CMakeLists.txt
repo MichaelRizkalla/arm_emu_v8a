@@ -9,7 +9,7 @@ project(arm_emu_lib)
 set(DECODE_PROJ arm_emu_decodes_lib)
 set(DECODES_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../${DECODE_PROJ}/Private/" 
                     "${CMAKE_CURRENT_SOURCE_DIR}/../${DECODE_PROJ}/Public/")
-set(INCLUDE_DIRS "Private/" "Public/")
+set(INCLUDE_DIRS ${COMMON_DIR}/Private/ "Private/" "Public/")
 
 file(GLOB_RECURSE LIB_FILES 
     "Private/*.*"

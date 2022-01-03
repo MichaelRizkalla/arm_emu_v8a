@@ -60,21 +60,23 @@ namespace test {
         m_resultElement->Signal(IResult::State::Waiting);
         ASSERT_EQ(m_resultElement->GetState(), IResult::State::Waiting);
 
-        ASSERT_EQ(m_resultElement->GetGPRegisterValue(0), 0);
+        auto resultFrame = m_resultElement->GetResultFrame();
+
+        ASSERT_EQ(resultFrame.GetGPRegisterValue(0), 0);
 
         GPRegisters::Arch64Registers registers {};
         registers.at(1) = Reg1;
         registers.at(4) = Reg4;
 
-        m_resultElement->StoreGPRegisters(registers);
-        m_resultElement->StorePC(PCVal);
+        m_resultElement->SetResultFrame({ registers, PCVal, 0, false, false, false, false, {} });
+        resultFrame = m_resultElement->GetResultFrame();
 
         ASSERT_EQ(m_resultElement->GetState(), IResult::State::Waiting);
-        ASSERT_EQ(m_resultElement->GetGPRegisterValue(1), Reg1);
-        ASSERT_EQ(m_resultElement->GetGPRegisterValue(4), Reg4);
-        ASSERT_EQ(m_resultElement->GetGPRegisterValue(5), 0);
-        ASSERT_NE(m_resultElement->GetGPRegisterValue(10), ~0);
-        ASSERT_EQ(m_resultElement->GetPC(), PCVal);
+        ASSERT_EQ(resultFrame.GetGPRegisterValue(1), Reg1);
+        ASSERT_EQ(resultFrame.GetGPRegisterValue(4), Reg4);
+        ASSERT_EQ(resultFrame.GetGPRegisterValue(5), 0);
+        ASSERT_NE(resultFrame.GetGPRegisterValue(10), ~0);
+        ASSERT_EQ(resultFrame.GetPC(), PCVal);
     }
 
     void ResultTest::CheckResult() {

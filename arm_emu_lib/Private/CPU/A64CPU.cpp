@@ -91,6 +91,13 @@ class A64CPU::Impl {
         m_debugObject.Log(LogType::Construction, "Constructing CPU succeeded!");
     }
 
+    ~Impl() {
+        m_cores.clear();
+        m_mmu.reset();
+        m_l3Cache.reset();
+        m_ram.reset();
+    }
+
     Result Run(Program program) {
         // TODO: load balance
         return m_cores.at(0)->Run(std::move(program));
@@ -104,6 +111,12 @@ class A64CPU::Impl {
     void Stop() {
         for (auto& core : m_cores) {
             core->Stop();
+        }
+    }
+
+    void Reset() noexcept {
+        for (auto& core : m_cores) {
+            core->Reset();
         }
     }
 
@@ -162,10 +175,10 @@ class A64CPU::Impl {
     }
 
     Object&                                  m_debugObject;
-    std::pmr::vector< UniqueRef< IModule > > m_cores;
     UniqueRef< IMemory >                     m_ram;
     UniqueRef< IMemory >                     m_l3Cache;
     SharedRef< MemoryManagementUnit >        m_mmu;
+    std::pmr::vector< UniqueRef< IModule > > m_cores;
 };
 
 template < class ImplDetail >
@@ -211,6 +224,10 @@ ControlledResult A64CPU::StepIn(Program program) {
 
 void A64CPU::Stop() {
     m_cpu->Stop();
+}
+
+void A64CPU::Reset() noexcept {
+    m_cpu->Reset();
 }
 
 std::uint8_t A64CPU::GetCoreCount() const noexcept {

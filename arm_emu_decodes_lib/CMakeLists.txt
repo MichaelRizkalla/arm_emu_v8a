@@ -6,7 +6,7 @@ project(arm_emu_decodes_lib)
 ################################################################################
 ### Includes
 ################################################################################
-set(INCLUDE_DIRS "Private/" "Public/")
+set(INCLUDE_DIRS "Private/" "Public/" ${COMMON_DIR}/Private/ )
 
 file(GLOB_RECURSE LIB_FILES 
     "Private/*.*"

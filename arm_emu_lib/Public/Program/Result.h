@@ -19,13 +19,12 @@ namespace arm_emu {
         Result(const Result&) = delete;
         Result& operator=(const Result&) = delete;
 
-        bool          IsReady() const noexcept final;
-        State         GetState() const noexcept final;
-        std::uint64_t GetGPRegisterValue(std::uint8_t registerLocation) const final;
-        std::uint64_t GetPC() const noexcept final;
-        void          WaitReady() final;
-        void          WaitForState(IResult::State state) final;
-        bool          CanStepIn() const noexcept final;
+        bool                 IsReady() const noexcept final;
+        State                GetState() const noexcept final;
+        IResult::ResultFrame GetResultFrame() const final;
+        void                 WaitReady() final;
+        void                 WaitForState(IResult::State state) final;
+        bool                 CanStepIn() const noexcept final;
 
       private:
         class Impl;

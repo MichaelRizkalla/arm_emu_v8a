@@ -9,7 +9,7 @@ project(compilation_lib_test)
 set(DECODE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arm_emu_decodes_lib")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../compilation_lib")
 set(GTEST_DIR "${COMMON_DIR}/GTest/googletest/")
-set(INCLUDE_DIRS ${LIB_DIR}/Public/ ${LIB_DIR}/Private/ ${DECODE_DIR}/Public/ 
+set(INCLUDE_DIRS ${LIB_DIR}/Public/ ${LIB_DIR}/Private/ ${DECODE_DIR}/Public/ ${COMMON_DIR}/Private/ 
                     ${DECODE_DIR}/Private/ ${GTEST_DIR}/include/ ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE LIB_FILES 
     "${LIB_DIR}/Private/*.*"

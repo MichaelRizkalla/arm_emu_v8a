@@ -7,17 +7,17 @@
 
 namespace arm_emu {
 
-    using ProgramSize = std::size_t;
+    struct [[nodiscard]] Program : private std::pair< IMemory::Address, UniqueRef< IMemory > > {
+        using EntryPoint = IMemory::Address;
 
-    struct [[nodiscard]] Program : private std::pair< ProgramSize, UniqueRef< IMemory > > {
-        constexpr Program() : std::pair< ProgramSize, UniqueRef< IMemory > >(0, nullptr) {
+        constexpr Program() : std::pair< EntryPoint, UniqueRef< IMemory > >(0, nullptr) {
         }
 
-        Program(UniqueRef< IMemory > program, ProgramSize size) :
-            std::pair< ProgramSize, UniqueRef< IMemory > >(size, std::move(program)) {
+        Program(UniqueRef< IMemory > program, EntryPoint entry) :
+            std::pair< EntryPoint, UniqueRef< IMemory > >(entry, std::move(program)) {
         }
 
-        ProgramSize GetProgramSize() const noexcept {
+        EntryPoint GetEntryPoint() const noexcept {
             return first;
         }
 
@@ -25,10 +25,8 @@ namespace arm_emu {
             return second.get();
         }
 
-        void Reset(UniqueRef< IMemory > program, ProgramSize size) noexcept {
-            assert(((program && size != 0) || (!program && size == 0)) &&
-                   "Either reset to empty program or add proper program size!");
-            first  = size;
+        void Reset(UniqueRef< IMemory > program, EntryPoint entry) noexcept {
+            first  = entry;
             second = std::move(program);
         }
 

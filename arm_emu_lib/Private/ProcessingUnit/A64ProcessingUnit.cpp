@@ -51,6 +51,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         DEFAULT_DTOR(ProgramState)
     };
 
+    static constexpr std::uint64_t Return_from_program = std::numeric_limits< std::uint64_t >::max();
+
     struct GPRegistersProxy : public GPRegisters {
 
         GPRegistersProxy(const IProcessingUnit::ProcessState& PE, IMemory* const upStreamMemory,
@@ -58,6 +60,22 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             GPRegisters(PE), m_upStreamMemory(upStreamMemory), m_mmu(mmu) {
         }
         ~GPRegistersProxy() = default;
+
+        [[nodiscard]] auto X(const Bitset& loc) const {
+            if (loc == 31) {
+                return std::bitset< 64 >(
+                    static_cast< std::uint64_t >(m_upStreamMemory->Read(m_mmu->Translate(SP().to_ullong()))));
+            }
+            return GPRegisters::X(loc);
+        }
+
+        [[nodiscard]] auto W(const Bitset& loc) noexcept {
+            if (loc == 31) {
+                return std::bitset< 32 >(static_cast< std::uint32_t >(
+                    m_upStreamMemory->Read(m_mmu->Translate(SP().to_ullong())) & 0x00000000FFFFFFFF));
+            }
+            return GPRegisters::W(loc);
+        }
 
         auto write(std::uint8_t loc, const std::uint64_t data) noexcept {
             if (loc == 31) {
@@ -117,7 +135,15 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         return m_gpRegisters.PC();
     }
 
+    decltype(auto) PC() const {
+        return m_gpRegisters.PC();
+    }
+
     decltype(auto) SP() {
+        return m_gpRegisters.SP();
+    }
+
+    decltype(auto) SP() const {
         return m_gpRegisters.SP();
     }
 
@@ -213,8 +239,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 } else {
                     imm = ZeroExtend< datasize, 12 >(imm12.ToULong());
                 }
-                auto operand1    = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
-                auto [result, _] = AddWithCarry(operand1, imm, 0);
+                const auto operand1 = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
+                auto [result, _]    = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
 
                 if (Rd == 31) {
@@ -237,7 +263,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 } else {
                     imm = ZeroExtend< datasize, 12 >(imm12.ToULong());
                 }
-                auto operand1       = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
+                const auto operand1 = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
                 auto [result, nzcv] = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
                 static_assert(std::is_same_v< decltype(nzcv), std::bitset< 4 > >);
@@ -284,8 +310,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 } else {
                     imm = ZeroExtend< datasize, 12 >(imm12.ToULong());
                 }
-                auto operand1 = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
-                auto operand2 = imm;
+                const auto operand1 = Rn == 31 ? WSP() : m_gpRegisters.W(Rn);
+                auto       operand2 = imm;
                 operand2.flip();
                 auto [result, nzcv] = AddWithCarry(operand1, operand2, static_cast< std::uint32_t >(1));
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
@@ -308,8 +334,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 } else {
                     imm = ZeroExtend< datasize, 12 >(imm12.ToULong());
                 }
-                auto operand1    = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
-                auto [result, _] = AddWithCarry(operand1, imm, 0);
+                const auto operand1 = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
+                auto [result, _]    = AddWithCarry(operand1, imm, 0);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
 
                 if (Rd == 31) {
@@ -332,11 +358,11 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 } else {
                     imm = ZeroExtend< datasize, 12 >(imm12.ToULong());
                 }
-                auto operand1 = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
+                const auto operand1 = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
 
-                auto [result, nzcv] = AddWithCarry(operand1, imm, 0);
-                static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
-                static_assert(std::is_same_v< decltype(nzcv), std::bitset< 4 > >);
+                const auto [result, nzcv] = AddWithCarry(operand1, imm, 0);
+                static_assert(std::is_same_v< decltype(result), const std::bitset< datasize > >);
+                static_assert(std::is_same_v< decltype(nzcv), const std::bitset< 4 > >);
 
                 SetNZCV(nzcv);
                 m_gpRegisters.write(Rd, result);
@@ -358,8 +384,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 auto operand1 = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
                 auto operand2 = imm;
                 operand2.flip();
-                auto [result, _] = AddWithCarry(operand1, operand2, static_cast< std::uint64_t >(1));
-                static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
+                const auto [result, _] = AddWithCarry(operand1, operand2, static_cast< std::uint64_t >(1));
+                static_assert(std::is_same_v< decltype(result), const std::bitset< datasize > >);
 
                 if (Rd == 31) {
                     SP() = result;
@@ -383,9 +409,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 auto operand1 = Rn == 31 ? SP() : m_gpRegisters.X(Rn);
                 auto operand2 = imm;
                 operand2.flip();
-                auto [result, nzcv] = AddWithCarry(operand1, imm, static_cast< std::uint64_t >(1));
-                static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
-                static_assert(std::is_same_v< decltype(nzcv), std::bitset< 4 > >);
+                const auto [result, nzcv] = AddWithCarry(operand1, imm, static_cast< std::uint64_t >(1));
+                static_assert(std::is_same_v< decltype(result), const std::bitset< datasize > >);
+                static_assert(std::is_same_v< decltype(nzcv), const std::bitset< 4 > >);
 
                 SetNZCV(nzcv);
                 m_gpRegisters.write(Rd, result);
@@ -612,9 +638,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
                 constexpr auto datasize = 32;
 
-                std::uint8_t            pos = hw.ToULong() << 4;
+                const std::uint8_t      pos = hw.ToULong() << 4;
                 std::bitset< datasize > result { 0 };
-                auto                    imm16_ = imm16.ToULong();
+                const auto              imm16_ = imm16.ToULong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
                 }
@@ -633,9 +659,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
                 constexpr auto datasize = 32;
 
-                std::uint8_t            pos = hw.ToULong() << 4;
+                const std::uint8_t      pos = hw.ToULong() << 4;
                 std::bitset< datasize > result(0);
-                auto                    imm16_ = imm16.ToULong();
+                const auto              imm16_ = imm16.ToULong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
                 }
@@ -652,10 +678,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 }
                 constexpr auto datasize = 32;
 
-                std::uint8_t pos    = hw.ToULong() << 4;
-                auto         result = m_gpRegisters.W(Rd);
+                const std::uint8_t pos    = hw.ToULong() << 4;
+                auto               result = m_gpRegisters.W(Rd);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
-                auto imm16_ = imm16.ToULong();
+                const auto imm16_ = imm16.ToULong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >((static_cast< std::uint16_t >(1) << (i - pos)) & imm16_);
                 }
@@ -669,9 +695,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
                 constexpr auto datasize = 64;
 
-                std::uint8_t            pos = hw.ToULong() << 4;
+                const std::uint8_t      pos = hw.ToULong() << 4;
                 std::bitset< datasize > result { 0 };
-                auto                    imm16_ = imm16.ToULLong();
+                const auto              imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >(
                         (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
@@ -688,9 +714,9 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
                 constexpr auto datasize = 64;
 
-                std::uint8_t            pos = hw.ToULong() << 4;
+                const std::uint8_t      pos = hw.ToULong() << 4;
                 std::bitset< datasize > result(0);
-                auto                    imm16_ = imm16.ToULLong();
+                const auto              imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >(
                         (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
@@ -705,10 +731,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
                 constexpr auto datasize = 64;
 
-                std::uint8_t pos    = hw.ToULong() << 4;
-                auto         result = m_gpRegisters.X(Rd);
+                const std::uint8_t pos    = hw.ToULong() << 4;
+                auto               result = m_gpRegisters.X(Rd);
                 static_assert(std::is_same_v< decltype(result), std::bitset< datasize > >);
-                auto imm16_ = imm16.ToULLong();
+                const auto imm16_ = imm16.ToULLong();
                 for (auto i = pos; i < pos + 16; i++) {
                     result[i] = static_cast< bool >(
                         (static_cast< std::uint64_t >(static_cast< std::uint16_t >(1)) << (i - pos)) & imm16_);
@@ -4635,10 +4661,10 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 
         m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() is running!");
 
-        auto                       currentProgramMemory = m_programs.front().m_program.GetProgram();
-        ProgramSize                currentProgramSize   = m_programs.front().m_program.GetProgramSize();
-        bool                       doStepIn             = m_programs.front().m_stepIn;
-        SharedRef< ResultElement > currentResult        = m_programs.front().m_result.lock();
+        auto                       currentProgramMemory    = m_programs.front().m_program.GetProgram();
+        const auto                 currentProgramEntrySize = m_programs.front().m_program.GetEntryPoint();
+        bool                       doStepIn                = m_programs.front().m_stepIn;
+        SharedRef< ResultElement > currentResult           = m_programs.front().m_result.lock();
 
         m_stopRunningInterrupt = interrupt;
         m_status.store(IProcessingUnit::ProcessStatus::Running, std::memory_order_seq_cst);
@@ -4665,15 +4691,22 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                    (!doStepIn || (doStepIn && currentResult) /* If result is destroyed then ignore the program */)) {
 
                 if (setup) {
-                    SetupRegisters();
+                    SetupRegisters(currentProgramEntrySize);
                     setup = false;
+                }
+
+                if (PC() == Return_from_program) {
+                    if (doStepIn && currentResult) {
+                        currentResult->SignalStepInValidity(false);
+                        stepInDoneInterrupt->Trigger();
+                        stepInDoneCondVar->notify_one();
+                    }
+                    break; // Program ended
                 }
 
                 if (doStepIn) {
                     if (currentResult) {
-                        // TODO: Store entire frame instead of GP, PC only
-                        currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
-                        currentResult->StorePC(PC());
+                        currentResult->SetResultFrame(GenerateFrameData());
 
                         std::mutex       localMutex {};
                         std::unique_lock localLock { localMutex };
@@ -4684,18 +4717,12 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                         stepInCondVar.wait(localLock, [&]() {
                             return stepInInterrupt->IsTriggered() || m_stopRunningInterrupt->IsTriggered();
                         });
+                        if (m_stopRunningInterrupt->IsTriggered()) {
+                            break;
+                        }
                     } else {
                         break;
                     }
-                }
-
-                if (PC() >= currentProgramSize) {
-                    if (doStepIn && currentResult) {
-                        currentResult->SignalStepInValidity(false);
-                        stepInDoneInterrupt->Trigger();
-                        stepInDoneCondVar->notify_one();
-                    }
-                    break; // Program ended
                 }
 
                 // Fetch
@@ -4741,8 +4768,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
             if (m_stopRunningInterrupt->IsTriggered()) {
                 m_status.store(IProcessingUnit::ProcessStatus::Interrupted, std::memory_order_seq_cst);
                 if (currentResult) {
-                    currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
-                    currentResult->StorePC(PC());
+                    currentResult->SetResultFrame(GenerateFrameData());
                     currentResult->Signal(Result::State::Interrupted);
                 }
 
@@ -4763,9 +4789,7 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 currentResult->StepInFinalize();
             }
             if (currentResult) {
-                // TODO: Store entire frame instead of GP, PC only
-                currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
-                currentResult->StorePC(PC());
+                currentResult->SetResultFrame(GenerateFrameData());
                 currentResult->Signal(Result::State::Ready);
             }
             m_debugObject.Log(LogType::Other, "ProcessingUnit::Run() finished executing program {}!",
@@ -4775,24 +4799,22 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
                 m_programs.pop();
             }
             if (m_programs.size() > 0) {
-                auto                       currentProgramMemory = m_programs.front().m_program.GetProgram();
-                ProgramSize                currentProgramSize   = m_programs.front().m_program.GetProgramSize();
-                bool                       doStepIn             = m_programs.front().m_stepIn;
-                SharedRef< ResultElement > currentResult        = m_programs.front().m_result.lock();
+                auto                       currentProgramMemory    = m_programs.front().m_program.GetProgram();
+                const auto                 currentProgramEntrySize = m_programs.front().m_program.GetEntryPoint();
+                bool                       doStepIn                = m_programs.front().m_stepIn;
+                SharedRef< ResultElement > currentResult           = m_programs.front().m_result.lock();
             } else {
-                currentProgramMemory = nullptr;
-                currentProgramSize   = 0;
-                doStepIn             = false;
-                currentResult        = nullptr;
+                currentProgramMemory               = nullptr;
+                const auto currentProgramEntrySize = 0;
+                doStepIn                           = false;
+                currentResult                      = nullptr;
             }
         }
 
         if (interrupt->IsTriggered()) {
             m_status.store(IProcessingUnit::ProcessStatus::Interrupted, std::memory_order_seq_cst);
             if (currentResult) {
-                // TODO: Store entire frame instead of GP, PC only
-                currentResult->StoreGPRegisters(m_gpRegisters.ReadBulk());
-                currentResult->StorePC(PC());
+                currentResult->SetResultFrame(GenerateFrameData());
                 currentResult->Signal(Result::State::Interrupted);
             }
 
@@ -4826,8 +4848,8 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
 #include <ProcessingUnit/InstructionCodeImpl/AArch64Operations/AArch64Operations.h>
 #include <ProcessingUnit/InstructionCodeImpl/SharedOperations/SharedOperations.h>
 
-    void SetupRegisters() {
-        PC() = 0;
+    void SetupRegisters(const Program::EntryPoint entry) {
+        PC() = entry;
         SP() = m_allocatedSize - 1;
     }
 
@@ -4835,6 +4857,34 @@ struct A64ProcessState : public A64ProcessingUnit::ProcessState {
         m_debugObject.LogTrace(LogType::Other, "Exiting execution of program {} with interrupt signal!",
                                programAddress);
         m_stopRunningInterrupt->Trigger(); // At this point, the interrupt exists
+    }
+
+    IResult::ResultFrame::Impl GenerateFrameData() const {
+
+        // TODO: very slow, think of a way to read more memory at once
+        /*
+        std::pmr::vector< IMemory::DataUnit > m_processMemory {};
+        m_processMemory.reserve(m_allocatedSize);
+
+        const auto nReads = static_cast< IMemory::Address >(
+            std::ceil(static_cast< double >(m_allocatedSize) / ICacheMemory::Cache_line_size));
+
+        for (IMemory::Address i = 0; i < nReads; ++i) {
+            auto data = m_upStreamMemory->ReadBlock(i * ICacheMemory::Cache_line_size, ICacheMemory::Cache_line_size);
+            m_processMemory.insert(m_processMemory.end(), data.Begin(), data.End());
+        }*/
+        // This is a quick hack until re-writing CacheMemory to allow for multi-cacheline read
+        auto ram = const_cast< IMemory* >(
+            static_cast< const ICacheMemory* >(
+                static_cast< const ICacheMemory* >(m_upStreamMemory->GetUpStreamMemory())->GetUpStreamMemory())
+                ->GetUpStreamMemory());
+
+        auto m_processMemory = ram->ReadBlock(0, m_allocatedSize);
+
+        return IResult::ResultFrame::Impl {
+            m_gpRegisters.ReadBulk(),        PC(), SP().to_ullong(), N.any(), C.any(), Z.any(), V.any(),
+            std::move(m_processMemory.Get())
+        };
     }
 
     std::atomic< IProcessingUnit::ProcessStatus >               m_status;
@@ -5075,6 +5125,10 @@ ControlledResult A64ProcessingUnit::StepIn(Program program) {
 
 void A64ProcessingUnit::Stop() {
     m_processingUnit->Stop();
+}
+
+void A64ProcessingUnit::Reset() noexcept {
+    ResetProcessState();
 }
 
 void A64ProcessingUnit::ResetProcessState() noexcept {

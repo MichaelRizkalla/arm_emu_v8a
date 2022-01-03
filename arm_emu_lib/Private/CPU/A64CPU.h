@@ -28,6 +28,7 @@ class [[nodiscard]] A64CPU : public ICPU, public Object {
     Result           Run(Program program) final;
     ControlledResult StepIn(Program program) final;
     void             Stop() final;
+    void             Reset() noexcept final;
 
     [[nodiscard]] std::uint8_t GetCoreCount() const noexcept final;
     [[nodiscard]] std::uint8_t GetThreadsPerCoreCount() const noexcept final;

@@ -41,11 +41,11 @@ std::ostream& operator<<(std::ostream& os, ClangVersion enumValue) {
     return os;
 }
 
-std::optional< Compiler > Compiler::FindCompiler(std::vector< std::filesystem::path > searchPaths) noexcept {
+std::optional< Compiler > Compiler::FindCompiler(std::pmr::vector< std::filesystem::path > searchPaths) noexcept {
     for (const auto& path : searchPaths) {
         if (std::error_code errorCode {};
             std::filesystem::is_regular_file(path, errorCode) || std::filesystem::is_symlink(path, errorCode)) {
-            if (const auto [result, out, err] = System::Call(fmt::format("{} --version", path.string()));
+            if (const auto [result, out, err] = System::Call(fmt::format(R"({} --version)", path.string()));
                 out.find("clang") != std::string::npos) {
 
                 auto version      = out.substr(out.find("clang version ") + 14, 2);
@@ -270,6 +270,10 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
         sourceFile, std::regex_replace(std::string { assembly.begin(), assembly.end() }, strip_attributes, ""),
         std::move(elfFile), parseDisassembly(disassembly, sectionOffsets)
     };
+}
+
+std::filesystem::path Compiler::GetPath() const noexcept {
+    return m_compiler;
 }
 
 END_NAMESPACE

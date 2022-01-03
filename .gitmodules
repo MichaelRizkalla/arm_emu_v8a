@@ -5,9 +5,12 @@
 [submodule "Common/Format"]
 	path = Common/Format
 	url = https://github.com/fmtlib/fmt.git
-[submodule "Common/SFML"]
-	path = Common/SFML
-	url = https://github.com/SFML/SFML.git
 [submodule "Common/ImGui"]
 	path = Common/ImGui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Common/GLFW"]
+	path = Common/GLFW
+	url = https://github.com/glfw/glfw.git
+[submodule "Common/ImGuiFileDialog"]
+	path = Common/ImGuiFileDialog
+	url = https://github.com/MichaelRizkalla/ImGuiFileDialog.git

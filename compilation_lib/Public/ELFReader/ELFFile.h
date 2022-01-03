@@ -7,17 +7,17 @@
     #include <map>
     #include <memory_resource>
 
-BEGIN_NAMESPACE
+namespace arm_emu {
 
-struct ELFFile {
-    UniqueRef< std::pmr::vector< std::uint8_t > > m_objectFileData;
-    FileHeader                                    m_fileHeader;
-    std::pmr::map< std::string, std::uint64_t >   m_sectionOffsets;
-    std::uint64_t                                 m_entryPointOffset;
+    struct ELFFile {
+        UniqueRef< std::pmr::vector< std::uint8_t > > m_objectFileData;
+        FileHeader                                    m_fileHeader { { nullptr, 0 } };
+        std::pmr::map< std::string, std::uint64_t >   m_sectionOffsets;
+        std::uint64_t                                 m_entryPointOffset;
 
-    bool m_validBinary;
-};
+        bool m_validBinary;
+    };
 
-END_NAMESPACE
+} // namespace arm_emu
 
 #endif // !defined(ELFFILE_H_INCLUDED_45C179ED_0D11_4502_8DB5_9C325E1B3F74)

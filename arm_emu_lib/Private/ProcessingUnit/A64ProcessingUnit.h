@@ -38,6 +38,7 @@ class [[nodiscard]] A64ProcessingUnit final : public IProcessingUnit {
     Result           Run(Program program) final;
     ControlledResult StepIn(Program program) final;
     void             Stop() final;
+    void             Reset() noexcept final;
 
   private:
     void ResetProcessState() noexcept;

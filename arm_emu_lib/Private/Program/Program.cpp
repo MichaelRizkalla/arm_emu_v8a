@@ -97,7 +97,7 @@ namespace test {
                 break;
         }
 
-        return Program { std::move(memory), size };
+        return Program { std::move(memory), 0 };
     }
 
 } // namespace test

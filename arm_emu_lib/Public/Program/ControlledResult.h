@@ -17,13 +17,12 @@ namespace arm_emu {
         ControlledResult(const ControlledResult&) = delete;
         ControlledResult& operator=(const ControlledResult&) = delete;
 
-        bool          IsReady() const noexcept final;
-        State         GetState() const noexcept final;
-        std::uint64_t GetGPRegisterValue(std::uint8_t registerLocation) const final;
-        std::uint64_t GetPC() const noexcept final;
-        void          WaitReady() final;
-        void          WaitForState(IResult::State state) final;
-        bool          CanStepIn() const noexcept final;
+        bool                 IsReady() const noexcept final;
+        State                GetState() const noexcept final;
+        IResult::ResultFrame GetResultFrame() const final;
+        void                 WaitReady() final;
+        void                 WaitForState(IResult::State state) final;
+        bool                 CanStepIn() const noexcept final;
 
         void StepIn();
 

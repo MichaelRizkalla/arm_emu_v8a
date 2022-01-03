@@ -36,10 +36,11 @@ class [[nodiscard]] A64Core : public ICore {
     Result           Run(Program program) final;
     ControlledResult StepIn(Program program) final;
     void             Stop() final;
+    void             Reset() noexcept final;
 
   private:
-    UniqueRef< IProcessingUnit > m_processingUnit;
     UniqueRef< ICacheMemory >    m_memory;
+    UniqueRef< IProcessingUnit > m_processingUnit;
 };
 
 END_NAMESPACE

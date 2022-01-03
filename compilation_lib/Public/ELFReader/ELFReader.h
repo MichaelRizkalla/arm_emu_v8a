@@ -9,7 +9,7 @@
 
 BEGIN_NAMESPACE
 
-struct ELFReader {
+struct ARMEMU_API ELFReader {
     STATIC_CLASS(ELFReader)
 
     /// @brief Consumes objectFileData and return an ELFFile

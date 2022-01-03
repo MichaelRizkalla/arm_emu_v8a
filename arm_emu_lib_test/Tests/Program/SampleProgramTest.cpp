@@ -34,8 +34,10 @@ namespace test {
             stepCtrl.StepIn();
         }
 
-        ASSERT_EQ(stepCtrl.GetGPRegisterValue(0), 5);
-        ASSERT_EQ(stepCtrl.GetPC(), std::numeric_limits< std::uint64_t >::max());
+        auto resultFrame = stepCtrl.GetResultFrame();
+
+        ASSERT_EQ(resultFrame.GetGPRegisterValue(0), 5);
+        ASSERT_EQ(resultFrame.GetPC(), std::numeric_limits< std::uint64_t >::max());
     }
 
     TEST_F(SampleProgramTest, RunSampleProgram0) {

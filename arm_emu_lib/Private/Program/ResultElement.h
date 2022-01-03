@@ -6,6 +6,7 @@
     #include <Interrupt/Interrupt.h>
     #include <ProcessingUnit/A64Registers/GeneralRegisters.h>
     #include <Program/IResult.h>
+    #include <Program/IResultImpl.h>
     #include <array>
     #include <bitset>
     #include <cassert>
@@ -21,12 +22,10 @@ struct [[nodiscard]] ARMEMU_API ResultElement : public std::enable_shared_from_t
     ~ResultElement();
 
     void Signal(IResult::State state) noexcept;
-    void StoreGPRegisters(GPRegisters::Arch64Registers registerData) noexcept;
-    void StorePC(std::uint64_t programCounter) noexcept;
+    void SetResultFrame(IResult::ResultFrame::Impl frame);
 
-    IResult::State GetState() const noexcept;
-    std::uint64_t  GetGPRegisterValue(std::uint8_t registerLocation) const;
-    std::uint64_t  GetPC() const noexcept;
+    IResult::State       GetState() const noexcept;
+    IResult::ResultFrame GetResultFrame() const;
 
     void WaitReady();
     void WaitForState(IResult::State state);
@@ -42,11 +41,11 @@ struct [[nodiscard]] ARMEMU_API ResultElement : public std::enable_shared_from_t
 
   private:
     // TODO: add all read data into frame struct
-    GPRegisters::Arch64Registers m_data {};
-    std::uint64_t                m_programCounter { 0 };
-    IResult::State               m_state { IResult::State::Waiting };
-    std::mutex                   m_mutex {};
-    std::condition_variable      m_condVar {};
+    IResult::ResultFrame::Impl m_resultFrame;
+
+    IResult::State          m_state { IResult::State::Waiting };
+    std::mutex              m_mutex {};
+    std::condition_variable m_condVar {};
 
     Interrupt                    m_stepInSource { CreateInterrupt() };
     std::condition_variable_any* m_stepInCondVar { nullptr };

@@ -67,10 +67,10 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
     [[nodiscard]] DataUnit Read(Address address) noexcept final {
         m_debugObject.LogTrace(LogType::Other, "Read memory at address: {}", address);
 
-        const auto segmentLoc = address / m_size;
+        const auto segmentLoc = (address / m_size) % m_segmentCount;
         assert(segmentLoc < m_segmentCount);
 
-        const auto cacheLineEntry = address / Cache_line_size;
+        const auto cacheLineEntry = (address / Cache_line_size) % m_cache.size();
         const auto dataUnitEntry  = address % Cache_line_size;
 
         const auto& cacheLine       = m_cache.at(cacheLineEntry);
@@ -88,8 +88,8 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
 
         m_watcher.RecordAccessResult(MemoryAccessResult::Miss);
 
-        auto blockStartAddr  = (segmentLoc * m_size) + (cacheLineEntry * Cache_line_size);
-        auto correctDataUnit = m_upStreamMemory->ReadBlock(blockStartAddr, Cache_line_size);
+        const auto blockStartAddr  = (address / Cache_line_size) * Cache_line_size;
+        const auto correctDataUnit = m_upStreamMemory->ReadBlock(blockStartAddr, Cache_line_size);
         m_watcher.RecordAccessType(MemoryAccessType::UpStreamReadBlock);
 
         WriteBlockFromUpStreamToCacheOnly(segmentLoc, cacheLineEntry, correctDataUnit);
@@ -103,17 +103,16 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         m_debugObject.LogTrace(LogType::Other, "ReadBlock of memory starting from address: {} with length: {}", start,
                                dataUnitCount);
 
-        const auto endBlockAddr  = start + dataUnitCount;
-        const auto segmentLoc    = start / m_size;
-        const auto endSegmentLoc = endBlockAddr / m_size;
+        const auto endBlockAddr  = start + dataUnitCount - 1;
+        const auto segmentLoc    = (start / m_size) % m_segmentCount;
+        const auto endSegmentLoc = (endBlockAddr / m_size) % m_segmentCount;
 
         assert(segmentLoc < m_segmentCount);
         assert(segmentLoc == endSegmentLoc); // Assume only requesting one cache line per call
 
-        const auto cacheLineEntry     = start / Cache_line_size;
-        const auto startDataUnitEntry = start % Cache_line_size;
-
-        const auto& cacheLine = m_cache.at(cacheLineEntry);
+        const auto  cacheLineEntry     = (start / Cache_line_size) % m_cache.size();
+        const auto  startDataUnitEntry = start % Cache_line_size;
+        const auto& cacheLine          = m_cache.at(cacheLineEntry);
 
         const auto isRequestedData = cacheLine.m_segmentLocInUpstream == segmentLoc;
 
@@ -133,8 +132,8 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
 
         m_watcher.RecordAccessResult(MemoryAccessResult::Miss);
 
-        auto blockStartAddr  = (segmentLoc * m_size) + (cacheLineEntry * Cache_line_size);
-        auto correctDataUnit = m_upStreamMemory->ReadBlock(blockStartAddr, Cache_line_size);
+        const auto blockStartAddr  = (start / Cache_line_size) * Cache_line_size;
+        const auto correctDataUnit = m_upStreamMemory->ReadBlock(blockStartAddr, Cache_line_size);
         m_watcher.RecordAccessType(MemoryAccessType::UpStreamReadBlock);
 
         WriteBlockFromUpStreamToCacheOnly(segmentLoc, cacheLineEntry, correctDataUnit);
@@ -147,10 +146,10 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
     void Write(Address address, DataUnit data) final {
         m_debugObject.LogTrace(LogType::Other, "Write DataUnit: {} at address: {}", data, address);
 
-        const auto segmentLoc = address / m_size;
+        const auto segmentLoc = (address / m_size) % m_segmentCount;
         assert(segmentLoc < m_segmentCount);
 
-        const auto cacheLineEntry = address / Cache_line_size;
+        const auto cacheLineEntry = (address / Cache_line_size) % m_cache.size();
         const auto dataUnitEntry  = address % Cache_line_size;
 
         if (m_cache.at(cacheLineEntry).m_segmentLocInUpstream != segmentLoc) {
@@ -160,7 +159,7 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         }
 
         WriteToCacheOnly(address, data);
-        auto blockStartAddr = (segmentLoc * m_size) + (cacheLineEntry * Cache_line_size);
+        const auto blockStartAddr = (address / Cache_line_size) * Cache_line_size;
 
         m_upStreamMemory->WriteBlock(blockStartAddr, { Cache_line_size, m_cache.at(cacheLineEntry).m_data.data() });
         m_cache.at(cacheLineEntry).m_state.at(dataUnitEntry) = State::Clean;
@@ -172,14 +171,14 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         m_debugObject.LogTrace(LogType::Other, "WriteBlock of DataUnits of size: {} starting from address: {}",
                                data.Size(), start);
 
-        const auto endBlockAddr  = start + data.Size();
-        const auto segmentLoc    = start / m_size;
-        const auto endSegmentLoc = endBlockAddr / m_size;
+        const auto endBlockAddr  = start + data.Size() - 1;
+        const auto segmentLoc    = (start / m_size) % m_segmentCount;
+        const auto endSegmentLoc = (endBlockAddr / m_size) % m_segmentCount;
 
         assert(segmentLoc < m_segmentCount);
         assert(segmentLoc == endSegmentLoc); // Assume only requesting one cache line per call
 
-        const auto cacheLineEntry = start / Cache_line_size;
+        const auto cacheLineEntry = (start / Cache_line_size) % m_cache.size();
         const auto dataUnitEntry  = start % Cache_line_size;
 
         if (m_cache.at(cacheLineEntry).m_segmentLocInUpstream != segmentLoc) {
@@ -189,11 +188,11 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
         }
 
         WriteBlockFromDownStreamToCacheOnly(segmentLoc, cacheLineEntry, dataUnitEntry, data);
-        auto blockStartAddr = (segmentLoc * m_size) + (cacheLineEntry * Cache_line_size);
+        const auto blockStartAddr = (start / Cache_line_size) * Cache_line_size;
 
         m_upStreamMemory->WriteBlock(blockStartAddr, { Cache_line_size, m_cache.at(cacheLineEntry).m_data.data() });
 
-        auto stateBegin = m_cache.at(cacheLineEntry).m_state.begin() + dataUnitEntry;
+        const auto stateBegin = m_cache.at(cacheLineEntry).m_state.begin() + dataUnitEntry;
         std::fill(stateBegin, stateBegin + data.Size(), State::Clean);
 
         m_watcher.RecordAccessType(MemoryAccessType::UpStreamWriteBlock);
@@ -212,7 +211,7 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
     }
 
     void ClearCache() noexcept final {
-        m_cache.clear();
+        std::memset(m_cache.data(), 0, m_cache.size() * sizeof(decltype(m_cache)::value_type));
     }
 
   private:
@@ -225,10 +224,10 @@ class [[nodiscard]] CacheMemory::DirectAccessWriteThroughCacheMemory final : pub
     }
 
     void WriteToCacheOnly(Address address, DataUnit data) {
-        const auto segmentLoc = address / m_size;
+        const auto segmentLoc = (address / m_size) % m_segmentCount;
         assert(segmentLoc < m_segmentCount);
 
-        const auto cacheLineEntry = address / Cache_line_size;
+        const auto cacheLineEntry = (address / Cache_line_size) % m_cache.size();
         const auto dataUnitEntry  = address % Cache_line_size;
 
         m_cache.at(cacheLineEntry).m_data.at(dataUnitEntry)  = std::move(data);

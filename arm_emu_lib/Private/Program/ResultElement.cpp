@@ -22,25 +22,17 @@ void ResultElement::Signal(IResult::State state) noexcept {
     m_condVar.notify_all();
 }
 
-void ResultElement::StoreGPRegisters(GPRegisters::Arch64Registers registerData) noexcept {
-    m_data = registerData;
-}
-
-void ResultElement::StorePC(std::uint64_t programCounter) noexcept {
-    m_programCounter = programCounter;
+void ResultElement::SetResultFrame(IResult::ResultFrame::Impl frame) {
+    m_resultFrame = frame;
 }
 
 IResult::State ResultElement::GetState() const noexcept {
     return m_state;
 }
 
-std::uint64_t ResultElement::GetGPRegisterValue(std::uint8_t registerLocation) const {
-    assert(registerLocation < 30 && registerLocation >= 0);
-    return m_data[registerLocation].to_ullong();
-}
-
-std::uint64_t ResultElement::GetPC() const noexcept {
-    return m_programCounter;
+IResult::ResultFrame ResultElement::GetResultFrame() const {
+    return IResult::ResultFrame { allocate_unique< IResult::ResultFrame::Impl >(
+        std::pmr::polymorphic_allocator< IResult::ResultFrame::Impl > {}, m_resultFrame) };
 }
 
 void ResultElement::WaitReady() {

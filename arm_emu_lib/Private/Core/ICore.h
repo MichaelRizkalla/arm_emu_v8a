@@ -34,6 +34,7 @@ class [[nodiscard]] ICore : public Object {
     virtual Result           Run(Program program)    = 0;
     virtual ControlledResult StepIn(Program program) = 0;
     virtual void             Stop()                  = 0;
+    virtual void             Reset() noexcept        = 0;
 };
 
 END_NAMESPACE

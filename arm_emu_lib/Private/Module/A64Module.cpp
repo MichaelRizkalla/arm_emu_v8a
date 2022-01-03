@@ -36,7 +36,11 @@ A64Module::A64Module(A64Module&&) noexcept = default;
 
 A64Module& A64Module::operator=(A64Module&&) noexcept = default;
 
-A64Module::~A64Module() = default;
+A64Module::~A64Module() {
+    m_cores.clear();
+    m_cacheMemory.reset();
+    m_coreControl.reset();
+}
 
 IProcessingUnit::ArchitectureProfile A64Module::GetExecutionState(std::uint8_t threadNumber) const noexcept {
     CorePreConditions(threadNumber);
@@ -103,6 +107,12 @@ ControlledResult A64Module::StepIn(Program program) {
 void A64Module::Stop() {
     for (auto& processingUnit : m_cores) {
         processingUnit->Stop();
+    }
+}
+
+void A64Module::Reset() noexcept {
+    for (auto& processingUnit : m_cores) {
+        processingUnit->Reset();
     }
 }
 

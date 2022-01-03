@@ -6,12 +6,10 @@
 BEGIN_NAMESPACE
 
 void Interrupt_::Trigger() noexcept {
-    assert(!m_interrupted);
     m_interrupted.store(true, std::memory_order_seq_cst);
 }
 
 void Interrupt_::Reset() noexcept {
-    assert(m_interrupted);
     m_interrupted.store(false, std::memory_order_seq_cst);
 }
 

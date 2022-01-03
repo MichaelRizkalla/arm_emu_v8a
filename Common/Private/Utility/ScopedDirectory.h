@@ -26,16 +26,24 @@ struct [[nodiscard]] ScopedDirectory {
         std::abort();
     }
 
-    ~ScopedDirectory() {
-        std::filesystem::remove_all(m_path);
+    ScopedDirectory(ScopedDirectory&& rhs) : m_path(std::exchange(rhs.m_path, "")) {
     }
 
-    const std::filesystem::path &Path() {
+    ScopedDirectory& operator=(ScopedDirectory&& rhs) {
+        m_path = std::exchange(rhs.m_path, "");
+    }
+
+    ~ScopedDirectory() {
+        if (m_path.string() != "") {
+            std::filesystem::remove_all(m_path);
+        }
+    }
+
+    const std::filesystem::path& Path() const noexcept {
         return m_path;
     }
 
     DELETE_COPY_CLASS(ScopedDirectory)
-    DELETE_MOVE_CLASS(ScopedDirectory)
 
   private:
     std::filesystem::path m_path;

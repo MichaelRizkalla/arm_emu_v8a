@@ -226,6 +226,8 @@ namespace arm_emu {
         /// @brief Stop all program executions. If a program is in progress, it will be interrupted and stopped.
         virtual void Stop() = 0;
 
+        virtual void Reset() noexcept = 0;
+
         [[nodiscard]] virtual std::uint8_t GetCoreCount() const noexcept = 0;
 
         [[nodiscard]] virtual std::uint8_t GetThreadsPerCoreCount() const noexcept = 0;

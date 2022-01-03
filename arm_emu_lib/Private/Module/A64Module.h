@@ -30,21 +30,22 @@ class [[nodiscard]] A64Module : public IModule {
     [[nodiscard]] IProcessingUnit::ExtensionVersion
         GetCurrentExtensionVersion(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] const std::pmr::vector< IProcessingUnit::Extension >&
-                                      GetSupportedExtensions(std::uint8_t threadNumber) const noexcept final;
-    [[nodiscard]] bool                IsFeatureSupported(std::uint8_t             threadNumber,
-                                                         IProcessingUnit::Feature feature) const noexcept final;
-    [[nodiscard]] bool                IsExceptionSupported(std::uint8_t                    threadNumber,
-                                                           IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept final;
-    [[nodiscard]] IMemory const*      GetCurrentProgramMemory(std::uint8_t threadNumber) const noexcept final;
+                                 GetSupportedExtensions(std::uint8_t threadNumber) const noexcept final;
+    [[nodiscard]] bool           IsFeatureSupported(std::uint8_t             threadNumber,
+                                                    IProcessingUnit::Feature feature) const noexcept final;
+    [[nodiscard]] bool           IsExceptionSupported(std::uint8_t                    threadNumber,
+                                                      IProcessingUnit::ExceptionLevel exceptionLevel) const noexcept final;
+    [[nodiscard]] IMemory const* GetCurrentProgramMemory(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] IProcessingUnit::ProcessStatus GetStatus(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] const IProcessingUnitWatcher&
         GetProcessingUnitWatcher(std::uint8_t threadNumber) const noexcept final;
     [[nodiscard]] const IProcessingUnit::ProcessState* const
         GetCurrentProcessState(std::uint8_t threadNumber) const noexcept final;
 
-    Result                   Run(Program program) final;
+    Result           Run(Program program) final;
     ControlledResult StepIn(Program program) final;
-    void   Stop() final;
+    void             Stop() final;
+    void             Reset() noexcept final;
 
     [[nodiscard]] std::uint8_t GetCoreCount() const noexcept final;
 
