@@ -1,6 +1,7 @@
 #if !defined(WINDOW_H_INCLUDED_54C73F7A_5B9B_471B_BC39_78EEDBC5C35C)
     #define WINDOW_H_INCLUDED_54C73F7A_5B9B_471B_BC39_78EEDBC5C35C
 
+    #include <API/Api.h>
     #include <Event/EventHandler.h>
     #include <Event/EventType.h>
     #include <Event/IEvent.h>

@@ -16,6 +16,7 @@ namespace {
     static bool show             = false;
     static bool isReadyToStepIn  = false;
     static bool isStepInFinished = false;
+    static bool stepInResult     = false;
     static bool cpuExists        = false;
 } // namespace
 
@@ -53,7 +54,12 @@ CodeControlNode::CodeControlNode(Window* const window) :
         isReadyToStepIn  = true;
         isStepInFinished = false;
     });
-    m_handler.Subscribe(EventType::StepInProgramFinished, [&](IEvent* const e) { isStepInFinished = true; });
+    m_handler.Subscribe(EventType::StepInProgramFinished, [&](IEvent* const e) {
+        StepInProgramFinishedEvent* ee = static_cast< StepInProgramFinishedEvent* const >(e);
+
+        stepInResult     = ee->GetResult();
+        isStepInFinished = true;
+    });
 }
 
 void CodeControlNode::OnEvent(IEvent* const anEvent) {
@@ -88,7 +94,11 @@ void CodeControlNode::OnRender() {
         const auto stepIn = ImGui::Button("Step in");
         if (isStepInFinished) {
             ImGui::SameLine();
-            ImGui::TextColored({ 0.f, 1.f, 0.f, 1.f }, "Program returned successfully!");
+            if (stepInResult) {
+                ImGui::TextColored({ 0.f, 1.f, 0.f, 1.f }, "Program returned successfully!");
+            } else {
+                ImGui::TextColored({ 1.f, 0.f, 0.f, 1.f }, "Program execution failed!");
+            }
             ImGui::PopItemFlag();
             ImGui::PopStyleVar();
         }

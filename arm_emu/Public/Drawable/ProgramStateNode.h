@@ -1,6 +1,7 @@
 #if !defined(PROGRAMSTATENODE_H_INCLUDED_85E21080_9839_4CAE_8716_BFA6209D8268)
     #define PROGRAMSTATENODE_H_INCLUDED_85E21080_9839_4CAE_8716_BFA6209D8268
 
+    #include <API/Api.h>
     #include <Compiler/Compiler.h>
     #include <Drawable/INode.h>
     #include <Program/IResult.h>

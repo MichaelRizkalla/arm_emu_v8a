@@ -71,12 +71,19 @@ std::underlying_type_t< EventCategory > StepInProgramEvent::GetEventCategories()
     return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::ProgramEvent);
 }
 
+StepInProgramFinishedEvent::StepInProgramFinishedEvent(bool result) : m_result(result) {
+}
+
 EventType StepInProgramFinishedEvent::GetEventType() const noexcept {
     return EventType::StepInProgramFinished;
 }
 
 std::underlying_type_t< EventCategory > StepInProgramFinishedEvent::GetEventCategories() const noexcept {
     return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::ProgramEvent);
+}
+
+bool StepInProgramFinishedEvent::GetResult() const noexcept {
+    return m_result;
 }
 
 END_NAMESPACE

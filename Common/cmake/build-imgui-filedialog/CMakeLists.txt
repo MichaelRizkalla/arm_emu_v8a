@@ -28,8 +28,6 @@ add_library(${PROJECT_NAME} STATIC ${IMGUIFD_HEADERS} ${IMGUIFD_SOURCES})
 ################################################################################
 target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUIFD_INCLUDE_DIRS} ${IMGUIFD_SOURCE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE)
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE 
                                     -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
@@ -60,6 +58,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Debug"
                                     /TP /Gd /Gm- /RTC1 /diagnostics:classic
                                     /fp:precise /EHsc)
     target_link_options(${PROJECT_NAME} PRIVATE /INCREMENTAL /MACHINE:X64)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DMSVC)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
     target_compile_options(${PROJECT_NAME} PRIVATE 
@@ -67,4 +66,5 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Releas
                                     /TP /Gd /Gm- /diagnostics:classic
                                     /fp:precise /EHsc /Ob2 /Ox /Oi)
     target_link_options(${PROJECT_NAME} PRIVATE /INCREMENTAL /MACHINE:X64)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DMSVC)
 endif()

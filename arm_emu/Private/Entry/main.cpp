@@ -10,16 +10,18 @@
 #include <Application/Application.h>
 #include <iostream>
 
-void HideConsole() noexcept {
-#ifdef ARMEMU_OS_WINDOWS
-    // ShowWindow(GetConsoleWindow(), SW_HIDE);
-#elif defined(ARMEMU_OS_LINUX)
+namespace {
 
-#endif
-}
+    void HideWindowsConsole() {
+#ifdef ARMEMU_OS_WINDOWS
+        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+#endif // ARMEMU_OS_WINDOWS
+    }
+
+} // namespace
 
 int main() {
-    HideConsole();
+    HideWindowsConsole();
     using namespace arm_emu;
 
     auto& app = Application::GetInstance();

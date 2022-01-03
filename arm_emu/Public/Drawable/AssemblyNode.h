@@ -1,6 +1,7 @@
 #if !defined(ASMREGISTRSNODE_H_INCLUDED_BD58C9E9_B1D6_4F9A_B298_E58449288168)
     #define ASMREGISTRSNODE_H_INCLUDED_BD58C9E9_B1D6_4F9A_B298_E58449288168
 
+    #include <API/Api.h>
     #include <Drawable/INode.h>
     #include <string>
 

@@ -1,6 +1,7 @@
 #if !defined(TEXTINPUTNODE_H_INCLUDED_A046B290_C93F_420F_AEF5_1ED4322AD7DA)
     #define TEXTINPUTNODE_H_INCLUDED_A046B290_C93F_420F_AEF5_1ED4322AD7DA
 
+    #include <API/Api.h>
     #include <Drawable/CodeControlNode.h>
     #include <Drawable/INode.h>
     #include <string>

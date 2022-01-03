@@ -28,6 +28,7 @@
 BEGIN_NAMESPACE
 
 namespace {
+
     static int         defaultWidth { 1280 };
     static int         defaultHeight { 720 };
     static std::string defaultTitle { "arm_emu" };
@@ -51,7 +52,6 @@ Application::Application() noexcept :
     m_cpu(nullptr),
     m_compiler(nullptr),
     m_result(nullptr) {
-
     m_eventHandler.Subscribe(EventType::LoadCompiler, [&](IEvent* const e) {
         LoadCompilerEvent* ee = static_cast< LoadCompilerEvent* const >(e);
 
@@ -122,7 +122,9 @@ Application::Application() noexcept :
         if (m_result->CanStepIn()) {
             std::thread { [&]() { m_result->StepIn(); } }.detach();
         } else {
-            EventQueue::PostEvent(CreateEvent< StepInProgramFinishedEvent >());
+            auto state = m_result->GetState();
+            EventQueue::PostEvent(
+                CreateEvent< StepInProgramFinishedEvent >(state == IResult::State::Ready ? true : false));
         }
     });
 

@@ -1,6 +1,7 @@
 #if !defined(APPLICATION_H_INCLUDED_B59BE8F2_10C9_4C6E_918B_6E0147A78C25)
     #define APPLICATION_H_INCLUDED_B59BE8F2_10C9_4C6E_918B_6E0147A78C25
 
+    #include <API/Api.h>
     #include <CPU/SystemCreator.h>
     #include <Compiler/Compiler.h>
     #include <Drawable/INode.h>

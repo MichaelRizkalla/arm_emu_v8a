@@ -54,8 +54,14 @@ namespace arm_emu {
     };
 
     struct StepInProgramFinishedEvent : public IEvent {
+        StepInProgramFinishedEvent(bool result);
         EventType                               GetEventType() const noexcept override;
         std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
+
+        bool GetResult() const noexcept;
+
+      private:
+        bool m_result;
     };
 
 } // namespace arm_emu

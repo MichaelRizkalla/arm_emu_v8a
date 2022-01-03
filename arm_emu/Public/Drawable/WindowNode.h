@@ -1,6 +1,7 @@
 #if !defined(WINDOWNODE_H_INCLUDED_6DB2D892_6A92_4911_8D14_66F7B3BEEC21)
     #define WINDOWNODE_H_INCLUDED_6DB2D892_6A92_4911_8D14_66F7B3BEEC21
 
+    #include <API/Api.h>
     #include <Drawable/INode.h>
     #include <Event/EventHandler.h>
     #include <Window/Window.h>

@@ -1,6 +1,7 @@
 #if !defined(CPUSETTINGSNODE_H_INCLUDED_A3131280_BDFF_429F_A0F9_AD36983C2682)
     #define CPUSETTINGSNODE_H_INCLUDED_A3131280_BDFF_429F_A0F9_AD36983C2682
 
+    #include <API/Api.h>
     #include <CPU/SystemSettings.h>
     #include <Drawable/INode.h>
     #include <Event/EventHandler.h>

@@ -1,6 +1,7 @@
 #if !defined(CODECONTROLNODE_H_INCLUDED_78D48582_10EE_476D_8361_0F65A33BAE64)
     #define CODECONTROLNODE_H_INCLUDED_78D48582_10EE_476D_8361_0F65A33BAE64
 
+    #include <API/Api.h>
     #include <Drawable/INode.h>
     #include <string>
 

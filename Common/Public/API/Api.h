@@ -28,6 +28,7 @@
         #ifndef NOIME
             #define NOIME
         #endif
+        #include <Windows.h>
     #endif
 
     #if defined(_WIN32)
@@ -63,7 +64,7 @@
             #define ARMEMU_COMPILER_CLANG
             #define ARMEMU_INTERFACE_ONLY
             #ifdef ARMEMU_BUILD_DLL
-                #define ARMEMU_DLL(cond) __attribute__ ((visibility ("default")))
+                #define ARMEMU_DLL(cond) __attribute__((visibility("default")))
             #else
                 #define ARMEMU_DLL(cond)
             #endif

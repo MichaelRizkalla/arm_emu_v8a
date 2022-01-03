@@ -1,6 +1,7 @@
 #if !defined(INODE_H_INCLUDED_B5F0B0CA_9AA8_4F8E_B794_E507FA34BDD2)
     #define INODE_H_INCLUDED_B5F0B0CA_9AA8_4F8E_B794_E507FA34BDD2
 
+    #include <API/Api.h>
     #include <Event/EventHandler.h>
     #include <Event/EventType.h>
     #include <Event/IEvent.h>

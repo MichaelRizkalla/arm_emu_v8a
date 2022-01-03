@@ -40,4 +40,4 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${ARMEMU_LIB_PROJ} ${COMPILATION_PROJ} ${ARMEMU_DECODES_LIB} imgui glfw fmt imgui-filedialog)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${EMU_INSTALL_DIR}/)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${EMU_INSTALL_DIR}/)
