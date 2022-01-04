@@ -3,6 +3,7 @@
 
     #include <Event/IEvent.h>
     #include <functional>
+    #include <memory_resource>
     #include <unordered_map>
 
 namespace arm_emu {

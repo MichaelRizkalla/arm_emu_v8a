@@ -3,6 +3,7 @@
 
     #include <API/Api.h>
     #include <array>
+    #include <bit>
     #include <bitset>
     #include <boost/dynamic_bitset.hpp>
     #include <cstdint>

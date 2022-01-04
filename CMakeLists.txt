@@ -1,7 +1,7 @@
 ################################################################################
 ### Minimum Cmake required
 ################################################################################
-cmake_minimum_required(VERSION 3.19.2)
+cmake_minimum_required(VERSION 3.21)
 
 ################################################################################
 ### Programming language version
@@ -9,15 +9,14 @@ cmake_minimum_required(VERSION 3.19.2)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(EMU_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(ARMEMU_BUILD_TYPE Debug CACHE STRING "Choose Debug or Release")
+set(ARMEMU_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/install" CACHE PATH "install directory")
+set(BUILD_TESTS OFF CACHE BOOL "Builds arm_emu_lib tests")
+
 set(COMMON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Common)
+set(CMAKE_BUILD_TYPE ${ARMEMU_BUILD_TYPE})
 
-set(BUILD_TESTS "Builds arm_emu_lib tests" OFF)
-
-include_directories(${COMMON_DIR}/Public/ ${COMMON_DIR}/ImGuiFileDialog/
-                    ${COMMON_DIR}/Boost/ ${COMMON_DIR}/Format/include/ 
-                    ${COMMON_DIR}/glfw/include/ ${COMMON_DIR}/ImGui/)
+include_directories(${COMMON_DIR}/Boost/)
 
 ################################################################################
 ### Compiler flags

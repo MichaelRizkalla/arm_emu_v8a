@@ -15,7 +15,7 @@ file(GLOB IMGUIFD_HEADERS "${IMGUIFD_DIR}/*.h" "${IMGUIFD_DIR}/*.hpp"
                         "${IMGUIFD_DIR}/dirent/dirent.h")
 file(GLOB IMGUIFD_SOURCES "${IMGUIFD_DIR}/*.cpp" "${IMGUIFD_DIR}/*.c")
 
-set(IMGUIFD_INCLUDE_DIRS "${IMGUIFD_DIR}/")
+set(IMGUIFD_INCLUDE_DIRS "${IMGUIFD_DIR}/" "${COMMON_DIR}/GLFW/include/" "${COMMON_DIR}/ImGui/")
 set(IMGUIFD_SOURCE_DIRS "${IMGUIFD_DIR}/")
 
 ################################################################################
@@ -30,25 +30,25 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUIFD_INCLUDE_DIRS} ${IMG
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE 
-                                    -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
-                                    -Wno-unknown-pragmas -Wno-unused-function -Oo)
+                                    -Wall -fexceptions -std=c++17 -Wpedantic 
+                                    -Wno-unknown-pragmas -Wno-unused-function -O0)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Release")
     target_compile_options(${PROJECT_NAME} PRIVATE 
-                                    -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
+                                    -Wall -fexceptions -std=c++17 -Wpedantic 
                                     -Wno-unknown-pragmas -Wno-unused-function -O3 -fPIC)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE 
-                                    -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
-                                    -Wno-unknown-pragmas -Wno-unused-function -Oo)
+                                    -Wall -fexceptions -std=c++17 -Wpedantic 
+                                    -Wno-unknown-pragmas -Wno-unused-function -O0)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATCHES "Release")
     target_compile_options(${PROJECT_NAME} PRIVATE 
-                                    -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
+                                    -Wall -fexceptions -std=c++17 -Wpedantic 
                                     -Wno-unknown-pragmas -Wno-unused-function -O3 -fPIC)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 

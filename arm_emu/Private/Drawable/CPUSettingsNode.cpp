@@ -42,12 +42,12 @@ void CPUSettingsNode::OnRender() {
             ImGui::PushItemWidth(-175);
             (void)ImGui::Text("Core count: %d", m_systemSettings.nCores);
             (void)ImGui::Text("Thread count: %d", m_systemSettings.nThreadsPerCore);
-            (void)ImGui::Text("L1 Cache size: %d Addresses", m_systemSettings.L1CacheSize);
-            (void)ImGui::Text("L2 Cache size: %d Addresses", m_systemSettings.L2CacheSize);
-            (void)ImGui::Text("L3 Cache size: %d Addresses", m_systemSettings.L3CacheSize);
-            (void)ImGui::Text("Ram size: %d Addresses", m_systemSettings.RamSize);
-            (void)ImGui::Text("Stack size: %d Addresses", m_systemSettings.StackSize);
-            (void)ImGui::Text("Heap size: %d Addresses", m_systemSettings.HeapSize);
+            (void)ImGui::Text("L1 Cache size: %ld Addresses", m_systemSettings.L1CacheSize);
+            (void)ImGui::Text("L2 Cache size: %ld Addresses", m_systemSettings.L2CacheSize);
+            (void)ImGui::Text("L3 Cache size: %ld Addresses", m_systemSettings.L3CacheSize);
+            (void)ImGui::Text("Ram size: %ld Addresses", m_systemSettings.RamSize);
+            (void)ImGui::Text("Stack size: %ld Addresses", m_systemSettings.StackSize);
+            (void)ImGui::Text("Heap size: %ld Addresses", m_systemSettings.HeapSize);
         }
         ImGui::EndChild();
 

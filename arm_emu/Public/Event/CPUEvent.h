@@ -3,6 +3,7 @@
 
     #include <CPU/SystemSettings.h>
     #include <Event/IEvent.h>
+    #include <string>
 
 namespace arm_emu {
 

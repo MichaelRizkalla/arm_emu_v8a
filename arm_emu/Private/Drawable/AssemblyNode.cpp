@@ -13,9 +13,7 @@ AssemblyNode::AssemblyNode(Window* const window) : m_window(window), m_handler()
         m_result = ee->GetResults().m_assembly;
         m_show   = true;
     });
-    m_handler.Subscribe(EventType::HideProgramControls, [&](IEvent* const) {
-        m_show = false;
-    });
+    m_handler.Subscribe(EventType::HideProgramControls, [&](IEvent* const) { m_show = false; });
 }
 
 void AssemblyNode::OnEvent(IEvent* const anEvent) {

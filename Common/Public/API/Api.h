@@ -29,6 +29,12 @@
             #define NOIME
         #endif
         #include <Windows.h>
+        #ifdef GetMessage
+            #undef GetMessage
+        #endif // GetMessage
+        #ifdef CreateEvent
+            #undef CreateEvent
+        #endif // CreateEvent
     #endif
 
     #if defined(_WIN32)

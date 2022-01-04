@@ -16,7 +16,7 @@ file(GLOB IMGUI_SOURCES "${IMGUI_DIR}/*.cpp" "${IMGUI_DIR}/*.c"
                         "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp" 
                         "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp")
 
-set(IMGUI_INCLUDE_DIRS "${IMGUI_DIR}/")
+set(IMGUI_INCLUDE_DIRS "${IMGUI_DIR}/" "${COMMON_DIR}/GLFW/include/")
 set(IMGUI_SOURCE_DIRS "${IMGUI_DIR}/")
 
 ################################################################################
@@ -32,7 +32,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_INCLUDE_DIRS} ${IMGUI
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE 
                                     -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
-                                    -Wno-unknown-pragmas -Wno-unused-function -Oo)
+                                    -Wno-unknown-pragmas -Wno-unused-function -O0)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Release")
@@ -44,7 +44,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_BUILD_TYPE MATCHES "Release
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE 
                                     -Wall -fexceptions -std=c++17 -Wpedantic -Werror 
-                                    -Wno-unknown-pragmas -Wno-unused-function -Oo)
+                                    -Wno-unknown-pragmas -Wno-unused-function -O0)
     target_link_options(${PROJECT_NAME} PRIVATE -s)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATCHES "Release")

@@ -7,6 +7,9 @@ It is only implementing AARCH64 on ARM v8-a CPUs based on the following document
 * https://developer.arm.com/documentation/ddi0487/fc/
 * https://developer.arm.com/architectures/learn-the-architecture/armv8-a-instruction-set-architecture
 
+# Dependencies
+To compile the application on Linux, please install libx11-dev, libxrandr-dev, libxinerama-dev, libxcursor-dev, libxi-dev, and OpenGL
+
 # Getting started
 This branch is used for re-working the project and might not be stable.
 

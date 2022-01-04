@@ -7,6 +7,7 @@
 #include <Drawable/CodeInputNode.h>
 #include <Drawable/ProgramStateNode.h>
 #include <Drawable/WindowNode.h>
+#include <Event/AppEvent.h>
 #include <Event/CPUEvent.h>
 #include <Event/CompilerEvent.h>
 #include <Event/ControlEvent.h>
@@ -15,8 +16,7 @@
 #include <Memory/ProgramMemory.h>
 #include <cstddef>
 #include <memory_resource>
-
-#include <Event/AppEvent.h>
+#include <thread>
 
 #define IMGUI_IMPL_OPENGL_ES3
 #include <backends/imgui_impl_glfw.h>
@@ -40,6 +40,7 @@ namespace {
         defaultTitle = "arm_emu";
         defaultVSync = false;
     }
+
 } // namespace
 
 IMPLEMENT_AS_SINGLETON(Application)

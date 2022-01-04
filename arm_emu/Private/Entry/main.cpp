@@ -1,12 +1,6 @@
 
 #include <API/Api.h>
 
-#ifdef ARMEMU_OS_WINDOWS
-    #include <Windows.h>
-#elif defined(ARMEMU_OS_LINUX)
-
-#endif
-
 #include <Application/Application.h>
 #include <iostream>
 

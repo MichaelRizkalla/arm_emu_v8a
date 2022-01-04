@@ -5,6 +5,7 @@
     #include <API/HiddenAPI.h>
     #include <Event/IEvent.h>
     #include <Utility/UniqueRef.h>
+    #include <memory_resource>
     #include <mutex>
     #include <queue>
 

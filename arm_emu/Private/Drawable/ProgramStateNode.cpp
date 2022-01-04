@@ -18,6 +18,7 @@ namespace {
 
     static std::uint64_t prevPC = 0;
 
+    constexpr auto instructionSize = (sizeof(IMemory::DataUnit) / sizeof(CompilationResult::ObjectData::value_type));
 } // namespace
 
 ProgramStateNode::ProgramStateNode(Window* const window) : m_window(window), m_handler(), m_result() {
@@ -57,14 +58,14 @@ void ProgramStateNode::OnEvent(IEvent* const anEvent) {
 }
 
 // Credits: https://github.com/lefticus/cpp_box/blob/master/src/cpp_box.cpp
-template < typename StringType, typename... Params >
-void AddText(const bool enabled, const StringType& formatStr, Params&&... params) {
+template < typename... Params >
+inline void AddText(const bool enabled, const char* formatStr, Params&&... params) {
     if (!enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
     }
-    const auto s     = fmt::format(static_cast< const char* >(formatStr), std::forward< Params >(params)...);
-    const auto begin = s.c_str();
-    const auto end   = begin + s.size();
+    const std::string s     = fmt::vformat(formatStr, fmt::make_format_args(std::forward< Params >(params)...));
+    const auto        begin = s.c_str();
+    const auto        end   = begin + s.size();
     ImGui::TextUnformatted(begin, end);
     if (!enabled) {
         ImGui::PopStyleColor();
@@ -78,9 +79,7 @@ void ProgramStateNode::OnRender() {
         ImGui::Begin("CPU and memory state", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         if (m_result) {
             {
-                const auto     frameData = m_result->GetResultFrame();
-                constexpr auto instructionSize =
-                    (sizeof(IMemory::DataUnit) / sizeof(CompilationResult::ObjectData::value_type));
+                const auto frameData = m_result->GetResultFrame();
 
                 if (ImGui::CollapsingHeader("Source                            ",
                                             ImGuiTreeNodeFlags_CollapsingHeader)) {

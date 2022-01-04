@@ -18,6 +18,7 @@
 BEGIN_NAMESPACE
 
 namespace {
+
     static const std::pmr::vector< IProcessingUnit::Extension > supportedExtensions {};
 
     static constexpr auto executionState = IProcessingUnit::ArchitectureProfile::AArch64;

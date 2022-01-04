@@ -50,13 +50,13 @@ namespace {
     static bool cpuCreationFailed  = false;
     static bool compilerLoadFailed = false;
 
-    static constexpr const char* cpuPopUpMenuString = "Create CPU";
+    static constexpr const char* cpuPopUpMenuString      = "Create CPU";
     static constexpr const char* compilerPopUpMenuString = "Load Compiler";
 
     static constexpr const char* cpuCreationFailedString     = "CPU creation failed!";
     static constexpr const char* compilerLoadingFailedString = "Compiler loading failed!";
 
-    std::string cpuFailureMessage = {};
+    static std::string cpuFailureMessage = "";
 
 } // namespace
 
@@ -72,9 +72,7 @@ WindowNode::WindowNode(Window* const window) :
 #endif
     ) {
     ResetValues();
-    m_handler.Subscribe(EventType::CompilerLoadingFailure, [&](IEvent* const) {
-        compilerLoadFailed = true;
-    });
+    m_handler.Subscribe(EventType::CompilerLoadingFailure, [&](IEvent* const) { compilerLoadFailed = true; });
     m_handler.Subscribe(EventType::CPUCreationFailure, [&](IEvent* const e) {
         CPUCreationFailureEvent* ee = static_cast< CPUCreationFailureEvent* const >(e);
         cpuFailureMessage           = ee->GetMessage();
@@ -190,7 +188,7 @@ void WindowNode::OnRender() {
         ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "Failed to create CPU!");
         ImGui::Text("Potential error message: ");
         ImGui::SameLine();
-        ImGui::Text(cpuFailureMessage.c_str());
+        ImGui::Text("%s", cpuFailureMessage.c_str());
 
         if (ImGui::Button("Ok")) {
             cpuCreationFailed = false;
@@ -336,7 +334,7 @@ bool WindowNode::ValidateEntry(const std::string& entry) const noexcept {
 }
 
 bool WindowNode::AddTextEntry(const char* header, const char* label, char* data, std::size_t size) {
-    ImGui::Text(header);
+    ImGui::Text("%s", header);
     ImGui::SameLine();
     ImGui::PushItemWidth(150);
     return ImGui::InputText(label, data, size, ImGuiInputTextFlags_EnterReturnsTrue);

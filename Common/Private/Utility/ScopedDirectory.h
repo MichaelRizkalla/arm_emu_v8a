@@ -26,11 +26,12 @@ struct [[nodiscard]] ScopedDirectory {
         std::abort();
     }
 
-    ScopedDirectory(ScopedDirectory&& rhs) : m_path(std::exchange(rhs.m_path, "")) {
+    ScopedDirectory(ScopedDirectory&& rhs) noexcept : m_path(std::exchange(rhs.m_path, "")) {
     }
 
-    ScopedDirectory& operator=(ScopedDirectory&& rhs) {
+    ScopedDirectory& operator=(ScopedDirectory&& rhs) noexcept {
         m_path = std::exchange(rhs.m_path, "");
+        return *this;
     }
 
     ~ScopedDirectory() {
