@@ -5,6 +5,7 @@
 #include <Event/CompilerEvent.h>
 #include <Event/ControlEvent.h>
 #include <Event/EventQueue.h>
+#include <Event/ProgramEvent.h>
 #include <ImGuiFileDialog.h>
 #include <imgui.h>
 
@@ -21,9 +22,10 @@ namespace {
 
     static constexpr const char* compilerLoadedFrom = "Compiler loaded from: ";
 
+    // TODO: move all string literals to a separate header
     static constexpr const char* defaultCode =
-        "int main(){\n\tint x = 5;\n\n\tif (x == 7) {\n\t\treturn 0;\n\t} else if (x == 5) {\n\treturn "
-        "5;\n\t}\n\treturn 0;\n}";
+        "int main(){\n\tint x = 5;\n\n\tif (x == 7) {\n\t\treturn 0;\n\t} else if (x == 5) {\n\t\treturn "
+        "5;\n\t}\n\n\treturn 0;\n}";
 
 } // namespace
 
@@ -42,9 +44,7 @@ CodeInputNode::CodeInputNode(std::string header, Window* const window) :
         showCompilationResult = true;
         compilationResult     = true;
     });
-    m_handler.Subscribe(EventType::LoadProgram, [&](IEvent* const) {
-        showCompilationResult = false;
-    });
+    m_handler.Subscribe(EventType::LoadProgram, [&](IEvent* const) { showCompilationResult = false; });
     m_handler.Subscribe(EventType::CompilerLoadingSuccessful, [&](IEvent* const e) {
         CompilerLoadingSuccessEvent* ee = static_cast< CompilerLoadingSuccessEvent* const >(e);
 
@@ -55,18 +55,10 @@ CodeInputNode::CodeInputNode(std::string header, Window* const window) :
 
         m_compilerPath = noCompilerLoaded;
     });
-    m_handler.Subscribe(EventType::LoadInputFromFile, [&](IEvent* const e) {
-        loadInputFromFile = true;
-    });
-    m_handler.Subscribe(EventType::SaveInput, [&](IEvent* const e) {
-        saveInputToFile = true;
-    });
-    m_handler.Subscribe(EventType::ClearInput, [&](IEvent* const) {
-        m_input.clear();
-    });
-    m_handler.Subscribe(EventType::HideProgramControls, [&](IEvent* const) {
-        showCompilationResult = false;
-    });
+    m_handler.Subscribe(EventType::LoadInputFromFile, [&](IEvent* const e) { loadInputFromFile = true; });
+    m_handler.Subscribe(EventType::SaveInput, [&](IEvent* const e) { saveInputToFile = true; });
+    m_handler.Subscribe(EventType::ClearInput, [&](IEvent* const) { m_input.clear(); });
+    m_handler.Subscribe(EventType::HideProgramControls, [&](IEvent* const) { showCompilationResult = false; });
 }
 
 void CodeInputNode::OnEvent(IEvent* const anEvent) {
@@ -93,6 +85,7 @@ void CodeInputNode::OnRender() {
         if (isInputChanged) {
             compilationResult = true;
             EventQueue::PostEvent(CreateEvent< HideProgramControlsEvent >());
+            EventQueue::PostEvent(CreateEvent< UnloadProgramEvent >());
         }
 
         const auto compileCode = ImGui::Button("Compile!");

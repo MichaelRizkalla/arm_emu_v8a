@@ -4,6 +4,14 @@
 
 BEGIN_NAMESPACE
 
+EventType UnloadProgramEvent::GetEventType() const noexcept {
+    return EventType::UnloadProgram;
+}
+
+std::underlying_type_t< EventCategory > UnloadProgramEvent::GetEventCategories() const noexcept {
+    return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::ProgramEvent);
+}
+
 LoadProgramEvent::LoadProgramEvent(CompilationResult::ObjectData objectData, Program::EntryPoint entryPoint) :
     m_objectData(objectData), m_entryPoint(entryPoint) {
 }

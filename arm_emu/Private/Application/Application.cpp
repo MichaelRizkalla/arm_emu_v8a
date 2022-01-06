@@ -118,6 +118,12 @@ Application::Application() noexcept :
             EventQueue::PostEvent(CreateEvent< LoadProgramFailureEvent >(std::string { e.what() }));
         }
     });
+    m_eventHandler.Subscribe(EventType::UnloadProgram, [&](IEvent* const e) {
+        if (m_result) {
+            m_cpu->Stop();
+            m_result = nullptr;
+        }
+    });
     m_eventHandler.Subscribe(EventType::StepInProgram, [&](IEvent* const e) {
         // TODO send an event (StepInUpdateState "?") to ProgramStateNode to update its internal old Frame
         if (m_result->CanStepIn()) {

@@ -43,6 +43,7 @@ namespace arm_emu {
         CPUCreationFailure,
 
         LoadProgram,
+        UnloadProgram,
         LoadProgramSuccessful,
         LoadProgramFailure,
         StepInProgramAvailable,

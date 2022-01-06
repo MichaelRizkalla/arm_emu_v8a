@@ -21,6 +21,11 @@ namespace arm_emu {
         Program::EntryPoint           m_entryPoint;
     };
 
+    struct UnloadProgramEvent : public IEvent {
+        EventType                               GetEventType() const noexcept override;
+        std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
+    };
+
     struct LoadProgramSuccessEvent : public IEvent {
         LoadProgramSuccessEvent(IResult* result);
         EventType                               GetEventType() const noexcept override;

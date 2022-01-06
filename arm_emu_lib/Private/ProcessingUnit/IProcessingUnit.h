@@ -14,6 +14,7 @@
 
 BEGIN_NAMESPACE
 
+// TODO: add a feature to stop a certain program or unload it (if not run yet)
 class [[nodiscard]] IProcessingUnit : public Object {
   public:
     struct ExceptionRecord;
