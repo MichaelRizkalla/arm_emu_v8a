@@ -60,6 +60,9 @@ Application::Application() noexcept :
         }
     });
     m_eventHandler.Subscribe(EventType::CompileCode, [&](IEvent* const e) {
+        if (m_result) {
+            EventQueue::PostEvent(CreateEvent< UnloadProgramEvent >());
+        }
         if (m_compiler) {
             CompileCodeEvent* ee = static_cast< CompileCodeEvent* const >(e);
 
@@ -119,6 +122,7 @@ Application::Application() noexcept :
     m_eventHandler.Subscribe(EventType::StepInProgram, [&](IEvent* const e) {
         // TODO send an event (StepInUpdateState "?") to ProgramStateNode to update its internal old Frame
         if (m_result->CanStepIn()) {
+            EventQueue::PostEvent(CreateEvent< UpdateProgramStateEvent >());
             std::thread { [&]() { m_result->StepIn(); } }.detach();
         } else {
             auto state = m_result->GetState();

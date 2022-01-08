@@ -12,11 +12,17 @@ namespace {
     static bool hasCPU  = false;
     static bool hasProg = false;
 
-    static bool                     show = false;
-    std::array< std::uint64_t, 33 > previousRegistersValues { 0 };
-    std::array< bool, 4 >           previousNZCV { false };
+    static bool show { false };
 
-    static std::uint64_t prevPC = 0;
+    static std::array< std::uint64_t, 33 > previousRegistersValues { 0 };
+    static std::array< bool, 4 >           previousNZCV { false };
+    static std::uint64_t                   prevPC { 0 };
+
+    void ResetOldFrame() {
+        previousRegistersValues.fill(0);
+        previousNZCV.fill(false);
+        prevPC = 0;
+    }
 
     constexpr auto instructionSize = (sizeof(IMemory::DataUnit) / sizeof(CompilationResult::ObjectData::value_type));
 } // namespace
@@ -50,6 +56,37 @@ ProgramStateNode::ProgramStateNode(Window* const window) : m_window(window), m_h
 
         m_result = ee->GetResult();
         hasProg  = true;
+        ResetOldFrame();
+    });
+    m_handler.Subscribe(EventType::UpdateProgramState, [&](IEvent* const e) {
+        if (show) {
+            const auto frameData = m_result->GetResultFrame();
+
+            for (std::size_t i = 0; i < 33; ++i) {
+                switch (i) {
+                    case 31: {
+                        previousRegistersValues.at(i) = frameData.GetSP();
+                    } break;
+                    case 32: {
+                        const auto pc = frameData.GetPC() * instructionSize;
+
+                        previousRegistersValues.at(i) = pc;
+                        prevPC                        = pc;
+                    } break;
+                    default: {
+                        previousRegistersValues.at(i) = frameData.GetGPRegisterValue(i);
+                    }
+                }
+            }
+
+            previousNZCV =
+                std::array< bool, 4 > { frameData.GetN(), frameData.GetZ(), frameData.GetC(), frameData.GetV() };
+        }
+    });
+    m_handler.Subscribe(EventType::UnloadProgram, [&](IEvent* const e) {
+        ResetOldFrame();
+        m_result = nullptr;
+        hasProg  = false;
     });
 }
 
@@ -134,7 +171,6 @@ void ProgramStateNode::OnRender() {
                                     m_compilationResult.m_locations[pcLoc].m_disassembly.c_str());
                         }
                     }
-                    prevPC = pc;
                 }
 
                 if (ImGui::CollapsingHeader("Registers                         ",
@@ -155,25 +191,27 @@ void ProgramStateNode::OnRender() {
                             case 31: {
                                 auto value = frameData.GetSP();
                                 AddText(value != previousRegistersValues.at(i), "{:08x}", value);
-                                previousRegistersValues.at(i) = value;
                             } break;
                             case 32: {
                                 auto value = frameData.GetPC() * instructionSize;
                                 AddText(value != previousRegistersValues.at(i), "{:08x}", value);
-                                previousRegistersValues.at(i) = value;
                             } break;
                             default: {
                                 auto value = frameData.GetGPRegisterValue(i);
+                                if (i == 8) {
+                                    int x = 5;
+                                }
                                 AddText(value != previousRegistersValues.at(i), "{:08x}", value);
-                                previousRegistersValues.at(i) = value;
                             }
                         }
                         if (i != 7 && i != 15 && i != 23 && i != 30 && i != 31 && i != 32) {
                             ImGui::SameLine();
                         }
                     }
+
                     const auto NZCV = std::array< bool, 4 > { frameData.GetN(), frameData.GetZ(), frameData.GetC(),
                                                               frameData.GetV() };
+
                     AddText(true, "NZCV ");
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2, 0 });
                     for (std::size_t bit = 0; bit < 4; ++bit) {
@@ -182,7 +220,6 @@ void ProgramStateNode::OnRender() {
                         const auto oldBit = previousNZCV.at(bit);
                         AddText(newBit != oldBit, "{:d}", NZCV.at(bit));
                     }
-                    previousNZCV = NZCV;
                     ImGui::PopStyleVar();
                 }
             }
