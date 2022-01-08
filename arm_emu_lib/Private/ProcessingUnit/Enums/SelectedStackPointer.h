@@ -1,0 +1,24 @@
+#if !defined(SELECTEDSTACKPOINTER_H_INCLUDED_0FD48759_5DA3_4826_9676_6B72D7A6EF87)
+    #define SELECTEDSTACKPOINTER_H_INCLUDED_0FD48759_5DA3_4826_9676_6B72D7A6EF87
+
+    #include <API/Api.h>
+    #include <cstdint>
+
+BEGIN_NAMESPACE
+
+enum class IProcessingUnit::SelectedStackPointer : std::uint32_t
+{
+    EL0t = 0b00000,
+    EL1t = 0b00100,
+    EL1h = 0b00101,
+
+    EL2t = 0b01000,
+    EL2h = 0b01001,
+
+    EL3t = 0b01000,
+    EL3h = 0b01101,
+};
+
+END_NAMESPACE
+
+#endif // !defined(SELECTEDSTACKPOINTER_H_INCLUDED_0FD48759_5DA3_4826_9676_6B72D7A6EF87)

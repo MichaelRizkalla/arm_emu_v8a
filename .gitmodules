@@ -1,0 +1,16 @@
+[submodule "Common/GTest"]
+	path = Common/GTest
+	url = https://github.com/google/googletest.git
+	branch = release-1.11.0
+[submodule "Common/Format"]
+	path = Common/Format
+	url = https://github.com/fmtlib/fmt.git
+[submodule "Common/ImGui"]
+	path = Common/ImGui
+	url = https://github.com/ocornut/imgui.git
+[submodule "Common/GLFW"]
+	path = Common/GLFW
+	url = https://github.com/glfw/glfw.git
+[submodule "Common/ImGuiFileDialog"]
+	path = Common/ImGuiFileDialog
+	url = https://github.com/MichaelRizkalla/ImGuiFileDialog.git

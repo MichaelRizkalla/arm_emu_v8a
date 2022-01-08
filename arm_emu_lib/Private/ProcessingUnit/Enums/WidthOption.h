@@ -1,0 +1,18 @@
+#if !defined(WIDTHOPTION_H_INCLUDED_046AFBED_7787_4165_942C_8D60E1C0672F)
+    #define WIDTHOPTION_H_INCLUDED_046AFBED_7787_4165_942C_8D60E1C0672F
+
+    #include <API/Api.h>
+    #include <cstdint>
+
+BEGIN_NAMESPACE
+
+enum class IProcessingUnit::WidthOption : std::uint32_t
+{
+    W,
+
+    X,
+};
+
+END_NAMESPACE
+
+#endif // !defined(WIDTHOPTION_H_INCLUDED_046AFBED_7787_4165_942C_8D60E1C0672F)

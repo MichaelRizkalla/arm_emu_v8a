@@ -1,0 +1,19 @@
+#if !defined(EXCEPTIONLEVEL_H_INCLUDED_3B73E87D_026A_4F8C_BE11_1EF00FF290CA)
+    #define EXCEPTIONLEVEL_H_INCLUDED_3B73E87D_026A_4F8C_BE11_1EF00FF290CA
+
+    #include <API/Api.h>
+    #include <cstdint>
+
+BEGIN_NAMESPACE
+
+enum class IProcessingUnit::ExceptionLevel : std::uint32_t
+{
+    EL0 = 0b00,
+    EL1 = 0b01,
+    EL2 = 0b10,
+    EL3 = 0b11,
+};
+
+END_NAMESPACE
+
+#endif // !defined(EXCEPTIONLEVEL_H_INCLUDED_3B73E87D_026A_4F8C_BE11_1EF00FF290CA)
