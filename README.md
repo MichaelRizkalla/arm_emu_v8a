@@ -47,13 +47,13 @@ cmake ..
 ```
 
 # Getting started
-1- Install clang compiler v11 or later to be used later.
-2- Build the project using a C++20 complaint compiler
-3- Run `arm_emu` executable
-3- Create a CPU from Edit->Create CPU
-4- Load a Clang compiler from Edit->Load Compiler
-5- Write your code, compile and load.
-6- Step in the program and view CPU registers and stack changes
+1. Install clang compiler v11 or later to be used later.
+2. Build the project using a C++20 complaint compiler
+3. Run `arm_emu` executable
+3. Create a CPU from Edit->Create CPU
+4. Load a Clang compiler from Edit->Load Compiler
+5. Write your code, compile and load.
+6. Step in the program and view CPU registers and stack changes
 
 # Remarks
 Thanks to [Jason Turner](https://github.com/lefticus/)'s talk "[Applied Best Practices](https://www.youtube.com/watch?v=DHOlsEd0eDE&t=3366s)" that provoked me to pick a hard project to work on it. And his project *cpp_box* which I used as ground zero.
