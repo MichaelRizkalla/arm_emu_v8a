@@ -21,7 +21,7 @@ namespace arm_emu {
         }
 
       private:
-        std::pmr::unordered_map< EventType, std::function< void(IEvent* const) > > m_handlers;
+        std::unordered_map< EventType, std::function< void(IEvent* const) > > m_handlers;
     };
 
 } // namespace arm_emu

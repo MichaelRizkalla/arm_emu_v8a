@@ -10,14 +10,14 @@
 namespace arm_emu {
 
     struct LoadCompilerEvent : public IEvent {
-        LoadCompilerEvent(std::pmr::vector< std::filesystem::path > searchPaths);
+        LoadCompilerEvent(std::vector< std::filesystem::path > searchPaths);
         EventType                               GetEventType() const noexcept override;
         std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
 
-        const std::pmr::vector< std::filesystem::path >& GetSearchPaths() const noexcept;
+        const std::vector< std::filesystem::path >& GetSearchPaths() const noexcept;
 
       private:
-        std::pmr::vector< std::filesystem::path > m_searchPaths;
+        std::vector< std::filesystem::path > m_searchPaths;
     };
 
     struct CompilerLoadingSuccessEvent : public IEvent {
@@ -37,17 +37,17 @@ namespace arm_emu {
     };
 
     struct CompileCodeEvent : public IEvent {
-        CompileCodeEvent(std::string source, std::pmr::vector< std::filesystem::path > libraries = {});
+        CompileCodeEvent(std::string source, std::vector< std::filesystem::path > libraries = {});
         EventType                               GetEventType() const noexcept override;
         std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
 
-        std::filesystem::path                            GetFile() const noexcept;
-        const std::pmr::vector< std::filesystem::path >& GetLibraries() const noexcept;
-        ScopedDirectory                                  MoveSourceDirectory() noexcept;
+        std::filesystem::path                       GetFile() const noexcept;
+        const std::vector< std::filesystem::path >& GetLibraries() const noexcept;
+        ScopedDirectory                             MoveSourceDirectory() noexcept;
 
       private:
-        ScopedDirectory                           m_sourceDir;
-        std::pmr::vector< std::filesystem::path > m_libraries;
+        ScopedDirectory                      m_sourceDir;
+        std::vector< std::filesystem::path > m_libraries;
     };
 
     struct CompilationSuccessEvent : public IEvent {
@@ -56,7 +56,7 @@ namespace arm_emu {
         std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
 
         const CompilationResult& GetResults() const noexcept;
-        CompilationResult&& MoveResults() noexcept;
+        CompilationResult&&      MoveResults() noexcept;
 
       private:
         CompilationResult m_results;

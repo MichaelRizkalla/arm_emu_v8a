@@ -40,7 +40,7 @@ namespace {
         L1CacheSize     = "1024";
         L2CacheSize     = "8192";
         L3CacheSize     = "16384";
-        ramSize         = "10485760";
+        ramSize         = "1048576";
         stackSize       = "524288";
         heapSize        = "524288";
     }
@@ -281,13 +281,13 @@ void WindowNode::CreateCPUPopUpMenu() {
 
 void WindowNode::LoadCompilerPopUpMenu() {
     if (ImGui::BeginPopupModal(compilerPopUpMenuString, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        std::pmr::vector< std::filesystem::path > m_paths {};
+        std::vector< std::filesystem::path > m_paths {};
 
         if (m_compilerPaths.size() - std::strlen(m_compilerPaths.c_str()) < 256) {
             m_compilerPaths.resize(m_compilerPaths.size() + 256);
         }
 
-        ImGui::Text(R"(Enter potential compiler paths separated by \n:)");
+        ImGui::Text(R"(Enter potential clang compiler paths separated by \n:)");
         const auto availRegion = ImGui::GetContentRegionAvail();
         (void)ImGui::InputTextMultiline("##CompilerPath", m_compilerPaths.data(), m_compilerPaths.capacity(),
                                         { availRegion.x, availRegion.y * 0.80f });

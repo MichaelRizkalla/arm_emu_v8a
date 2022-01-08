@@ -4,7 +4,7 @@
     #include <API/Api.h>
     #include <API/HiddenAPI.h>
     #include <Event/IEvent.h>
-    #include <Utility/UniqueRef.h>
+    #include <memory>
     #include <memory_resource>
     #include <mutex>
     #include <queue>
@@ -12,16 +12,16 @@
 BEGIN_NAMESPACE
 
 template < class TEventType, class... Args >
-UniqueRef< IEvent > CreateEvent(Args&&... args) {
-    return allocate_unique< IEvent, TEventType >(std::pmr::polymorphic_allocator< TEventType > {},
-                                                 std::forward< Args >(args)...);
+std::unique_ptr< IEvent > CreateEvent(Args&&... args) {
+    return std::make_unique< TEventType >(std::forward< Args >(args)...);
 }
 
 struct EventQueue {
-    using Queue = std::queue< UniqueRef< IEvent >, std::pmr::deque< UniqueRef< IEvent > > >;
+    using Queue = std::queue< std::unique_ptr< IEvent >, std::deque< std::unique_ptr< IEvent > > >;
 
-    static void   PostEvent(UniqueRef< IEvent > anEvent);
-    static Queue& GetQueue() noexcept;
+    static void                      PostEvent(std::unique_ptr< IEvent > anEvent);
+    static std::unique_ptr< IEvent > PopEvent() noexcept;
+    static bool                      HasEvent() noexcept;
 
   private:
     static Queue      m_queue;

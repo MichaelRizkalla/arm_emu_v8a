@@ -9,8 +9,8 @@ BEGIN_NAMESPACE
 
 // Credits: https://github.com/lefticus/cpp_box/blob/master/src/elf_reader.cpp
 
-ELFFile ELFReader::ParseObjectFile(const std::filesystem::path &                 objectFilePath,
-                                   UniqueRef< std::pmr::vector< std::uint8_t > > objectFileData, Object &debugObject) {
+ELFFile ELFReader::ParseObjectFile(const std::filesystem::path &                  objectFilePath,
+                                   std::unique_ptr< std::vector< std::uint8_t > > objectFileData, Object &debugObject) {
     if (objectFileData->size() >= 64) {
         const auto fileHeader = FileHeader { { objectFileData->data(), objectFileData->size() } };
         const auto isElf      = fileHeader.IsELFFile();
@@ -19,7 +19,7 @@ ELFFile ELFReader::ParseObjectFile(const std::filesystem::path &                
         if (isElf) {
             const auto &sectionHeaderStringTable = fileHeader.GetSectionHeaderStringTable();
 
-            std::pmr::map< std::string, std::uint64_t > sectionOffsets;
+            std::map< std::string, std::uint64_t > sectionOffsets;
 
             for (const auto &header : fileHeader.GetSectionHeaders()) {
                 const auto headerName      = std::string { header.ReadNameFrom(sectionHeaderStringTable) };
@@ -56,8 +56,7 @@ ELFFile ELFReader::ParseObjectFile(const std::filesystem::path &                
     }; // empty ELFFile, and handing back the object file data
 }
 
-void ELFReader::ResolveSymbols(std::pmr::vector< std::uint8_t > &data, const FileHeader &fileHeader,
-                               Object &debugObject) {
+void ELFReader::ResolveSymbols(std::vector< std::uint8_t > &data, const FileHeader &fileHeader, Object &debugObject) {
 
     const auto &sectionHeaderStringTable = fileHeader.GetSectionHeaderStringTable();
     const auto &stringTable              = fileHeader.GetStringTable();
@@ -122,7 +121,8 @@ void ELFReader::ResolveSymbols(std::pmr::vector< std::uint8_t > &data, const Fil
                 if (isBranchInstruction) {
                     const auto newValue =
                         (value & 0xFF000000) | (((static_cast< std::int32_t >(to - from) >> 2) - 2) & 0x00FFFFFF);
-                    debugObject.Log(LogType::SymbolResolving, "Resolving Branch Instruction: {:#x} -> {:#x}", value, newValue);
+                    debugObject.Log(LogType::SymbolResolving, "Resolving Branch Instruction: {:#x} -> {:#x}", value,
+                                    newValue);
                     data[from]     = static_cast< uint8_t >(newValue & 0xFF);
                     data[from + 1] = static_cast< uint8_t >((newValue >> 8) & 0xFF);
                     data[from + 2] = static_cast< uint8_t >((newValue >> 16) & 0xFF);
@@ -130,7 +130,8 @@ void ELFReader::ResolveSymbols(std::pmr::vector< std::uint8_t > &data, const Fil
                 } else if (value == 0) {
                     debugObject.Log(LogType::SymbolResolving, "Instruction is '0', nothing to resolve");
                 } else {
-                    debugObject.Log(LogType::SymbolResolving, "Unable to resolve instruction: {0:#x}, aborting ...", value);
+                    debugObject.Log(LogType::SymbolResolving, "Unable to resolve instruction: {0:#x}, aborting ...",
+                                    value);
                     std::terminate();
                 }
             }

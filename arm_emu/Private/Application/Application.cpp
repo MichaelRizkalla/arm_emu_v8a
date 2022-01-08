@@ -46,21 +46,14 @@ namespace {
 IMPLEMENT_AS_SINGLETON(Application)
 
 Application::Application() noexcept :
-    m_eventHandler(),
-    m_isRunning(false),
-    m_sceneNodes(),
-    m_window(nullptr),
-    m_cpu(nullptr),
-    m_compiler(nullptr),
-    m_result(nullptr) {
+    m_eventHandler(), m_isRunning(false), m_window(nullptr), m_cpu(nullptr), m_compiler(nullptr), m_result(nullptr) {
     m_eventHandler.Subscribe(EventType::LoadCompiler, [&](IEvent* const e) {
         LoadCompilerEvent* ee = static_cast< LoadCompilerEvent* const >(e);
 
         auto& searchPaths = ee->GetSearchPaths();
         auto  compiler    = Compiler::FindCompiler(searchPaths);
         if (compiler.has_value()) {
-            m_compiler = allocate_unique< Compiler >(std::pmr::polymorphic_allocator< Compiler > {},
-                                                     std::move(compiler.value()));
+            m_compiler = std::make_unique< Compiler >(std::move(compiler.value()));
             EventQueue::PostEvent(CreateEvent< CompilerLoadingSuccessEvent >(m_compiler->GetPath()));
         } else {
             EventQueue::PostEvent(CreateEvent< CompilerLoadingFailureEvent >());
@@ -104,8 +97,7 @@ Application::Application() noexcept :
 
         try {
             auto program = CreateProgram(objectData, entryPoint);
-            m_result     = allocate_unique< ControlledResult >(std::pmr::polymorphic_allocator< ControlledResult > {},
-                                                           m_cpu->StepIn(std::move(program)));
+            m_result     = std::make_unique< ControlledResult >(m_cpu->StepIn(std::move(program)));
 
             std::thread { [&]() {
                 while (!m_result->CanStepIn())
@@ -188,20 +180,19 @@ void Application::Run() {
     ImGui_ImplGlfw_InitForOpenGL(windowHandle, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    std::pmr::polymorphic_allocator< std::byte > alloc {};
+    // Create Scene nodes
+    auto codeInputNode    = CodeInputNode { "C++ Code", m_window.get() };
+    auto windowNode       = WindowNode { m_window.get() };
+    auto cpuSettingsNode  = CPUSettingsNode { "CPU Settings", m_window.get() };
+    auto assemblyNode     = AssemblyNode { m_window.get() };
+    auto programStateNode = ProgramStateNode { m_window.get() };
 
-    // Set event handlers per node
-    auto codeInputNode    = allocate_unique< INode, CodeInputNode >(alloc, "C++ Code", m_window.get());
-    auto windowNode       = allocate_unique< INode, WindowNode >(alloc, m_window.get());
-    auto cpuSettingsNode  = allocate_unique< INode, CPUSettingsNode >(alloc, "CPU Settings", m_window.get());
-    auto assemblyNode     = allocate_unique< INode, AssemblyNode >(alloc, m_window.get());
-    auto programStateNode = allocate_unique< INode, ProgramStateNode >(alloc, m_window.get());
-
-    m_sceneNodes.push_back(std::move(windowNode));
-    m_sceneNodes.push_back(std::move(codeInputNode));
-    m_sceneNodes.push_back(std::move(cpuSettingsNode));
-    m_sceneNodes.push_back(std::move(assemblyNode));
-    m_sceneNodes.push_back(std::move(programStateNode));
+    std::vector< INode* > m_sceneNodes {};
+    m_sceneNodes.push_back(&windowNode);
+    m_sceneNodes.push_back(&codeInputNode);
+    m_sceneNodes.push_back(&cpuSettingsNode);
+    m_sceneNodes.push_back(&assemblyNode);
+    m_sceneNodes.push_back(&programStateNode);
 
     while (m_isRunning && !glfwWindowShouldClose(windowHandle)) {
         m_window->OnUpdate();
@@ -211,15 +202,13 @@ void Application::Run() {
         ImGui::NewFrame();
 
         // Handle global events
-        auto& eventQueue = EventQueue::GetQueue();
-        while (!eventQueue.empty()) {
-            auto& anEvent = eventQueue.front();
+        while (EventQueue::HasEvent()) {
+            auto anEvent = EventQueue::PopEvent();
             m_eventHandler.Handle(anEvent.get());
             for (auto& node : m_sceneNodes) {
                 node->OnEvent(anEvent.get());
             }
             m_window->OnEvent(anEvent.get());
-            eventQueue.pop();
         }
 
         for (auto& node : m_sceneNodes) {

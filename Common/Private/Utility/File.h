@@ -12,11 +12,11 @@ BEGIN_NAMESPACE
 struct FileUtility {
     STATIC_CLASS(FileUtility)
 
-    static std::pmr::vector< std::uint8_t > Read(const std::filesystem::path& path) {
+    static std::vector< std::uint8_t > Read(const std::filesystem::path& path) {
         if (std::ifstream is { path, std::ios::binary }; is.good()) {
             const auto fileSize = is.seekg(0, std::ios_base::end).tellg();
             is.seekg(0);
-            std::pmr::vector< char > data {};
+            std::vector< char > data {};
             data.resize(static_cast< std::size_t >(fileSize));
             is.read(data.data(), fileSize);
             return { data.begin(), data.end() };

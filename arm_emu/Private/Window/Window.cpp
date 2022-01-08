@@ -17,15 +17,13 @@ Window::~Window() {
     Finalize();
 };
 
-UniqueRef< Window > Window::Create() {
+std::unique_ptr< Window > Window::Create() {
     struct WindowMaker : public Window {
         WindowMaker()  = default;
         ~WindowMaker() = default;
     };
 
-    std::pmr::polymorphic_allocator< WindowMaker > alloc {};
-
-    return allocate_unique< Window, WindowMaker >(alloc);
+    return std::make_unique< WindowMaker >();
 }
 
 const GLFWwindow* Window::GetHandle() const noexcept {

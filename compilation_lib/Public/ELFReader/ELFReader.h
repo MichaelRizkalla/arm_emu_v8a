@@ -4,8 +4,8 @@
     #include <API/Api.h>
     #include <DebugUtils/Object.h>
     #include <ELFReader/ELFFile.h>
-    #include <Utility/UniqueRef.h>
     #include <filesystem>
+    #include <memory>
 
 BEGIN_NAMESPACE
 
@@ -15,12 +15,11 @@ struct ARMEMU_API ELFReader {
     /// @brief Consumes objectFileData and return an ELFFile
     /// @param objectFileData object file to parse
     /// @return ELFFile object with parsed object file
-    static ELFFile ParseObjectFile(const std::filesystem::path&                  objectFilePath,
-                                   UniqueRef< std::pmr::vector< std::uint8_t > > objectFileData, Object& debugObject);
+    static ELFFile ParseObjectFile(const std::filesystem::path&                   objectFilePath,
+                                   std::unique_ptr< std::vector< std::uint8_t > > objectFileData, Object& debugObject);
 
   private:
-    static void ResolveSymbols(std::pmr::vector< std::uint8_t >& data, const FileHeader& fileHeader,
-                               Object& debugObject);
+    static void ResolveSymbols(std::vector< std::uint8_t >& data, const FileHeader& fileHeader, Object& debugObject);
 };
 
 END_NAMESPACE

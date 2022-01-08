@@ -3,17 +3,17 @@
 
     #include <API/Api.h>
     #include <ELFReader/Entries/FileHeader.h>
-    #include <Utility/UniqueRef.h>
     #include <map>
+    #include <memory>
     #include <memory_resource>
 
 namespace arm_emu {
 
     struct ELFFile {
-        UniqueRef< std::pmr::vector< std::uint8_t > > m_objectFileData;
-        FileHeader                                    m_fileHeader { { nullptr, 0 } };
-        std::pmr::map< std::string, std::uint64_t >   m_sectionOffsets;
-        std::uint64_t                                 m_entryPointOffset;
+        std::unique_ptr< std::vector< std::uint8_t > > m_objectFileData;
+        FileHeader                                     m_fileHeader { { nullptr, 0 } };
+        std::map< std::string, std::uint64_t >         m_sectionOffsets;
+        std::uint64_t                                  m_entryPointOffset;
 
         bool m_validBinary;
     };

@@ -6,9 +6,9 @@
     #include <Event/EventType.h>
     #include <Event/IEvent.h>
     #include <GLFW/glfw3.h>
-    #include <Utility/UniqueRef.h>
     #include <Window/WindowProperties.h>
     #include <atomic>
+    #include <memory>
     #include <mutex>
 
 namespace arm_emu {
@@ -37,7 +37,7 @@ namespace arm_emu {
 
         /// @brief CreateWindow is reserved in Windows "WinUser.h" so I used Create
         /// Create only initializes a new Window object, call Init and Finalize to open and close the window
-        [[nodiscard]] static UniqueRef< Window > Create();
+        [[nodiscard]] static std::unique_ptr< Window > Create();
 
         [[nodiscard]] const GLFWwindow* GetHandle() const noexcept;
         [[nodiscard]] GLFWwindow*       GetHandle() noexcept;

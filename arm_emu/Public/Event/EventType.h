@@ -48,6 +48,7 @@ namespace arm_emu {
         LoadProgramFailure,
         StepInProgramAvailable,
         StepInProgram,
+        UpdateProgramState,
         StepInProgramFinished,
 
         ShowProgramControls,

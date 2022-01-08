@@ -6,8 +6,7 @@
 
 BEGIN_NAMESPACE
 
-LoadCompilerEvent::LoadCompilerEvent(std::pmr::vector< std::filesystem::path > searchPaths) :
-    m_searchPaths(searchPaths) {
+LoadCompilerEvent::LoadCompilerEvent(std::vector< std::filesystem::path > searchPaths) : m_searchPaths(searchPaths) {
 }
 
 EventType LoadCompilerEvent::GetEventType() const noexcept {
@@ -18,7 +17,7 @@ std::underlying_type_t< EventCategory > LoadCompilerEvent::GetEventCategories() 
     return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::CompilerEvent);
 }
 
-const std::pmr::vector< std::filesystem::path >& LoadCompilerEvent::GetSearchPaths() const noexcept {
+const std::vector< std::filesystem::path >& LoadCompilerEvent::GetSearchPaths() const noexcept {
     return m_searchPaths;
 }
 
@@ -46,7 +45,7 @@ std::underlying_type_t< EventCategory > CompilerLoadingFailureEvent::GetEventCat
     return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::CompilerEvent);
 }
 
-CompileCodeEvent::CompileCodeEvent(std::string source, std::pmr::vector< std::filesystem::path > libraries) :
+CompileCodeEvent::CompileCodeEvent(std::string source, std::vector< std::filesystem::path > libraries) :
     m_sourceDir(), m_libraries(std::move(libraries)) {
     const auto cppFile = m_sourceDir.Path() / "src.cpp";
     if (std::ofstream os(cppFile, std::ios::out | std::ios::binary); os.good()) {
@@ -67,7 +66,7 @@ std::filesystem::path CompileCodeEvent::GetFile() const noexcept {
     return m_sourceDir.Path() / "src.cpp";
 }
 
-const std::pmr::vector< std::filesystem::path >& CompileCodeEvent::GetLibraries() const noexcept {
+const std::vector< std::filesystem::path >& CompileCodeEvent::GetLibraries() const noexcept {
     return m_libraries;
 }
 

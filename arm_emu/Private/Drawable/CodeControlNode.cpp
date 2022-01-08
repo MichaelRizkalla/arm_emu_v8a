@@ -34,9 +34,7 @@ CodeControlNode::CodeControlNode(Window* const window) :
         CompilationSuccessEvent* ee = static_cast< CompilationSuccessEvent* const >(e);
 
         auto& result     = ee->GetResults();
-        m_objectFileData = allocate_unique< std::pmr::vector< std::uint8_t > >(
-            std::pmr::polymorphic_allocator< std::pmr::vector< std::uint8_t > > {},
-            *(result.m_ELFFile.m_objectFileData.get()));
+        m_objectFileData = std::make_unique< std::vector< std::uint8_t > >(*(result.m_ELFFile.m_objectFileData.get()));
         m_entryPointOffset = result.m_ELFFile.m_entryPointOffset;
         isReadyToStepIn    = false;
     });

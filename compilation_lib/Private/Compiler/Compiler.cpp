@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& os, ClangVersion enumValue) {
     return os;
 }
 
-std::optional< Compiler > Compiler::FindCompiler(std::pmr::vector< std::filesystem::path > searchPaths) noexcept {
+std::optional< Compiler > Compiler::FindCompiler(std::vector< std::filesystem::path > searchPaths) noexcept {
     for (const auto& path : searchPaths) {
         if (std::error_code errorCode {};
             std::filesystem::is_regular_file(path, errorCode) || std::filesystem::is_symlink(path, errorCode)) {
@@ -87,8 +87,8 @@ void Compiler::SetOption(WarningOptions warningOptions) noexcept {
 }
 
 // Credits: https://github.com/lefticus/cpp_box/blob/master/lib/compiler.cpp
-std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path&                     sourceFilePath,
-                                                     const std::pmr::vector< std::filesystem::path >& libraries) {
+std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path&                sourceFilePath,
+                                                     const std::vector< std::filesystem::path >& libraries) {
     ScopedDirectory dir {};
     Log(LogType::None, "dir");
     const auto cppFile         = dir.Path() / "src.cpp";
@@ -125,9 +125,8 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
         return std::nullopt;
     }
     const auto assembly   = FileUtility::Read(asmFile);
-    auto       objectData = allocate_unique< std::pmr::vector< std::uint8_t > >(
-        std::pmr::polymorphic_allocator< std::pmr::vector< std::uint8_t > > {}, FileUtility::Read(objFile));
-    auto elfFile = ELFReader::ParseObjectFile(objFile, std::move(objectData), *this);
+    auto       objectData = std::make_unique< std::vector< std::uint8_t > >(FileUtility::Read(objFile));
+    auto       elfFile    = ELFReader::ParseObjectFile(objFile, std::move(objectData), *this);
 
     std::string objDumpEntity { Obj_dump_name };
 #ifndef ARMEMU_OS_WINDOWS
@@ -156,7 +155,7 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
 
         std::stringstream ss { file };
 
-        std::pmr::unordered_map< std::uint32_t, Location > memoryLocations;
+        std::unordered_map< std::uint32_t, Location > memoryLocations;
 
         std::string   currentFunctionName {};
         std::string   currentSection {};
@@ -202,7 +201,7 @@ std::optional< CompilationResult > Compiler::Compile(const std::filesystem::path
         return memoryLocations;
     };
 
-    std::pmr::map< std::string, std::uint64_t > sectionOffsets = elfFile.m_sectionOffsets;
+    std::map< std::string, std::uint64_t > sectionOffsets = elfFile.m_sectionOffsets;
 
     if ((Log::GetLogType() & LogType::ELFSummary) == LogType::ELFSummary) {
         std::stringstream ss {};

@@ -79,6 +79,14 @@ std::underlying_type_t< EventCategory > StepInProgramEvent::GetEventCategories()
     return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::ProgramEvent);
 }
 
+EventType UpdateProgramStateEvent::GetEventType() const noexcept {
+    return EventType::UpdateProgramState;
+}
+
+std::underlying_type_t< EventCategory > UpdateProgramStateEvent::GetEventCategories() const noexcept {
+    return static_cast< std::underlying_type_t< EventCategory > >(EventCategory::ProgramEvent);
+}
+
 StepInProgramFinishedEvent::StepInProgramFinishedEvent(bool result) : m_result(result) {
 }
 

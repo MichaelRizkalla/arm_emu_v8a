@@ -19,8 +19,8 @@ namespace arm_emu {
         Window* const m_window;
         EventHandler  m_handler;
 
-        std::uint64_t                                 m_entryPointOffset;
-        UniqueRef< std::pmr::vector< std::uint8_t > > m_objectFileData;
+        std::uint64_t                                  m_entryPointOffset;
+        std::unique_ptr< std::vector< std::uint8_t > > m_objectFileData;
     };
 
 } // namespace arm_emu

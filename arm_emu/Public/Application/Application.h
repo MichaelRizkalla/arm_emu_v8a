@@ -7,9 +7,9 @@
     #include <Drawable/INode.h>
     #include <Program/Program.h>
     #include <Utility/Singleton.h>
-    #include <Utility/UniqueRef.h>
     #include <Window/Window.h>
     #include <exception>
+    #include <memory>
     #include <vector>
 
 namespace arm_emu {
@@ -39,13 +39,12 @@ namespace arm_emu {
         Application() noexcept;
 
       private:
-        EventHandler                           m_eventHandler;
-        std::atomic_bool                       m_isRunning;
-        std::pmr::vector< UniqueRef< INode > > m_sceneNodes;
-        UniqueRef< Window >                    m_window;
-        UniqueRef< ICPU >                      m_cpu;
-        UniqueRef< Compiler >                  m_compiler;
-        UniqueRef< ControlledResult >          m_result;
+        EventHandler                        m_eventHandler;
+        std::atomic_bool                    m_isRunning;
+        std::unique_ptr< Window >           m_window;
+        UniqueRef< ICPU >                   m_cpu;
+        std::unique_ptr< Compiler >         m_compiler;
+        std::unique_ptr< ControlledResult > m_result;
     };
 
 } // namespace arm_emu

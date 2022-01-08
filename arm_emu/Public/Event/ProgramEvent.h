@@ -58,6 +58,11 @@ namespace arm_emu {
         std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
     };
 
+    struct UpdateProgramStateEvent : public IEvent {
+        EventType                               GetEventType() const noexcept override;
+        std::underlying_type_t< EventCategory > GetEventCategories() const noexcept override;
+    };
+
     struct StepInProgramFinishedEvent : public IEvent {
         StepInProgramFinishedEvent(bool result);
         EventType                               GetEventType() const noexcept override;

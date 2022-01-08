@@ -24,14 +24,14 @@ namespace arm_emu {
     };
 
     struct CompilationResult {
-        using ObjectData = std::pmr::vector< std::uint8_t >;
+        using ObjectData = std::vector< std::uint8_t >;
 
         std::string m_source;
         std::string m_assembly;
 
         ELFFile m_ELFFile;
 
-        std::pmr::unordered_map< std::uint32_t, Location > m_locations;
+        std::unordered_map< std::uint32_t, Location > m_locations;
     };
 
     enum class ClangVersion : std::uint32_t
@@ -52,7 +52,7 @@ namespace arm_emu {
     #endif
 
       public:
-        static std::optional< Compiler > FindCompiler(std::pmr::vector< std::filesystem::path > searchPaths) noexcept;
+        static std::optional< Compiler > FindCompiler(std::vector< std::filesystem::path > searchPaths) noexcept;
 
         Compiler(std::filesystem::path compilerPath, ClangVersion version);
         Compiler(Compiler&&) noexcept;
@@ -66,8 +66,8 @@ namespace arm_emu {
         void SetOption(OptimizationLevel optimizationLevel) noexcept;
         void SetOption(WarningOptions warningOptions) noexcept;
 
-        std::optional< CompilationResult > Compile(const std::filesystem::path&                     sourceFilePath,
-                                                   const std::pmr::vector< std::filesystem::path >& libraries);
+        std::optional< CompilationResult > Compile(const std::filesystem::path&                sourceFilePath,
+                                                   const std::vector< std::filesystem::path >& libraries);
 
         std::filesystem::path GetPath() const noexcept;
 
