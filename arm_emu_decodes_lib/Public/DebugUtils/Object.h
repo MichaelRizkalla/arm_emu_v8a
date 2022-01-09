@@ -27,22 +27,7 @@ namespace arm_emu {
         Logger m_logger { Logger::UnknownObject };
     };
 
-    class DebugObject_ : public LoggedObject {
-      public:
-        DebugObject_()                        = default;
-        DebugObject_(const DebugObject_&)     = default;
-        DebugObject_(DebugObject_&&) noexcept = default;
-        DebugObject_& operator=(const DebugObject_&) = default;
-        DebugObject_& operator=(DebugObject_&&) = default;
-        DebugObject_(std::string name) : LoggedObject(std::move(name)) {
-        }
-        virtual ~DebugObject_() = default;
-
-        template < class... Args >
-        void LogTrace(LogType type, const char* logMsg, Args&&... args) const {
-            m_logger.LogTrace(type, logMsg, std::forward< Args >(args)...);
-        }
-    };
+    #ifdef NDEBUG
 
     class ReleaseObject_ : public LoggedObject {
       public:
@@ -60,9 +45,27 @@ namespace arm_emu {
         }
     };
 
-    #ifdef NDEBUG
     using Object = ReleaseObject_;
+
     #else  // NDEBUG
+
+    class DebugObject_ : public LoggedObject {
+      public:
+        DebugObject_()                        = default;
+        DebugObject_(const DebugObject_&)     = default;
+        DebugObject_(DebugObject_&&) noexcept = default;
+        DebugObject_& operator=(const DebugObject_&) = default;
+        DebugObject_& operator=(DebugObject_&&) = default;
+        DebugObject_(std::string name) : LoggedObject(std::move(name)) {
+        }
+        virtual ~DebugObject_() = default;
+
+        template < class... Args >
+        void LogTrace(LogType type, const char* logMsg, Args&&... args) const {
+            m_logger.LogTrace(type, logMsg, std::forward< Args >(args)...);
+        }
+    };
+
     using Object = DebugObject_;
     #endif // NDEBUG
 
