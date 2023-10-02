@@ -11,7 +11,7 @@ class RandomAccessMemory::Impl final {
     Impl(Object* logger, Address addressableSize) :
         m_size(addressableSize), m_memory(BuildInitialMemory(m_size)), m_watcher(), m_debugObject(*logger) {
         m_debugObject.Log(LogType::Construction, "Memory construction {}!",
-                               m_memory.size() > 0 ? "succeeded" : "failed");
+                          m_memory.size() > 0 ? "succeeded" : "failed");
     }
 
     DataUnit Read(Address address) noexcept {
@@ -75,7 +75,8 @@ class RandomAccessMemory::Impl final {
         const auto dataSize     = data.Size();
         const auto blockEndAddr = start + dataSize;
 
-        // TODO: think about adding a Singleton<ErrorTracer> (?) to hold all possible error at runtime, and print stack trace
+        // TODO: think about adding a Singleton<ErrorTracer> (?) to hold all possible error at runtime, and print stack
+        // trace
         Preconditions(blockEndAddr - 1);
 
         if (blockEndAddr > m_memory.size()) {
@@ -137,11 +138,12 @@ RandomAccessMemory::~RandomAccessMemory() {
     Log(LogType::Destruction, "Destroying memory of size {} Addresses!", m_memory->Size());
 }
 
-RandomAccessMemory::DataUnit RandomAccessMemory::Read(Address address) noexcept {
+RandomAccessMemory::DataUnit RandomAccessMemory::Read(Address address) const noexcept {
     return m_memory->Read(address);
 }
 
-DataBlock< RandomAccessMemory::DataUnit > RandomAccessMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) {
+DataBlock< RandomAccessMemory::DataUnit > RandomAccessMemory::ReadBlock(Address       start,
+                                                                        std::uint64_t dataUnitCount) const {
     return m_memory->ReadBlock(start, dataUnitCount);
 }
 

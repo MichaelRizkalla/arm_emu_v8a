@@ -13,7 +13,7 @@ class ProgramMemory::Impl final {
                           m_memory.size() > 0 ? "succeeded" : "failed");
     }
 
-    DataUnit Read(Address address) noexcept {
+    DataUnit Read(Address address) const noexcept {
         m_debugObject.LogTrace(LogType::Other, "Read memory at address: {}", address);
         Preconditions(address);
 
@@ -26,7 +26,7 @@ class ProgramMemory::Impl final {
         return m_memory[address];
     }
 
-    DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) {
+    DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) const {
         m_debugObject.LogTrace(LogType::Other, "ReadBlock of memory starting from address: {} with length: {}", start,
                                dataUnitCount);
 
@@ -137,11 +137,11 @@ ProgramMemory::~ProgramMemory() {
     Log(LogType::Destruction, "Destroying memory of size {} Addresses!", m_memory->Size());
 }
 
-ProgramMemory::DataUnit ProgramMemory::Read(Address address) noexcept {
+ProgramMemory::DataUnit ProgramMemory::Read(Address address) const noexcept {
     return m_memory->Read(address);
 }
 
-DataBlock< ProgramMemory::DataUnit > ProgramMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) {
+DataBlock< ProgramMemory::DataUnit > ProgramMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) const {
     return m_memory->ReadBlock(start, dataUnitCount);
 }
 

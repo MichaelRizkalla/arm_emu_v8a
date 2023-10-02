@@ -23,10 +23,10 @@ class [[nodiscard]] CacheMemory final : public ICacheMemory {
     CacheMemory& operator=(CacheMemory&&) noexcept;
     virtual ~CacheMemory();
 
-    CacheMemory(const CacheMemory&) = delete;
+    CacheMemory(const CacheMemory&)            = delete;
     CacheMemory& operator=(const CacheMemory&) = delete;
 
-    [[nodiscard]] DataUnit Read(Address address) noexcept final;
+    [[nodiscard]] DataUnit Read(Address address) const noexcept final;
 
     /// <summary>
     /// Block has to be equal to one cache line
@@ -35,7 +35,7 @@ class [[nodiscard]] CacheMemory final : public ICacheMemory {
     /// <param name="start"></param>
     /// <param name="dataUnitCount"></param>
     /// <returns></returns>
-    [[nodiscard]] DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) final;
+    [[nodiscard]] DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) const final;
 
     void Write(Address address, DataUnit data) final;
 

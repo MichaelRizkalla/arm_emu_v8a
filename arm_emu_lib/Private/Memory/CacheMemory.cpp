@@ -17,8 +17,7 @@ namespace {
 } // namespace
 
 // Direct Mapping implementation
-enum class State
-{
+enum class State {
     Empty,
     Clean,
     Modified,
@@ -321,11 +320,11 @@ CacheMemory::~CacheMemory() {
     Log(LogType::Destruction, "Destroying memory of size {} Addresses!", m_memory->Size());
 }
 
-IMemory::DataUnit CacheMemory::Read(Address address) noexcept {
+IMemory::DataUnit CacheMemory::Read(Address address) const noexcept {
     return m_memory->Read(address);
 }
 
-DataBlock< IMemory::DataUnit > CacheMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) {
+DataBlock< IMemory::DataUnit > CacheMemory::ReadBlock(Address start, std::uint64_t dataUnitCount) const {
     return m_memory->ReadBlock(start, dataUnitCount);
 }
 

@@ -20,11 +20,11 @@ class [[nodiscard]] RandomAccessMemory final : public IMemory {
     RandomAccessMemory& operator=(RandomAccessMemory&&) noexcept;
     virtual ~RandomAccessMemory();
 
-    RandomAccessMemory(const RandomAccessMemory&) = delete;
+    RandomAccessMemory(const RandomAccessMemory&)            = delete;
     RandomAccessMemory& operator=(const RandomAccessMemory&) = delete;
 
-    [[nodiscard]] DataUnit              Read(Address address) noexcept final;
-    [[nodiscard]] DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) final;
+    [[nodiscard]] DataUnit              Read(Address address) const noexcept final;
+    [[nodiscard]] DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) const final;
 
     void Write(Address address, DataUnit data) noexcept final;
     void WriteBlock(Address start, const DataBlock< DataUnit >& data) final;

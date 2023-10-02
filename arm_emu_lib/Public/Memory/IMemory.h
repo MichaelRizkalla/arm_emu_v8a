@@ -24,15 +24,15 @@ namespace arm_emu {
 
         IMemory(std::string name = "IMemory") : Object(std::move(name)) {
         }
-        IMemory(IMemory&&) = default;
+        IMemory(IMemory&&)            = default;
         IMemory& operator=(IMemory&&) = default;
         virtual ~IMemory()            = default;
 
-        IMemory(const IMemory&) = delete;
+        IMemory(const IMemory&)            = delete;
         IMemory& operator=(const IMemory&) = delete;
 
-        [[nodiscard]] virtual DataUnit              Read(Address address) noexcept                               = 0;
-        [[nodiscard]] virtual DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount)        = 0;
+        [[nodiscard]] virtual DataUnit              Read(Address address) const noexcept                         = 0;
+        [[nodiscard]] virtual DataBlock< DataUnit > ReadBlock(Address start, std::uint64_t dataUnitCount) const  = 0;
         virtual void                                Write(Address address, DataUnit data)                        = 0;
         virtual void                                WriteBlock(Address start, const DataBlock< DataUnit >& data) = 0;
         [[nodiscard]] virtual Address               Size() const noexcept                                        = 0;
